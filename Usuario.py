@@ -18,6 +18,8 @@ class Usuario:
     def get_tipo_usuario(self) -> int:
 
         return self.__tipo_usuario
+
+    
     
     
     def crear_cliente(self) -> bool:

@@ -71,4 +71,7 @@ class Usuario:
         #Muestra mensaje con la info de la cliente creado en el sistema.
         print(f"El cliente se ha creado con éxito. Información de la cuenta:\n {self.usuarios[self.contUsuario - 1]}")
         return True            
-   
+"""
+   Autor: Salomé García Velásquez
+   Fecha: 04/05/26
+   """

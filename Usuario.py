@@ -14,3 +14,26 @@ class Usuario:
 
         return self.__tipo_usuario
     
+    def crear_cliente(self, tipo_usuario) -> bool:
+        self.tipo_usuario = int(input("Ingrese el tipo de usuario: "))
+
+        if tipo_usuario == 2:
+            nombre = input("Ingrese el nombre del cliente")
+            usuario = int(input("Ingrese el usuario del cliente"))
+            contrasena = (f"{usuario}{nombre[0].lower()}*") 
+            lista_usuarios = open("usuarios.txt" , "r")
+
+            for linea in lista_usuarios:
+                dato = linea.strip().split(",")
+
+                if dato[1] == str(self.usuario):
+                    print("El usuario ya tiene una cuenta existente.")
+                    return False
+                
+                else:
+                    lista_usuarios = open("usuarios.txt" , "a")
+                    lista_usuarios.write(f"{nombre}, {usuario}, {contrasena}, 3\n")
+                    lista_usuarios.close()
+                    print("El cliente se ha creado con éxito.")
+                    return True
+                    

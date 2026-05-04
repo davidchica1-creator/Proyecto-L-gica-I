@@ -1,0 +1,22 @@
+from Funcion import *
+import numpy as np
+
+class SalaCine:
+
+    def __init__(self, identificador_sala:int, valor_boleta:int, cant_filas:int, sillas_por_fila:int):
+        self.__identificador_sala = identificador_sala
+        self.__valor_boleta = valor_boleta
+        self.__cant_filas = cant_filas
+        self.__sillas_por_fila = sillas_por_fila
+        self.__tamanio = self.__cant_filas * self.__sillas_por_fila
+        self.__programacion = np.full((5), fill_value = None, dtype = object)
+
+    
+    def agregar_funcion(self, funcion:Funcion)-> bool:
+        pass
+
+    def eliminar_funcion(self, identificador_funcion:int):
+        pass
+
+    def calcular_porcentaje_ocupacion(self):
+        pass

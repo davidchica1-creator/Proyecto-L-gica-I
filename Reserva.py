@@ -1,3 +1,11 @@
+'''
+Autor: David Chica López
+Fecha: 04/05/2026
+Clase Reserva: Representa una reserva de boletas para una función de cine.
+Atributos: usuario, identificador_funcion, cant_boletas, asientos, precio_total
+'''
+
+
 import numpy as np
 
 class Reserva:
@@ -8,6 +16,11 @@ class Reserva:
         self.__cant_boletas = cant_boletas
         self.__asientos = np.full((cant_boletas,), fill_value=1, dtype=int)
         self.__precio_total = precio_total
+
+    '''
+    Metodo: generar_boleta, muestra la información de la reserva, incluyendo el usuario, el identificador de la función, 
+    la cantidad de boletas, los asientos reservados y el precio total.
+    '''
 
     def generar_boleta(self) -> None:
         print("Boleta de Reserva")

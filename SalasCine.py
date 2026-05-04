@@ -1,3 +1,10 @@
+'''
+Autor: David Chica López
+Fecha: 03/06/2026
+Clase SalaCine: Representa una sala de cine dentro de un complejo.
+Atributos: identificador_sala, valor_boleta, cant_filas, sillas_por_fila, tamanio, programacion
+'''
+
 from Funcion import *
 import numpy as np
 

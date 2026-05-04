@@ -12,8 +12,12 @@ class SalaCine:
         self.__programacion = np.full((5), fill_value = None, dtype = object)
 
     
+    def get_identificador(self):
+        return self.__identificador_sala
+
     def agregar_funcion(self, funcion:Funcion)-> bool:
         pass
+    
 
     def eliminar_funcion(self, identificador_funcion:int):
         pass

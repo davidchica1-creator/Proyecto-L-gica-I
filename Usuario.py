@@ -1,4 +1,5 @@
 import numpy as np
+from funciones_utiles import solicitar_dato
 
 class Usuario:
     
@@ -24,8 +25,8 @@ class Usuario:
     
     def crear_cliente(self) -> bool:
         
-            self.__nombre = input("Ingrese el nombre completo del cliente: ")
-            self.__usuario = int(input("Ingrese el usuario (documento) del cliente: "))
+            self.__nombre = solicitar_dato("Ingrese el nombre completo del cliente: ")
+            self.__usuario = int(solicitar_dato("Ingrese el usuario (documento) del cliente: "))
             self.__contrasena = (f"{self.__usuario}{self.__nombre[0].lower()}*")
            
             if self.contUsuario >= 100 :

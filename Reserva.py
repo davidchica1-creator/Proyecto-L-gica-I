@@ -10,9 +10,10 @@ import numpy as np
 
 class Reserva:
     
-    def __init__(self, usuario:int, identificador_funcion:int, cant_boletas:int, asientos:np.ndarray, precio_total:int):
+    def __init__(self, usuario:int, identificador_funcion:int, identificador_sala:int, cant_boletas:int, asientos:np.ndarray, precio_total:int):
         self.__usuario = usuario
         self.__identificador_funcion = identificador_funcion
+        self.__identificador_sala = identificador_sala
         self.__cant_boletas = cant_boletas
         self.__asientos = np.full((cant_boletas,), fill_value=1, dtype=int)
         self.__precio_total = precio_total

@@ -8,9 +8,10 @@ Atributos: nombre_espanol, nombre_original, anno_estreno, duracion, genero, pais
 from funciones_utiles import solicitar_dato
 
 class Pelicula:
-    def __init__(self,nombre_espanol:str, nombre_original:str, anno_estreno:int, duracion:int, genero:str, pais_origen:str, calificacion:str, estado:bool = True):
+    def __init__(self,nombre_espanol:str, nombre_original:str, identificador_pelicula:int, anno_estreno:int, duracion:int, genero:str, pais_origen:str, calificacion:str, estado:bool = True):
         self.__nombre_espanol = nombre_espanol
         self.__nombre_original = nombre_original
+        self.__identificador_pelicula = identificador_pelicula
         self.__anno_estreno = anno_estreno
         self.__duracion = duracion
         self.__genero = genero

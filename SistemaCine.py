@@ -22,7 +22,7 @@ class sistemaCine:
         self.__usuario = int(input("Ingrese el usuario (documento) del cliente: "))
         self.__contrasena = (f"{self.__usuario}{self.__nombre[0].lower()}*")
         
-        if self.contUsuario >= 100 :
+        if self.contador_clientes >= 100 :
             print ("Se ha alcanzado el máximo de usuarios permitidos por el sistema.")
             return False
         

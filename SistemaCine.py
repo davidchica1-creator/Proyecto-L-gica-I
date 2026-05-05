@@ -10,7 +10,7 @@ class sistemaCine:
         self.contador_peliculas=0
 
     '''
-    Autor: Juan David Ortiz Diaz  
+    Autor: Salomé García Velásquez
     Fecha: 04/05/2026  
     Método crear_cliente: Permite registrar un nuevo cliente en el sistema validando que no exista previamente.  
     Parámetros: Ninguno  

@@ -23,7 +23,7 @@ class sistemaCine:
                     print("El usuario ya existe")
                     return False
 
-        # 🔹 Crear objeto Usuario (tipo 3)
+        
         nuevo = Usuario(self.__nombre,self.__usuario, 3)
 
         self.usuarios[self.contador_clientes] = nuevo

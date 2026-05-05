@@ -1,7 +1,7 @@
 import numpy as np
 
 class Funcion:
-    def __init__(self, identificador_funcion:int, identificador_pelicula:str, fecha:str, hora_inicio:int, cant_filas:int, sillas_por_fila:int):
+    def __init__(self, identificador_funcion:int, identificador_pelicula:str, fecha:str, hora_inicio:str, cant_filas:int, sillas_por_fila:int):
         self.__identificador_funcion = identificador_funcion
         self.__identificador_pelicula = identificador_pelicula
         self.__fecha = fecha

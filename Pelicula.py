@@ -29,14 +29,17 @@ class Pelicula:
         self.__nombre_original = input("Ingrese el nombre original de la pelicula: \n")
         solicitar_dato(self.__nombre_original, "texto")
 
-        self.__anno_estreno = int(input("Ingrese el año de estreno de la pelicula: \n"))
+        self.__anno_estreno = input("Ingrese el año de estreno de la pelicula: \n")
         solicitar_dato(self.__anno_estreno, "entero")
+        int(self.__anno_estreno)
 
-        self.__duracion = int(input("Ingrese la duracion (en minutos) de la pelicula: "))
+        self.__duracion = input("Ingrese la duracion (en minutos) de la pelicula: ")
         solicitar_dato(self.__duracion, "entero", 90, 180)
+        int(self.__duracion)
 
-        self.__genero = int(input("Ingrese el genero de la pelicula:\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6)Infantil\n"))
+        self.__genero = input("Ingrese el genero de la pelicula:\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6)Infantil\n")
         solicitar_dato(self.__genero, "entero", 1, 6)
+        int(self.__genero)
         match self.__genero:
             case 1:
                 self.__genero = "Drama"
@@ -54,8 +57,9 @@ class Pelicula:
         self.__pais_origen = input("Ingrese el pais de origen de la pelicula:\n")
         solicitar_dato(self.__pais_origen, "texto")
 
-        self.__calificacion = int(input("Ingrese la calificacion de la pelicula: \n1) G (Para todas las edades) \n2) PG (Se recomienda la compañía de un adulto) \n3) PG-13 (No recomendado para menores de 13 años) \n4) R (Restringida, no recomendada para menores de 17 años) \n5) NC-17 (No recomendado para menores de 17 años)\n"))
+        self.__calificacion = input("Ingrese la calificacion de la pelicula: \n1) G (Para todas las edades) \n2) PG (Se recomienda la compañía de un adulto) \n3) PG-13 (No recomendado para menores de 13 años) \n4) R (Restringida, no recomendada para menores de 17 años) \n5) NC-17 (No recomendado para menores de 17 años)\n")
         solicitar_dato(self.__calificacion, "entero", 1, 7)
+        int(self.__calificacion)
         match self.__calificacion:
             case 1:
                 self.__calificacion = "G"

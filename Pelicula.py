@@ -30,6 +30,10 @@ class Pelicula:
         self.__nombre_original = input("Ingrese el nombre original de la pelicula: \n")
         solicitar_dato(self.__nombre_original, "texto")
 
+        self.__identificador_pelicula = input("Ingrese el identificador de la pelicula: \n")
+        solicitar_dato(self.__identificador_pelicula, "entero")
+        self.__identificador_pelicula = int(self.__identificador_pelicula)
+
         self.__anno_estreno = input("Ingrese el año de estreno de la pelicula: \n")
         solicitar_dato(self.__anno_estreno, "entero")
         self.__anno_estreno = int(self.__anno_estreno)

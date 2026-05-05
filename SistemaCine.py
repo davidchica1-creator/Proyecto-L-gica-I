@@ -3,14 +3,14 @@ from funciones_utiles import solicitar_dato
 from SalasCine import*
 from Pelicula import*
 
-class sistemaCine:
+class SistemaCine:
     def __init__(self):
         self.usuarios = np.full((100), fill_value = None, dtype = object)
         self.contador_clientes=0
         self.contador_peliculas=0
 
     '''
-    Autor: Juan David Ortiz Diaz  
+    Autor: Salome Garcia  
     Fecha: 04/05/2026  
     Método crear_cliente: Permite registrar un nuevo cliente en el sistema validando que no exista previamente.  
     Parámetros: Ninguno  
@@ -22,7 +22,7 @@ class sistemaCine:
         self.__usuario = int(input("Ingrese el usuario (documento) del cliente: "))
         self.__contrasena = (f"{self.__usuario}{self.__nombre[0].lower()}*")
         
-        if self.contUsuario >= 100 :
+        if self.contador_clientes >= 100 :
             print ("Se ha alcanzado el máximo de usuarios permitidos por el sistema.")
             return False
         
@@ -64,18 +64,19 @@ class sistemaCine:
             case 1:
                 usuario_ingresado=input("Ingrese el usuario: ")
                 contrasena=input("Ingresa la contrasena: ")
-                if usuario_ingresado=="Admin123" and contrasena=="Admin123*":
-                    user=Usuario("Admin",123,1)
-                    user.menu_admin(self)
-                elif usuario_ingresado=="Vendedor123" and contrasena=="Vendedor123*":
-                    user=Usuario("Vendedor",1234,2)
-                    user.menu_vendedor(self)
-                else:
-                    for i in range(self.contador_clientes):
-                        cliente=self.usuarios[i]
-                        if cliente.get_usuario()==usuario_ingresado and cliente.get_contrasena()==contrasena:
-                            cliente.menu_cliente()
-                    print("Usuario no encontrado")
+                while opcion != 2:
+                    if usuario_ingresado=="Admin123" and contrasena=="Admin123*":
+                        user=Usuario("Admin",123,1)
+                        user.menu_admin(self)
+                    elif usuario_ingresado=="Vendedor123" and contrasena=="Vendedor123*":
+                        user=Usuario("Vendedor",1234,2)
+                        user.menu_vendedor(self)
+                    else:
+                        for i in range(self.contador_clientes):
+                            cliente=self.usuarios[i]
+                            if cliente.get_usuario()==usuario_ingresado and cliente.get_contrasena()==contrasena:
+                                cliente.menu_cliente()
+                        print("Usuario no encontrado")
             
             case 2:
                 print("Hasta luego")
@@ -115,4 +116,9 @@ class sistemaCine:
             print("Proceso terminado con éxito.")
         else:
             print("No se pudo realizar el registro.")
-        
+
+obj:SistemaCine
+
+obj = SistemaCine()
+
+obj.login()

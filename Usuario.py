@@ -47,7 +47,7 @@ class Usuario:
          
     
     '''
-Autor: Juan David Ortiz Diaz  
+Autor: Salome Garcia  
 Fecha: 04/05/2026  
 Método menu_admin: Muestra el menú del administrador y permite ejecutar funciones de gestión del sistema.  
 Parámetros: sistema (objeto sistemaCine)  

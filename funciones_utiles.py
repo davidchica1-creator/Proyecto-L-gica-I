@@ -11,20 +11,35 @@ valores mínimo y máximo en caso de se usen menus de opciones, para evitar repe
 from datetime import datetime
 
 def solicitar_dato(mensaje, tipo_esperado, min_val=None, max_val=None):
-    """Función genérica para validar entradas de usuario."""
     while True:
         entrada = input(mensaje).strip()
         
+        # 1. Validar que no esté vacío
         if not entrada:
             print("Error: El campo no puede estar vacío.")
             continue
             
+        # 2. Validación de TEXTO
         if tipo_esperado == 'texto':
             if entrada.isdigit():
-                print("Error: El nombre no puede ser solo números.")
+                print("Error: El texto no puede ser solo números.")
                 continue
-            return entrada
             
+            # Verificamos que el texto tenga al menos una letra del abecedario.
+            # Así evitamos que ingresen solo símbolos como "---" o "!!!"
+            tiene_letra = False
+            for caracter in entrada:
+                if caracter.isalpha():
+                    tiene_letra = True
+                    break # Si encontramos al menos una letra, dejamos de buscar
+            
+            if not tiene_letra:
+                print("Error: El texto debe contener letras válidas, no solo símbolos.")
+                continue
+                
+            return entrada # Si pasa todas las pruebas, retorna el texto
+            
+        # 3. Validación de NÚMERO
         elif tipo_esperado == 'numero':
             try:
                 valor = int(entrada)
@@ -34,9 +49,18 @@ def solicitar_dato(mensaje, tipo_esperado, min_val=None, max_val=None):
                 if max_val is not None and valor > max_val:
                     print(f"Error: El valor máximo permitido es {max_val}.")
                     continue
-                return valor
+                
+                return valor # Si pasa todas las pruebas, retorna el número
+                
             except ValueError:
                 print("Error: Debes ingresar un número entero válido.")
+                continue # Obliga a reiniciar el ciclo while inmediatamente
+        
+        # 4. Seguro contra errores de programación
+        else:
+            # Si el programador manda un tipo_esperado diferente a 'texto' o 'numero'
+            print(f"Error interno: El tipo esperado '{tipo_esperado}' no existe.")
+            return None
 
 '''
 Función para validar formato de fecha y hora.

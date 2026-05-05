@@ -31,15 +31,15 @@ class Pelicula:
 
         self.__anno_estreno = input("Ingrese el año de estreno de la pelicula: \n")
         solicitar_dato(self.__anno_estreno, "entero")
-        int(self.__anno_estreno)
+        self.__anno_estreno = int(self.__anno_estreno)
 
         self.__duracion = input("Ingrese la duracion (en minutos) de la pelicula: ")
         solicitar_dato(self.__duracion, "entero", 90, 180)
-        int(self.__duracion)
+        self.__duracion = int(self.__duracion)
 
         self.__genero = input("Ingrese el genero de la pelicula:\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6)Infantil\n")
         solicitar_dato(self.__genero, "entero", 1, 6)
-        int(self.__genero)
+        self.__genero = int(self.__genero)
         match self.__genero:
             case 1:
                 self.__genero = "Drama"
@@ -59,7 +59,7 @@ class Pelicula:
 
         self.__calificacion = input("Ingrese la calificacion de la pelicula: \n1) G (Para todas las edades) \n2) PG (Se recomienda la compañía de un adulto) \n3) PG-13 (No recomendado para menores de 13 años) \n4) R (Restringida, no recomendada para menores de 17 años) \n5) NC-17 (No recomendado para menores de 17 años)\n")
         solicitar_dato(self.__calificacion, "entero", 1, 7)
-        int(self.__calificacion)
+        self.__calificacion = int(self.__calificacion)
         match self.__calificacion:
             case 1:
                 self.__calificacion = "G"

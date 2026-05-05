@@ -1,3 +1,5 @@
+
+
 from Usuario import*
 from funciones_utiles import solicitar_dato
 from SalasCine import*
@@ -13,18 +15,22 @@ class sistemaCine:
     def menu_crear_sala(complejo):
         print("Registro de Nueva Sala")
 
-        identificador_sala = int(input("Ingrese el identificador de la sala: "))
+        identificador_sala = input("Ingrese el identificador de la sala: ")
         solicitar_dato(identificador_sala, "entero", 1, 12)
+        identificador_sala = int(identificador_sala)
 
-        valor_boleta = int(input("Ingrese el valor de la boleta: "))
+        valor_boleta = input("Ingrese el valor de la boleta: ")
         solicitar_dato(valor_boleta, "entero", 1)
+        valor_boleta = int(valor_boleta)
 
-        cant_filas = int(input("Ingrese cantidad de filas: "))
+        cant_filas = input("Ingrese cantidad de filas: ")
         solicitar_dato(cant_filas, "entero", 1)
+        cant_filas = int(cant_filas)
 
-        sillas_por_fila = int(input("Ingrese sillas por fila: "))
+        sillas_por_fila = input("Ingrese sillas por fila: ")
         solicitar_dato(sillas_por_fila, "entero", 1)
-        
+        sillas_por_fila = int(sillas_por_fila)
+
         nueva_sala = SalaCine(identificador_sala, valor_boleta, cant_filas, sillas_por_fila)
         
         exito = complejo.agregar_sala(nueva_sala)

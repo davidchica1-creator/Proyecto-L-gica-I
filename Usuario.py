@@ -46,7 +46,13 @@ class Usuario:
         return self.__contrasena
          
     
-
+    '''
+Autor: Juan David Ortiz Diaz  
+Fecha: 04/05/2026  
+Método menu_admin: Muestra el menú del administrador y permite ejecutar funciones de gestión del sistema.  
+Parámetros: sistema (objeto sistemaCine)  
+Retorna: None  
+'''
 
     def menu_admin(self, sistema)->None:
         opcion:int
@@ -61,6 +67,13 @@ class Usuario:
                 pelicula.agregar_pelicula()
             
     
+    '''
+Autor: Juan David Ortiz Diaz  
+Fecha: 04/05/2026  
+Método menu_vendedor: Muestra el menú del vendedor y permite gestionar clientes, consultar información y visualizar mapas de funciones.  
+Parámetros: sistema (objeto sistemaCine)  
+Retorna: None  
+'''
     def menu_vendedor(self, sistema)->None:
         mapa:Funcion
         mapa=Funcion()
@@ -91,6 +104,14 @@ class Usuario:
             case 5:
                 print("Hasta luego")
 
+    '''
+Autor: Juan David Ortiz Diaz  
+Fecha: 04/05/2026  
+Método menu_cliente: Muestra el menú del cliente y permite consultar programación, ver información de películas y gestionar reservas.  
+Parámetros: Ninguno  
+Retorna: None  
+'''
+
     def menu_cliente(self)->None:
         opcion=(input("Ingresa una de la opciones:\n1.Consultar programacion\n2.Consultar info de la pelicula\n3.Reservar boletas\n4.Salir"))
         solicitar_dato(opcion,"numero",1,2)
@@ -114,6 +135,3 @@ class Usuario:
                         mapa.mostrar_mapa()
                     case 2:
                         print("Aun no se ha implementado")
-  
-        
-

@@ -1,26 +1,28 @@
-
-
 from Usuario import*
 from funciones_utiles import solicitar_dato
 from SalasCine import*
 from Pelicula import*
 
-class SistemaCine:
-
-
+class sistemaCine:
     def __init__(self):
         self.usuarios = np.full((100), fill_value = None, dtype = object)
         self.contador_clientes=0
         self.contador_peliculas=0
 
-
+    '''
+    Autor: Juan David Ortiz Diaz  
+    Fecha: 04/05/2026  
+    Método crear_cliente: Permite registrar un nuevo cliente en el sistema validando que no exista previamente.  
+    Parámetros: Ninguno  
+    Retorna: bool (True si se crea correctamente, False si falla)  
+    '''
     def crear_cliente(self) -> bool:
     
         self.__nombre = input("Ingrese el nombre completo del cliente: ")
         self.__usuario = int(input("Ingrese el usuario (documento) del cliente: "))
         self.__contrasena = (f"{self.__usuario}{self.__nombre[0].lower()}*")
         
-        if self.contador_clientes >= 100 :
+        if self.contUsuario >= 100 :
             print ("Se ha alcanzado el máximo de usuarios permitidos por el sistema.")
             return False
         
@@ -42,41 +44,49 @@ class SistemaCine:
 
         return True
     
-
+    '''
+    Autor: Juan David Ortiz Diaz  
+    Fecha: 04/05/2026  
+    Método login: Gestiona el inicio de sesión de usuarios (admin, vendedor o cliente) y redirige al menú correspondiente.  
+    Parámetros: Ninguno  
+    Retorna: None  
+    '''
     def login(self)->None:
-
         opcion:int
         user:Usuario
         usuario_ingresado:str
         contrasena:str
         print("Bienvenidos a ¿Qué hay para ver?")
         opcion=(input("Ingresa una de las opciones:\n1.Ingresar.\n2.Salir\n"))
-
-
+        #solicitar_dato(opcion,"numero",1,2)
         opcion=int(opcion)
         match opcion:
             case 1:
                 usuario_ingresado=input("Ingrese el usuario: ")
                 contrasena=input("Ingresa la contrasena: ")
-
-                while opcion != 9:
-                    if usuario_ingresado=="Admin123" and contrasena=="Admin123*":
-                        user=Usuario("Admin",123,1)
-                        user.menu_admin(self)
-                    elif usuario_ingresado=="Vendedor123" and contrasena=="Vendedor123*":
-                        user=Usuario("Vendedor",1234,2)
-                        user.menu_vendedor(self)
-                    else:
-                        for i in range(self.contador_clientes):
-                            cliente=self.usuarios[i]
-                            if cliente.get_usuario()==usuario_ingresado and cliente.get_contrasena()==contrasena:
-                                cliente.menu_cliente()
-                        print("Usuario no encontrado")
-                
+                if usuario_ingresado=="Admin123" and contrasena=="Admin123*":
+                    user=Usuario("Admin",123,1)
+                    user.menu_admin(self)
+                elif usuario_ingresado=="Vendedor123" and contrasena=="Vendedor123*":
+                    user=Usuario("Vendedor",1234,2)
+                    user.menu_vendedor(self)
+                else:
+                    for i in range(self.contador_clientes):
+                        cliente=self.usuarios[i]
+                        if cliente.get_usuario()==usuario_ingresado and cliente.get_contrasena()==contrasena:
+                            cliente.menu_cliente()
+                    print("Usuario no encontrado")
+            
             case 2:
                 print("Hasta luego")
                         
-
+    '''
+    Autor: Juan David Ortiz Diaz  
+    Fecha: 04/05/2026  
+    Método menu_crear_sala: Permite registrar una nueva sala de cine solicitando los datos necesarios y validándolos.  
+    Parámetros: complejo (objeto que gestiona las salas de cine)  
+    Retorna: None  
+    '''
 
     def menu_crear_sala(complejo):
         print("Registro de Nueva Sala")
@@ -106,7 +116,3 @@ class SistemaCine:
         else:
             print("No se pudo realizar el registro.")
         
-
-obj: SistemaCine
-obj = SistemaCine().login()
-

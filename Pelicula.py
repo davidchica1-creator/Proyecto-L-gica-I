@@ -24,27 +24,19 @@ class Pelicula:
     def agregar_pelicula(self)-> str:
         print("Hola Administrador, vas a agregar una pelicula, por favor ingrese todos los siguientes datos:\n")
 
-        self.__nombre_espanol = input("Ingrese el nombre en español de la pelicula: \n")
-        solicitar_dato(self.__nombre_espanol, "texto")
 
-        self.__nombre_original = input("Ingrese el nombre original de la pelicula: \n")
-        solicitar_dato(self.__nombre_original, "texto")
+        self.__nombre_espanol = solicitar_dato("Ingrese el nombre en español de la pelicula: \n", "texto")
 
-        self.__identificador_pelicula = input("Ingrese el identificador de la pelicula: \n")
-        solicitar_dato(self.__identificador_pelicula, "entero")
-        self.__identificador_pelicula = int(self.__identificador_pelicula)
 
-        self.__anno_estreno = input("Ingrese el año de estreno de la pelicula: \n")
-        solicitar_dato(self.__anno_estreno, "entero")
-        self.__anno_estreno = int(self.__anno_estreno)
+        self.__nombre_original = solicitar_dato("Ingrese el nombre original de la pelicula: \n", "texto")
 
-        self.__duracion = input("Ingrese la duracion (en minutos) de la pelicula: ")
-        solicitar_dato(self.__duracion, "entero", 90, 180)
-        self.__duracion = int(self.__duracion)
+        self.__identificador_pelicula = solicitar_dato("Ingrese el identificador de la pelicula: \n", "numero")
 
-        self.__genero = input("Ingrese el genero de la pelicula:\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6)Infantil\n")
-        solicitar_dato(self.__genero, "entero", 1, 6)
-        self.__genero = int(self.__genero)
+        self.__anno_estreno = solicitar_dato("Ingrese el año de estreno de la pelicula: \n", "numero")
+
+        self.__duracion = solicitar_dato("Ingrese la duracion (en minutos) de la pelicula: ", "numero", 90, 180)
+
+        self.__genero = solicitar_dato("Ingrese el genero de la pelicula:\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6)Infantil\n", "numero", 1, 6)
         match self.__genero:
             case 1:
                 self.__genero = "Drama"
@@ -59,12 +51,11 @@ class Pelicula:
             case 6:
                 self.__genero = "Infantil"
 
-        self.__pais_origen = input("Ingrese el pais de origen de la pelicula:\n")
-        solicitar_dato(self.__pais_origen, "texto")
 
-        self.__calificacion = input("Ingrese la calificacion de la pelicula: \n1) G (Para todas las edades) \n2) PG (Se recomienda la compañía de un adulto) \n3) PG-13 (No recomendado para menores de 13 años) \n4) R (Restringida, no recomendada para menores de 17 años) \n5) NC-17 (No recomendado para menores de 17 años)\n")
-        solicitar_dato(self.__calificacion, "entero", 1, 7)
-        self.__calificacion = int(self.__calificacion)
+        self.__pais_origen = solicitar_dato("Ingrese el pais de origen de la pelicula:\n", "texto")
+
+
+        self.__calificacion = solicitar_dato("Ingrese la calificacion de la pelicula: \n1) G \n2) PG \n3) PG-13 \n4) R \n5) NC-17\n", "numero", 1, 5)
         match self.__calificacion:
             case 1:
                 self.__calificacion = "G"

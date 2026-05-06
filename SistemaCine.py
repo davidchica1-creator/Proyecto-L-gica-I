@@ -18,8 +18,8 @@ class SistemaCine:
     '''
     def crear_cliente(self) -> bool:
     
-        self.__nombre = input("Ingrese el nombre completo del cliente: ")
-        self.__usuario = int(input("Ingrese el usuario (documento) del cliente: "))
+        self.__nombre = solicitar_dato("Ingrese el nombre completo del cliente: ", "texto")
+        self.__usuario = solicitar_dato("Ingrese el usuario (documento) del cliente: ", "numero")
         self.__contrasena = (f"{self.__usuario}{self.__nombre[0].lower()}*")
         
         if self.contador_clientes >= 100 :
@@ -38,7 +38,8 @@ class SistemaCine:
         self.usuarios[self.contador_clientes] = nuevo
         self.contador_clientes += 1
 
-        print("Cliente creado con éxito")
+        print("\nCliente creado con éxito\n")
+        print("Las credenciales del nuevo cliente son:\n")
         print("Usuario:", self.__usuario)
         print("Contraseña:", self.__contrasena)
 
@@ -56,30 +57,36 @@ class SistemaCine:
         user:Usuario
         usuario_ingresado:str
         contrasena:str
-        print("Bienvenidos a ¿Qué hay para ver?")
-        opcion=(input("Ingresa una de las opciones:\n1.Ingresar.\n2.Salir\n"))
-        #solicitar_dato(opcion,"numero",1,2)
-        opcion=int(opcion)
-        match opcion:
-            case 1:
-                usuario_ingresado=input("Ingrese el usuario: ")
-                contrasena=input("Ingresa la contrasena: ")
-                while opcion != 2:
-                    if usuario_ingresado=="Admin123" and contrasena=="Admin123*":
-                        user=Usuario("Admin",123,1)
-                        user.menu_admin(self)
-                    elif usuario_ingresado=="Vendedor123" and contrasena=="Vendedor123*":
-                        user=Usuario("Vendedor",1234,2)
-                        user.menu_vendedor(self)
-                    else:
-                        for i in range(self.contador_clientes):
-                            cliente=self.usuarios[i]
-                            if cliente.get_usuario()==usuario_ingresado and cliente.get_contrasena()==contrasena:
-                                cliente.menu_cliente()
-                        print("Usuario no encontrado")
-            
-            case 2:
+        while True:
+            print("\n------------------------------")
+            print("Bienvenidos a ¿Qué hay para ver?")
+            print("------------------------------")
+            opcion = solicitar_dato("1. Ingresar\n2. Salir\nSeleccione una opción: ", "numero", 1, 2)
+
+
+            if opcion == 2:
                 print("Hasta luego")
+                break
+
+            usuario_ingresado = input("Ingrese el usuario: ")
+            contrasena = input("Ingresa la contrasena: ")
+
+            if usuario_ingresado == "Admin123" and contrasena == "Admin123*":
+                user = Usuario("Admin", 123, 1)
+                user.menu_admin(self)
+            elif usuario_ingresado == "Vendedor123" and contrasena == "Vendedor123*":
+                user = Usuario("Vendedor", 1234, 2)
+                user.menu_vendedor(self)
+            else:
+                encontrado = False
+                for i in range(self.contador_clientes):
+                    cliente = self.usuarios[i]
+                    if str(cliente.get_usuario()) == usuario_ingresado and cliente.get_contrasena() == contrasena:
+                        cliente.menu_cliente()
+                        encontrado = True
+                        break
+                if not encontrado:
+                    print("\n[!] Error: Usuario no encontrado o contraseña incorrecta.")
                         
     '''
     Autor: Juan David Ortiz Diaz  
@@ -89,24 +96,19 @@ class SistemaCine:
     Retorna: None  
     '''
 
-    def menu_crear_sala(complejo):
+
+    def menu_crear_sala(self, complejo):
         print("Registro de Nueva Sala")
 
-        identificador_sala = input("Ingrese el identificador de la sala: ")
-        solicitar_dato(identificador_sala, "entero", 1, 12)
-        identificador_sala = int(identificador_sala)
 
-        valor_boleta = input("Ingrese el valor de la boleta: ")
-        solicitar_dato(valor_boleta, "entero", 1)
-        valor_boleta = int(valor_boleta)
+        identificador_sala = solicitar_dato("Ingrese el identificador de la sala (1-12): ", "numero", 1, 12)
 
-        cant_filas = input("Ingrese cantidad de filas: ")
-        solicitar_dato(cant_filas, "entero", 1)
-        cant_filas = int(cant_filas)
+        valor_boleta = solicitar_dato("Ingrese el valor de la boleta: ", "numero", 1)
 
-        sillas_por_fila = input("Ingrese sillas por fila: ")
-        solicitar_dato(sillas_por_fila, "entero", 1)
-        sillas_por_fila = int(sillas_por_fila)
+
+        cant_filas = solicitar_dato("Ingrese cantidad de filas: ", "numero", 1)
+
+        sillas_por_fila = solicitar_dato("Ingrese sillas por fila: ", "numero", 1)
 
         nueva_sala = SalaCine(identificador_sala, valor_boleta, cant_filas, sillas_por_fila)
         

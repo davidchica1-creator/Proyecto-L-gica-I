@@ -18,57 +18,6 @@ class Pelicula:
         self.__pais_origen = pais_origen
         self.__calificacion = calificacion
         self.__estado = estado
-    '''
-    Metodo: agregar_pelicula, recibe los datos de la película a través de entradas del administrador y los asigna a los atributos correspondientes.
-    '''
-    def agregar_pelicula(self)-> str:
-        print("Hola Administrador, vas a agregar una pelicula, por favor ingrese todos los siguientes datos:\n")
-
-
-        self.__nombre_espanol = solicitar_dato("Ingrese el nombre en español de la pelicula: \n", "texto")
-
-
-        self.__nombre_original = solicitar_dato("Ingrese el nombre original de la pelicula: \n", "texto")
-
-        self.__identificador_pelicula = solicitar_dato("Ingrese el identificador de la pelicula: \n", "numero")
-
-        self.__anno_estreno = solicitar_dato("Ingrese el año de estreno de la pelicula: \n", "numero")
-
-        self.__duracion = solicitar_dato("Ingrese la duracion (en minutos) de la pelicula: ", "numero", 90, 180)
-
-        self.__genero = solicitar_dato("Ingrese el genero de la pelicula:\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6)Infantil\n", "numero", 1, 6)
-        match self.__genero:
-            case 1:
-                self.__genero = "Drama"
-            case 2:
-                self.__genero = "Suspenso"
-            case 3:
-                self.__genero = "Terror"
-            case 4:
-                self.__genero = "Acción"
-            case 5:
-                self.__genero = "Comedia"
-            case 6:
-                self.__genero = "Infantil"
-
-
-        self.__pais_origen = solicitar_dato("Ingrese el pais de origen de la pelicula:\n", "texto")
-
-
-        self.__calificacion = solicitar_dato("Ingrese la calificacion de la pelicula: \n1) G \n2) PG \n3) PG-13 \n4) R \n5) NC-17\n", "numero", 1, 5)
-        match self.__calificacion:
-            case 1:
-                self.__calificacion = "G"
-            case 2:
-                self.__calificacion = "PG"
-            case 3:
-                self.__calificacion = "PG-13"
-            case 4:
-                self.__calificacion = "R"
-            case 5:
-                self.__calificacion = "NC-17"
-
-        self.__estado = True
 
     '''
     Método: get_estado, devuelve el estado actual de la película (activa o inactiva).

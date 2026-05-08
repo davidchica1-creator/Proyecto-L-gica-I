@@ -2,6 +2,7 @@ from Usuario import*
 from funciones_utiles import solicitar_dato
 from SalasCine import*
 from Pelicula import*
+from Complejo import Complejo  
 
 class SistemaCine:
     def __init__(self):
@@ -9,6 +10,7 @@ class SistemaCine:
         self.contador_clientes=0
         self.peliculas = np.full((50), fill_value = None, dtype = object)
         self.contador_peliculas=0
+        self.complejo = Complejo()
 
     '''
     Autor: Juan David Ortiz Diaz  
@@ -98,7 +100,7 @@ class SistemaCine:
     '''
 
 
-    def menu_crear_sala(self, Complejo):
+    def menu_crear_sala(self):
 
         print("Registro de Nueva Sala")
 
@@ -114,7 +116,7 @@ class SistemaCine:
 
         sala_nueva = SalaCine(identificador_sala, valor_boleta, cant_filas, sillas_por_fila)
         
-        exito = Complejo.agregar_sala(sala_nueva)
+        exito = self.complejo.agregar_sala(sala_nueva)
         
         if exito:
             print("Proceso terminado con éxito.")

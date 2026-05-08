@@ -81,7 +81,7 @@ Retorna: None
                 case 7:
                     print("Consultar recaudo (no implementado)")
                 case 8:
-                    sistema.menu_crear_sala(sistema)
+                    sistema.menu_crear_sala()
                 
             
     

@@ -71,7 +71,7 @@ class Pelicula:
         self.__estado = True
 
     '''
-    Método: get_estado, devuelve el estado actual de la película (activa o inactiva).
+    Método: get_estado, devuelve el estado actual de la película (activa o inactiva), sin parámetros.
     '''
     def get_estado(self) -> bool:
         return self.__estado
@@ -89,7 +89,7 @@ class Pelicula:
             print(f"La pelicula {pelicula} ha sido activada.")
 
     '''
-    Metodo: get_informacion, devuelve una cadena de texto con toda la información de la película.
+    Metodo: get_informacion, devuelve una cadena de texto con toda la información de la película. No recibe parámetros.
     '''
 
     def get_informacion(self) -> str:

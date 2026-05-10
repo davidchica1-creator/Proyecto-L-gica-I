@@ -2,7 +2,7 @@
 Autor: David Chica López
 Fecha: 04/05/2026
 Clase Reserva: Representa una reserva de boletas para una función de cine.
-Atributos: usuario, identificador_funcion, cant_boletas, asientos, precio_total
+Atributos: usuario, identificador_funcion, identificador_sala, cant_boletas, asientos, precio_total
 '''
 
 
@@ -21,6 +21,8 @@ class Reserva:
     '''
     Metodo: generar_boleta, muestra la información de la reserva, incluyendo el usuario, el identificador de la función, 
     la cantidad de boletas, los asientos reservados y el precio total.
+    Parámetros: No recibe parámetros.
+    Retorna: None
     '''
 
     def generar_boleta(self) -> None:

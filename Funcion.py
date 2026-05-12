@@ -42,3 +42,4 @@ class Funcion:
 
     def verificar_disponibilidad(self, asiento_inicial, cant_boletas):
         pass
+

@@ -77,7 +77,7 @@ class Pelicula:
         return self.__estado
 
     '''
-    Metodo: cambiar_estado, recibe como parámetro el nombre de la película y cambia su estado de activa a inactiva o viceversa.
+    Método: get_estado, devuelve el estado actual de la película (activa o inactiva), sin parámetros.
     '''
 
     def cambiar_estado(self, pelicula:int)-> None:

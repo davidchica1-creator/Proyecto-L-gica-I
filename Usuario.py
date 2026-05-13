@@ -93,8 +93,7 @@ Parámetros: sistema (objeto sistemaCine)
 Retorna: None  
 '''
     def menu_vendedor(self, sistema)->None:
-        mapa:Funcion
-        mapa=Funcion()
+    
         while True:
             print("\n--- Menú Vendedor ---")
             opcion = solicitar_dato("Ingresa una de la opciones:\n1.Crear clientes\n2.Consultar programacion\n3.Consultar info de la pelicula\n4.Reserva boletas\n5.Salir\n", "numero", 1, 5)

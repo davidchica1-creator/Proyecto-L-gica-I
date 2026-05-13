@@ -13,7 +13,7 @@ class SistemaCine:
         self.complejo = Complejo()
 
     '''
-    Autor: Juan David Ortiz Diaz  
+    Autor: Juan David Ortiz Diaz  f
     Fecha: 04/05/2026  
     Método crear_cliente: Permite registrar un nuevo cliente en el sistema validando que no exista previamente.  
     Parámetros: Ninguno  

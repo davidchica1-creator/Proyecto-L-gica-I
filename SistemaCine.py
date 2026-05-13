@@ -2,12 +2,15 @@ from Usuario import*
 from funciones_utiles import solicitar_dato
 from SalasCine import*
 from Pelicula import*
+from Complejo import Complejo  
 
 class SistemaCine:
     def __init__(self):
         self.usuarios = np.full((100), fill_value = None, dtype = object)
         self.contador_clientes=0
+        self.peliculas = np.full((50), fill_value = None, dtype = object)
         self.contador_peliculas=0
+        self.complejo = Complejo()
 
     '''
     Autor: Juan David Ortiz Diaz  
@@ -86,7 +89,7 @@ class SistemaCine:
                         encontrado = True
                         break
                 if not encontrado:
-                    print("\n[!] Error: Usuario no encontrado o contraseña incorrecta.")
+                    print("\n! Error: Usuario no encontrado o contraseña incorrecta.")
                         
     '''
     Autor: Juan David Ortiz Diaz  
@@ -97,7 +100,8 @@ class SistemaCine:
     '''
 
 
-    def menu_crear_sala(self, complejo):
+    def menu_crear_sala(self):
+
         print("Registro de Nueva Sala")
 
 
@@ -110,14 +114,69 @@ class SistemaCine:
 
         sillas_por_fila = solicitar_dato("Ingrese sillas por fila: ", "numero", 1)
 
-        nueva_sala = SalaCine(identificador_sala, valor_boleta, cant_filas, sillas_por_fila)
+        sala_nueva = SalaCine(identificador_sala, valor_boleta, cant_filas, sillas_por_fila)
         
-        exito = complejo.agregar_sala(nueva_sala)
+        exito = self.complejo.agregar_sala(sala_nueva)
         
         if exito:
             print("Proceso terminado con éxito.")
         else:
             print("No se pudo realizar el registro.")
+            
+    '''
+    Metodo: agregar_pelicula, recibe los datos de la película a través de entradas del administrador y los asigna a los atributos correspondientes.
+    '''
+    def agregar_pelicula(self)-> bool:
+        print("Hola Administrador, vas a agregar una pelicula, por favor ingrese todos los siguientes datos:\n")
+
+        if self.contador_peliculas >= 50:
+            print("Error: Capacidad máxima de películas alcanzada.")
+            return False
+
+        nombre_espanol = solicitar_dato("Ingrese el nombre en español de la pelicula: \n", "texto")
+        nombre_original = solicitar_dato("Ingrese el nombre original de la pelicula: \n", "texto")
+        identificador_pelicula = solicitar_dato("Ingrese el identificador de la pelicula: \n", "numero")
+        anno_estreno = solicitar_dato("Ingrese el año de estreno de la pelicula: \n", "numero")
+        duracion = solicitar_dato("Ingrese la duracion (en minutos) de la pelicula: ", "numero", 90, 180)
+        
+        gen_opc = solicitar_dato("Ingrese el genero de la pelicula:\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6)Infantil\n", "numero", 1, 6)
+        match gen_opc:
+            case 1:
+                genero = "Drama"
+            case 2:
+                genero = "Suspenso"
+            case 3:
+                genero = "Terror"
+            case 4:
+                genero = "Acción"
+            case 5:
+                genero = "Comedia"
+            case 6:
+                genero = "Infantil"
+
+        pais_origen = solicitar_dato("Ingrese el pais de origen de la pelicula:\n", "texto")
+
+        cal_opc = solicitar_dato("Ingrese la calificacion de la pelicula: \n1) G \n2) PG \n3) PG-13 \n4) R \n5) NC-17\n", "numero", 1, 5)
+        match cal_opc:
+            case 1:
+                calificacion = "G"
+            case 2:
+                calificacion = "PG"
+            case 3:
+                calificacion = "PG-13"
+            case 4:
+                calificacion = "R"
+            case 5:
+                calificacion = "NC-17"
+
+
+        nueva_pelicula = Pelicula(nombre_espanol, nombre_original, identificador_pelicula, anno_estreno, duracion, genero, pais_origen, calificacion)
+        
+        self.peliculas[self.contador_peliculas] = nueva_pelicula
+        self.contador_peliculas += 1
+
+        print(f"\nPelícula '{nombre_espanol}' agregada exitosamente.")
+        return True
 
 obj:SistemaCine
 

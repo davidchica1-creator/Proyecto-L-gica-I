@@ -3,6 +3,7 @@ from funciones_utiles import solicitar_dato
 from Pelicula import*
 from Funcion import*
 
+
 class Usuario:
     """
     Esta clase sirve para manejar los usuarios del sistema, guardar y crear clientes nuevos.
@@ -66,10 +67,22 @@ Retorna: None
             match opcion:            
                 case 1:
                     sistema.crear_cliente()
+                case 2:
+                    print("Consultar programacion (no implementado)")
+                case 3:
+                    print("Consultar info de la pelicula (no implementado)")
+                case 4:
+                    print("Gestionar programacion (no implementado)")
+
                 case 5:
-                    pelicula:Pelicula
-                    pelicula=Pelicula()
-                    pelicula.agregar_pelicula()
+                    sistema.agregar_pelicula()
+                case 6:
+                    print("Consultar porcentaje de ocupacion (no implementado)")
+                case 7:
+                    print("Consultar recaudo (no implementado)")
+                case 8:
+                    sistema.menu_crear_sala()
+                
             
     
     '''

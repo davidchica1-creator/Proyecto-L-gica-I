@@ -157,8 +157,6 @@ Retorna: None
             print("--------------------------------------------\n")
             opcion = solicitar_dato("Ingresa una de la opciones:\n1.Consultar programacion\n2.Consultar info de la peliculas\n3.Reservar boletas\n4.Salir\n\n", "numero", 1, 4)
             
-            if opcion == 4:
-                break
                 
             match opcion:
                 case 1:
@@ -185,3 +183,5 @@ Retorna: None
                             mapa.mostrar_mapa()
                         case 2:
                             print("Aun no se ha implementado")
+                case 4: 
+                    break 

@@ -58,11 +58,13 @@ Retorna: None
     def menu_admin(self, sistema)->None:
 
         while True:
-            print("\n--- Menú Administrador ---\n")
-            opcion = solicitar_dato("Ingresa una de la opciones:\n\n1.Crear clientes\n2.Consultar programacion\n3.Consultar info de la pelicula\n4.Gestionar programacion\n5.Crear o modificar pelicula\n6.Consultar porcentaje de ocupacion\n7.Consultar recaudo\n8.Crear salas\n9.Salir\n\n", "numero", 1, 9)
+            print("\n--------------------------------------------")
+            print("|     Bienvenido al menú de administrador     |")
+            print("--------------------------------------------\n")
+            opcion = solicitar_dato("Ingresa una de la opciones:\n\n1.Crear clientes\n2.Consultar programacion\n3.Consultar info de la peliculas\n4.Gestionar programacion\n5.Crear o modificar pelicula\n6.Consultar porcentaje de ocupacion\n7.Consultar recaudo\n8.Crear salas\n9.Salir\n\n", "numero", 1, 9)
             
             if opcion == 9:
-                break # Sale del bucle y regresa al login
+                break
                 
             match opcion:            
                 case 1:
@@ -70,33 +72,43 @@ Retorna: None
                 case 2:
                     print("Consultar programacion (no implementado)")
                 case 3:
-                    print("Consultar info de la pelicula (no implementado)")
+                    sistema.mostrar_lista_peliculas()
                 case 4:
                     print("Gestionar programacion (no implementado)")
-
                 case 5:
-                    sistema.agregar_pelicula()
-                case 6:
-                    print("Consultar porcentaje de ocupacion (no implementado)")
-                case 7:
-                    print("Consultar recaudo (no implementado)")
-                case 8:
-                    sistema.menu_crear_sala()
-                
-            
-    
+                    print("\n\n1) Crear pelicula\n2) Modificar estado de pelicula\n3) Salir\n")
+                    sub_opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 3)
+                    match sub_opcion:
+
+
+                        case 1:
+                            sistema.agregar_pelicula()
+                        case 2:
+                            if sistema.contador_peliculas == 0:
+                                print("No hay películas registradas en el sistema.")
+                                continue
+                            else:
+                                sistema.mostrar_lista_peliculas()
+                                numeral_pelicula = solicitar_dato("Ingrese el número de la película a modificar: ", "numero", 1, sistema.contador_peliculas)
+                                pelicula_seleccionada = sistema.peliculas[numeral_pelicula - 1]
+                                pelicula_seleccionada.cambiar_estado(pelicula_seleccionada.get_estado())
+                        
+
+
     '''
-Autor: Juan David Ortiz Diaz  
-Fecha: 04/05/2026  
-Método menu_vendedor: Muestra el menú del vendedor y permite gestionar clientes, consultar información y visualizar mapas de funciones.  
-Parámetros: sistema (objeto sistemaCine)  
-Retorna: None  
-'''
+    Autor: Juan David Ortiz Diaz  
+    Fecha: 04/05/2026  
+    Método menu_vendedor: Muestra el menú del vendedor y permite gestionar clientes, consultar información y visualizar mapas de funciones.  
+    Parámetros: sistema (objeto sistemaCine)  
+    Retorna: None  
+    '''
     def menu_vendedor(self, sistema)->None:
     
         while True:
-            print("\n--- Menú Vendedor ---")
-            opcion = solicitar_dato("Ingresa una de la opciones:\n1.Crear clientes\n2.Consultar programacion\n3.Consultar info de la pelicula\n4.Reserva boletas\n5.Salir\n", "numero", 1, 5)
+            print("\n--------------------------------------------")
+            print("|       Bienvenido al menú de vendedor       |")
+            print("--------------------------------------------\n")
+            opcion = solicitar_dato("Ingresa una de la opciones:\n1.Crear clientes\n2.Consultar programacion\n3.Consultar info de la peliculas\n4.Reserva boletas\n5.Salir\n", "numero", 1, 5)
             
             if opcion == 5:
                 break
@@ -104,7 +116,12 @@ Retorna: None
             match opcion:
                 case 1:
                     sistema.crear_cliente()
+
                 case 3:
+                    sistema.mostrar_lista_peliculas()
+                    input("\nPresione enter para continuar...")
+
+                case 4:
                     sub_opcion = solicitar_dato("\n1. Visualizar mapa\n2. Reservar boleta\nSeleccione: ", "numero", 1, 2)
                     match sub_opcion:
                         case 1:
@@ -119,6 +136,7 @@ Retorna: None
                             mapa.mostrar_mapa()
                         case 2:
                             print("Aun no se ha implementado")
+                        
 
     '''
 Autor: Juan David Ortiz Diaz  
@@ -128,19 +146,24 @@ Parámetros: Ninguno
 Retorna: None  
 '''
 
-    def menu_cliente(self)->None:
+    def menu_cliente(self, sistema)->None:
 
         while True:
-            print("\n--- Menú Cliente ---")
-            opcion = solicitar_dato("Ingresa una de la opciones:\n1.Consultar programacion\n2.Consultar info de la pelicula\n3.Reservar boletas\n4.Salir\n", "numero", 1, 4)
+            print("\n--------------------------------------------")
+            print(f"|       Bienvenido al menú {self.nombre}       |")  
+            print("--------------------------------------------\n")
+            opcion = solicitar_dato("Ingresa una de la opciones:\n1.Consultar programacion\n2.Consultar info de la peliculas\n3.Reservar boletas\n4.Salir\n", "numero", 1, 4)
             
             if opcion == 4:
                 break
                 
             match opcion:
                 case 1:
-                    print("Consultar programacion (no implementado)")                        
+                    print("Consultar programacion (no implementado)")    
                 case 2:
+                    sistema.mostrar_lista_peliculas()
+                    input("\nPresione enter para continuar...")                     
+                case 3:
                     sub_opcion = solicitar_dato("Ingresa una de las opciones:\n1.Visualizar mapa\n2.Reservar boleta\n", "numero", 1, 2)
                     match sub_opcion:
                         case 1:

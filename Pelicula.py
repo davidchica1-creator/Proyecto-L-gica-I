@@ -38,12 +38,19 @@ class Pelicula:
             print(f"La pelicula {pelicula} ha sido activada.")
 
     '''
+    Método: get_id, devuelve el identificador único de la película.
+    '''
+    def get_id(self) -> int:
+        return self.__identificador_pelicula
+
+    '''
     Metodo: get_informacion, devuelve una cadena de texto con toda la información de la película. No recibe parámetros.
     '''
 
     def get_informacion(self) -> str:
-        return f"Nombre en español: {self.__nombre_espanol}\nNombre original: {self.__nombre_original}\nAño de estreno: {self.__anno_estreno}\nDuración: {self.__duracion} minutos\nGénero: {self.__genero}\nPaís de origen: {self.__pais_origen}\nCalificación: {self.__calificacion}\nEstado: {'Activa' if self.__estado else 'Inactiva'}"
-    
+        estado_txt = "Activa" if self.__estado else "Inactiva"
+        return (f"{self.__nombre_espanol:<20} | {self.__nombre_original:<20} | {self.__anno_estreno:<15} | {self.__duracion:<10} | {self.__genero:<12} | {self.__pais_origen:<15} | {self.__calificacion:<12} | {estado_txt:<10} |")
+
     def get_duracion(self) -> int:
         return self.__duracion
     

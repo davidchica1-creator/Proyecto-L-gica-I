@@ -48,6 +48,26 @@ class SistemaCine:
 
         return True
     
+
+    def mostrar_lista_peliculas(self) -> None:
+        if self.contador_peliculas == 0:
+            print("No hay películas registradas en el sistema.")
+            return
+        
+        header = f"| {'#':<3} | {'Nombre en español':<20} | {'Nombre original':<20} | {'Año de estreno':<15} | {'Duración':<10} | {'Género':<12} | {'Pais de origen':<15} | {'Calificación':<12} | {'Estado':<10} |"
+        separador = "-" * len(header)
+        
+        print(f"\n{separador}")
+        print(header)
+        print(separador)
+        
+        for i in range(self.contador_peliculas):
+            if self.peliculas[i] is not None:
+                print(f"| {i+1:<3} | {self.peliculas[i].get_informacion()}")
+                print(separador)
+        
+        input("\nPresione enter para continuar...")
+
     '''
     Autor: Juan David Ortiz Diaz  
     Fecha: 04/05/2026  
@@ -61,10 +81,10 @@ class SistemaCine:
         usuario_ingresado:str
         contrasena:str
         while True:
-            print("\n------------------------------")
-            print("Bienvenidos a ¿Qué hay para ver?")
-            print("------------------------------")
-            opcion = solicitar_dato("1. Ingresar\n2. Salir\nSeleccione una opción: ", "numero", 1, 2)
+            print("\n--------------------------------------------")
+            print("|     Bienvenido a ¿Qué hay para ver?     |")
+            print("--------------------------------------------\n")
+            opcion = solicitar_dato("1. Ingresar\n2. Salir\n\nSeleccione una opción: ", "numero", 1, 2)
 
 
             if opcion == 2:
@@ -109,7 +129,6 @@ class SistemaCine:
 
         valor_boleta = solicitar_dato("Ingrese el valor de la boleta: ", "numero", 1)
 
-
         cant_filas = solicitar_dato("Ingrese cantidad de filas: ", "numero", 1)
 
         sillas_por_fila = solicitar_dato("Ingrese sillas por fila: ", "numero", 1)
@@ -127,19 +146,34 @@ class SistemaCine:
     Metodo: agregar_pelicula, recibe los datos de la película a través de entradas del administrador y los asigna a los atributos correspondientes.
     '''
     def agregar_pelicula(self)-> bool:
+        
         print("Hola Administrador, vas a agregar una pelicula, por favor ingrese todos los siguientes datos:\n")
 
         if self.contador_peliculas >= 50:
             print("Error: Capacidad máxima de películas alcanzada.")
             return False
 
-        nombre_espanol = solicitar_dato("Ingrese el nombre en español de la pelicula: \n", "texto")
-        nombre_original = solicitar_dato("Ingrese el nombre original de la pelicula: \n", "texto")
-        identificador_pelicula = solicitar_dato("Ingrese el identificador de la pelicula: \n", "numero")
-        anno_estreno = solicitar_dato("Ingrese el año de estreno de la pelicula: \n", "numero")
-        duracion = solicitar_dato("Ingrese la duracion (en minutos) de la pelicula: ", "numero", 90, 180)
+        nombre_espanol = solicitar_dato("Ingrese el nombre en español de la pelicula: ", "texto")
+        nombre_original = solicitar_dato("\nIngrese el nombre original de la pelicula: ", "texto")
         
-        gen_opc = solicitar_dato("Ingrese el genero de la pelicula:\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6)Infantil\n", "numero", 1, 6)
+        # Bucle para 
+        while True:
+            identificador_pelicula = solicitar_dato("\nIngrese el identificador de la pelicula: ", "numero")
+            existe = False
+            for i in range(self.contador_peliculas):
+                if self.peliculas[i] is not None:
+                    if self.peliculas[i].get_id() == identificador_pelicula:
+                        print("Error: Ya existe una película con ese identificador. Intente con otro.")
+                        existe = True
+                        break
+            
+            if not existe:
+                break
+
+        anno_estreno = solicitar_dato("\nIngrese el año de estreno de la pelicula: ", "numero")
+        duracion = solicitar_dato("\nIngrese la duracion (en minutos) de la pelicula: ", "numero", 90, 180)
+        
+        gen_opc = solicitar_dato("\nIngrese el genero de la pelicula:\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6) Infantil\n", "numero", 1, 6)
         match gen_opc:
             case 1:
                 genero = "Drama"
@@ -154,9 +188,9 @@ class SistemaCine:
             case 6:
                 genero = "Infantil"
 
-        pais_origen = solicitar_dato("Ingrese el pais de origen de la pelicula:\n", "texto")
+        pais_origen = solicitar_dato("\nIngrese el pais de origen de la pelicula: ", "texto")
 
-        cal_opc = solicitar_dato("Ingrese la calificacion de la pelicula: \n1) G \n2) PG \n3) PG-13 \n4) R \n5) NC-17\n", "numero", 1, 5)
+        cal_opc = solicitar_dato("\nIngrese la calificacion de la pelicula: \n1) G (General) \n2) PG (Se recomienda la compañía de un adulto) \n3) PG-13 (Se recomienda la compañía de un adulto para menores de 13 años) \n4) R (Prohibida la entrada a menores de 17 años sin compañía de un adulto) \n5) NC-17 (Prohibida la entrada a menores de 18 años sin compañía de un adulto)\n", "numero", 1, 5)
         match cal_opc:
             case 1:
                 calificacion = "G"

@@ -20,8 +20,10 @@ class SistemaCine:
     Retorna: bool (True si se crea correctamente, False si falla)  
     '''
     def crear_cliente(self) -> bool:
-    
-        self.__nombre = solicitar_dato("Ingrese el nombre completo del cliente: ", "texto")
+        print("\n--------------------------------------------")
+        print("        Vas a crear un cliente nuevo          ")
+        print("--------------------------------------------\n")
+        self.__nombre = solicitar_dato("\nIngrese el nombre completo del cliente: ", "texto")
         self.__usuario = solicitar_dato("Ingrese el usuario (documento) del cliente: ", "numero")
         self.__contrasena = (f"{self.__usuario}{self.__nombre[0].lower()}*")
         
@@ -48,7 +50,13 @@ class SistemaCine:
 
         return True
     
-
+    '''
+    Autor: David Chica López  
+    Fecha: 14/05/2026  
+    Metodo mostrar_lista_peliculas: Muestra una tabla ordenada con la informacion de las peliculas registradas en el sistema.  
+    Parámetros: Ninguno  
+    Retorna: None  
+    '''
     def mostrar_lista_peliculas(self) -> None:
         if self.contador_peliculas == 0:
             print("No hay películas registradas en el sistema.")
@@ -147,7 +155,7 @@ class SistemaCine:
     '''
     def agregar_pelicula(self)-> bool:
         print("----------------------------------------------------------------------------------------------")
-        print("|Hola Administrador, vas a agregar una pelicula, por favor ingrese todos los siguientes datos|")
+        print("| Hola Administrador, vas a agregar una pelicula, por favor ingrese todos los siguientes datos |")
         print("----------------------------------------------------------------------------------------------\n")
         if self.contador_peliculas >= 50:
             print("Error: Capacidad máxima de películas alcanzada.")
@@ -190,7 +198,7 @@ class SistemaCine:
 
         pais_origen = solicitar_dato("\nIngrese el pais de origen de la pelicula: ", "texto")
 
-        cal_opc = solicitar_dato("\n---Tipos de calificacion de la pelicula---\n\n1) G      (General) \n2) PG     (Se recomienda la compañía de un adulto) \n3) PG-13   (Se recomienda la compañía de un adulto para menores de 13 años) \n4) R      (Prohibida la entrada a menores de 17 años sin compañía de un adulto) \n5) NC-17 (Prohibida la entrada a menores de 18 años sin compañía de un adulto)\n\nIngrese una opcion: ", "numero", 1, 5)
+        cal_opc = solicitar_dato("\n---Tipos de calificacion de la pelicula---\n\n1) G      (General) \n2) PG     (Se recomienda la compañía de un adulto) \n3) PG-13  (Se recomienda la compañía de un adulto para menores de 13 años) \n4) R      (Prohibida la entrada a menores de 17 años sin compañía de un adulto) \n5) NC-17  (Prohibida la entrada a menores de 18 años sin compañía de un adulto)\n\nIngrese una opcion: ", "numero", 1, 5)
         match cal_opc:
             case 1:
                 calificacion = "G"

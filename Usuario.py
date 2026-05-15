@@ -61,7 +61,7 @@ Retorna: None
             print("\n-----------------------------------------------")
             print("|     Bienvenido al menú de administrador     |")
             print("------------------------------------------------\n")
-            opcion = solicitar_dato("Ingresa una de la opciones:\n\n1.Crear clientes\n2.Consultar programacion\n3.Consultar info de la peliculas\n4.Gestionar programacion\n5.Crear o modificar pelicula\n6.Consultar porcentaje de ocupacion\n7.Consultar recaudo\n8.Crear salas\n9.Salir\n\n", "numero", 1, 9)
+            opcion = solicitar_dato("Ingresa una de la opciones:\n\n1) Crear clientes\n2) Consultar programacion\n3) Consultar info de la peliculas\n4) Gestionar programacion\n5) Crear o modificar pelicula\n6) Consultar porcentaje de ocupacion\n7) Consultar recaudo\n8) Crear salas\n9) Salir\n\n", "numero", 1, 9)
             
             if opcion == 9:
                 break
@@ -76,6 +76,9 @@ Retorna: None
                 case 4:
                     print("Gestionar programacion (no implementado)")
                 case 5:
+                    print("\n--------------------------------------------")
+                    print("         Menu de gestion de peliculas         ")
+                    print("--------------------------------------------\n")
                     print("\n\t1) Crear pelicula\n\t2) Modificar estado de pelicula\n\t3) Salir\n")
                     sub_opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 3)
                     match sub_opcion:
@@ -108,7 +111,7 @@ Retorna: None
             print("\n--------------------------------------------")
             print("|       Bienvenido al menú de vendedor       |")
             print("--------------------------------------------\n")
-            opcion = solicitar_dato("Ingresa una de la opciones:\n1.Crear clientes\n2.Consultar programacion\n3.Consultar info de la peliculas\n4.Reserva boletas\n5.Salir\n", "numero", 1, 5)
+            opcion = solicitar_dato("Ingresa una de la opciones:\n1) Crear clientes\n2) Consultar programacion\n3) Consultar info de la peliculas\n4) Reserva boletas\n5) Salir\n", "numero", 1, 5)
             
             if opcion == 5:
                 break
@@ -152,7 +155,7 @@ Retorna: None
             print("\n--------------------------------------------")
             print(f"|       Bienvenido al menú {self.get_nombre()}       |")  
             print("--------------------------------------------\n")
-            opcion = solicitar_dato("Ingresa una de la opciones:\n1.Consultar programacion\n2.Consultar info de la peliculas\n3.Reservar boletas\n4.Salir\n", "numero", 1, 4)
+            opcion = solicitar_dato("Ingresa una de la opciones:\n1.Consultar programacion\n2.Consultar info de la peliculas\n3.Reservar boletas\n4.Salir\n\n", "numero", 1, 4)
             
             if opcion == 4:
                 break
@@ -162,7 +165,11 @@ Retorna: None
                     print("Consultar programacion (no implementado)")    
                 case 2:
                     sistema.mostrar_lista_peliculas()
-                    input("\nPresione enter para continuar...")                     
+                    entrada = input("\nPresione enter para continuar...")          
+                    if entrada == "":
+                        pass
+                    else:
+                        break 
                 case 3:
                     sub_opcion = solicitar_dato("Ingresa una de las opciones:\n1.Visualizar mapa\n2.Reservar boleta\n", "numero", 1, 2)
                     match sub_opcion:

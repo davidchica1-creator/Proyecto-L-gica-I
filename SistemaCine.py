@@ -103,9 +103,9 @@ class SistemaCine:
             else:
                 encontrado = False
                 for i in range(self.contador_clientes):
-                    cliente = self.usuarios[i]
-                    if str(cliente.get_usuario()) == usuario_ingresado and cliente.get_contrasena() == contrasena:
-                        cliente.menu_cliente()
+                    user = self.usuarios[i]
+                    if str(user.get_usuario()) == usuario_ingresado and user.get_contrasena() == contrasena:
+                        user.menu_cliente(self)
                         encontrado = True
                         break
                 if not encontrado:
@@ -146,9 +146,9 @@ class SistemaCine:
     Metodo: agregar_pelicula, recibe los datos de la película a través de entradas del administrador y los asigna a los atributos correspondientes.
     '''
     def agregar_pelicula(self)-> bool:
-        
-        print("Hola Administrador, vas a agregar una pelicula, por favor ingrese todos los siguientes datos:\n")
-
+        print("----------------------------------------------------------------------------------------------")
+        print("|Hola Administrador, vas a agregar una pelicula, por favor ingrese todos los siguientes datos|")
+        print("----------------------------------------------------------------------------------------------\n")
         if self.contador_peliculas >= 50:
             print("Error: Capacidad máxima de películas alcanzada.")
             return False
@@ -173,7 +173,7 @@ class SistemaCine:
         anno_estreno = solicitar_dato("\nIngrese el año de estreno de la pelicula: ", "numero")
         duracion = solicitar_dato("\nIngrese la duracion (en minutos) de la pelicula: ", "numero", 90, 180)
         
-        gen_opc = solicitar_dato("\nIngrese el genero de la pelicula:\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6) Infantil\n", "numero", 1, 6)
+        gen_opc = solicitar_dato("\n---Generos de la pelicula---\n\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6) Infantil\n\nIngrese una opcion: ", "numero", 1, 6)
         match gen_opc:
             case 1:
                 genero = "Drama"
@@ -190,7 +190,7 @@ class SistemaCine:
 
         pais_origen = solicitar_dato("\nIngrese el pais de origen de la pelicula: ", "texto")
 
-        cal_opc = solicitar_dato("\nIngrese la calificacion de la pelicula: \n1) G (General) \n2) PG (Se recomienda la compañía de un adulto) \n3) PG-13 (Se recomienda la compañía de un adulto para menores de 13 años) \n4) R (Prohibida la entrada a menores de 17 años sin compañía de un adulto) \n5) NC-17 (Prohibida la entrada a menores de 18 años sin compañía de un adulto)\n", "numero", 1, 5)
+        cal_opc = solicitar_dato("\n---Tipos de calificacion de la pelicula---\n\n1) G      (General) \n2) PG     (Se recomienda la compañía de un adulto) \n3) PG-13   (Se recomienda la compañía de un adulto para menores de 13 años) \n4) R      (Prohibida la entrada a menores de 17 años sin compañía de un adulto) \n5) NC-17 (Prohibida la entrada a menores de 18 años sin compañía de un adulto)\n\nIngrese una opcion: ", "numero", 1, 5)
         match cal_opc:
             case 1:
                 calificacion = "G"

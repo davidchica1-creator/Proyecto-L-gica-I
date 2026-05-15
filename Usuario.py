@@ -58,9 +58,9 @@ Retorna: None
     def menu_admin(self, sistema)->None:
 
         while True:
-            print("\n--------------------------------------------")
+            print("\n-----------------------------------------------")
             print("|     Bienvenido al menú de administrador     |")
-            print("--------------------------------------------\n")
+            print("------------------------------------------------\n")
             opcion = solicitar_dato("Ingresa una de la opciones:\n\n1.Crear clientes\n2.Consultar programacion\n3.Consultar info de la peliculas\n4.Gestionar programacion\n5.Crear o modificar pelicula\n6.Consultar porcentaje de ocupacion\n7.Consultar recaudo\n8.Crear salas\n9.Salir\n\n", "numero", 1, 9)
             
             if opcion == 9:
@@ -76,7 +76,7 @@ Retorna: None
                 case 4:
                     print("Gestionar programacion (no implementado)")
                 case 5:
-                    print("\n\n1) Crear pelicula\n2) Modificar estado de pelicula\n3) Salir\n")
+                    print("\n\t1) Crear pelicula\n\t2) Modificar estado de pelicula\n\t3) Salir\n")
                     sub_opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 3)
                     match sub_opcion:
 
@@ -139,18 +139,18 @@ Retorna: None
                         
 
     '''
-Autor: Juan David Ortiz Diaz  
-Fecha: 04/05/2026  
-Método menu_cliente: Muestra el menú del cliente y permite consultar programación, ver información de películas y gestionar reservas.  
-Parámetros: Ninguno  
-Retorna: None  
-'''
+    Autor: Juan David Ortiz Diaz  
+    Fecha: 04/05/2026  
+    Método menu_cliente: Muestra el menú del cliente y permite consultar programación, ver información de películas y gestionar reservas.  
+    Parámetros: Ninguno  
+    Retorna: None  
+    '''
 
     def menu_cliente(self, sistema)->None:
 
         while True:
             print("\n--------------------------------------------")
-            print(f"|       Bienvenido al menú {self.nombre}       |")  
+            print(f"|       Bienvenido al menú {self.get_nombre()}       |")  
             print("--------------------------------------------\n")
             opcion = solicitar_dato("Ingresa una de la opciones:\n1.Consultar programacion\n2.Consultar info de la peliculas\n3.Reservar boletas\n4.Salir\n", "numero", 1, 4)
             

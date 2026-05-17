@@ -16,14 +16,31 @@ class SalaCine:
         self.__cant_filas = cant_filas
         self.__sillas_por_fila = sillas_por_fila
         self.__tamanio = self.__cant_filas * self.__sillas_por_fila
-        self.__programacion = np.full((5), fill_value = None, dtype = object)
+        self.__programacion = np.full((12), fill_value = None, dtype = object)
+        self.__contador_funciones = 0
 
     
     def get_identificador(self):
         return self.__identificador_sala
 
+    def get_cant_filas(self):
+        return self.__cant_filas
+
+    def get_sillas_por_fila(self):
+        return self.__sillas_por_fila
+
     def agregar_funcion(self, funcion:Funcion)-> bool:
-        pass
+        if self.__contador_funciones >= 12:
+            print(f"Error: La sala {self.__identificador_sala} ya tiene el máximo de funciones (12).")
+            return False
+        
+        for i in range(len(self.__programacion)):
+            if self.__programacion[i] is None:
+                self.__programacion[i] = funcion
+                self.__contador_funciones += 1
+                print("Función agregada con éxito a la sala.")
+                return True
+        return False
     
 
     def eliminar_funcion(self, identificador_funcion:int):

@@ -6,11 +6,17 @@ from Complejo import Complejo
 
 class SistemaCine:
     def __init__(self):
-        self.usuarios = np.full((100), fill_value = None, dtype = object)
-        self.contador_clientes=0
-        self.peliculas = np.full((50), fill_value = None, dtype = object)
-        self.contador_peliculas=0
-        self.complejo = Complejo()
+        self.usuarios:np.ndarray = np.full((100), fill_value = None, dtype = object)
+        self.contador_clientes:int =0
+
+        self.peliculas:np.ndarray = np.full((50), fill_value = None, dtype = object)
+        self.contador_peliculas:int=0
+
+        self.complejo:Complejo = Complejo()
+        self.contador_salas:int = 0
+
+
+
 
     '''
     Autor: Juan David Ortiz Diaz  f
@@ -74,7 +80,11 @@ class SistemaCine:
                 print(f"| {i+1:<3} | {self.peliculas[i].get_informacion()}")
                 print(separador)
         
-        input("\nPresione enter para continuar...")
+        entrada = input("\nPresione enter para continuar...")
+
+        if entrada == "":
+            pass
+
 
     '''
     Autor: Juan David Ortiz Diaz  
@@ -117,7 +127,7 @@ class SistemaCine:
                         encontrado = True
                         break
                 if not encontrado:
-                    print("\n! Error: Usuario no encontrado o contraseña incorrecta.")
+                    print("\n ==Error: Usuario no encontrado o contraseña incorrecta==")
                         
     '''
     Autor: Juan David Ortiz Diaz  
@@ -128,29 +138,36 @@ class SistemaCine:
     '''
 
 
-    def menu_crear_sala(self):
+    def menu_crear_sala(self)->str:
+        print("\n--------------------------------------------")
+        print("|         Registro de Nueva Sala             |") 
+        print("--------------------------------------------\n")
 
-        print("Registro de Nueva Sala")
-
-
-        identificador_sala = solicitar_dato("Ingrese el identificador de la sala (1-12): ", "numero", 1, 12)
-
-        valor_boleta = solicitar_dato("Ingrese el valor de la boleta: ", "numero", 1)
-
-        cant_filas = solicitar_dato("Ingrese cantidad de filas: ", "numero", 1)
-
-        sillas_por_fila = solicitar_dato("Ingrese sillas por fila: ", "numero", 1)
-
-        sala_nueva = SalaCine(identificador_sala, valor_boleta, cant_filas, sillas_por_fila)
-        
-        exito = self.complejo.agregar_sala(sala_nueva)
-        
-        if exito:
-            print("Proceso terminado con éxito.")
-        else:
-            print("No se pudo realizar el registro.")
+        if self.contador_salas == 12:
+            return "Se ha alcanzado el máximo de salas permitidas por el sistema."
             
+        else: 
+
+            identificador_sala = solicitar_dato("Ingrese el identificador de la sala (1-12): ", "numero", 1, 12)
+
+            valor_boleta = solicitar_dato("Ingrese el valor de la boleta: ", "numero", 1)
+
+            cant_filas = solicitar_dato("Ingrese cantidad de filas: ", "numero", 1)
+
+            sillas_por_fila = solicitar_dato("Ingrese sillas por fila: ", "numero", 1)
+
+            sala_nueva = SalaCine(identificador_sala, valor_boleta, cant_filas, sillas_por_fila)
+            self.contador_salas += 1
+            exito = self.complejo.agregar_sala(sala_nueva)
+            
+            if exito:
+                print("Proceso terminado con éxito.")
+            else:
+                print("No se pudo realizar el registro.")
+    
     '''
+    Autor: David Chica lopez
+    Fecha: 04/05/2026
     Metodo: agregar_pelicula, recibe los datos de la película a través de entradas del administrador y los asigna a los atributos correspondientes.
     '''
     def agregar_pelicula(self)-> bool:
@@ -164,7 +181,7 @@ class SistemaCine:
         nombre_espanol = solicitar_dato("Ingrese el nombre en español de la pelicula: ", "texto")
         nombre_original = solicitar_dato("\nIngrese el nombre original de la pelicula: ", "texto")
         
-        # Bucle para 
+        
         while True:
             identificador_pelicula = solicitar_dato("\nIngrese el identificador de la pelicula: ", "numero")
             existe = False

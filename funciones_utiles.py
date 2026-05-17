@@ -44,28 +44,26 @@ def solicitar_dato(mensaje, tipo_esperado, min_val=None, max_val=None):
                     print(f"Error: El valor máximo permitido es {max_val}.")
                     continue
                 
-                return valor # Si pasa todas las pruebas, retorna el número
+                return valor
                 
             except ValueError:
                 print("Error: Debes ingresar un número entero válido.")
                 continue 
 
+        elif tipo_esperado == 'fecha':
+            if validar_formato(entrada, "%d/%m/%Y"):
+                return entrada
+            else:
+                print("Error: El formato de fecha debe ser DD/MM/AAAA.")
+                continue
+        elif tipo_esperado == 'hora':
+            if validar_formato(entrada, "%H:%M"):
+                return entrada
+            else:
+                print("Error: El formato de hora debe ser HH:MM.")
+                continue
         else:
             print(f"Error interno: El tipo esperado '{tipo_esperado}' no existe.")
             return None
 
-'''
-Función para validar formato de fecha y hora.
-La función validar_formato se utiliza para verificar que una cadena de texto cumpla con un formato específico, como fechas o horas, 
-utilizando el módulo datetime para analizar la entrada.
-'''
-
-def validar_formato(entrada: str, formato: str) -> bool:
-    try:
-
-        datetime.strptime(entrada, formato)
-        return True
-    except ValueError:
-
-        return False
     

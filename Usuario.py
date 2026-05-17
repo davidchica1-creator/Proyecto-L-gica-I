@@ -163,11 +163,7 @@ Retorna: None
                     print("Consultar programacion (no implementado)")    
                 case 2:
                     sistema.mostrar_lista_peliculas()
-                    entrada = input("\nPresione enter para continuar...")          
-                    if entrada == "":
-                        pass
-                    else:
-                        break 
+ 
                 case 3:
                     sub_opcion = solicitar_dato("Ingresa una de las opciones:\n1.Visualizar mapa\n2.Reservar boleta\n", "numero", 1, 2)
                     match sub_opcion:

@@ -24,7 +24,13 @@ class Reserva:
     Parámetros: No recibe parámetros.
     Retorna: None
     '''
-
+    def get_cant_boletas(self) -> int:
+        return self.__cant_boletas
+    
+    def get_asientos(self) -> np.ndarray:
+        return self.__asientos
+    
+    
     def generar_boleta(self) -> None:
         print("Boleta de Reserva")
         print(f"Usuario: {self.__usuario}")

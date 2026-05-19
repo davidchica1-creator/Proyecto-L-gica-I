@@ -1,3 +1,4 @@
+import Reserva
 from Usuario import*
 from funciones_utiles import solicitar_dato
 from SalasCine import*
@@ -219,6 +220,47 @@ class SistemaCine:
 
         print(f"\nPelícula '{nombre_espanol}' agregada exitosamente.")
         return True
+
+    def reservar_boleta(self, usuario,sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial, precio_total = 0) -> bool:
+        
+        if usuario is None:
+            print("Usuario no encontrado.")
+            return False
+        
+        if sala is None:
+            print("Sala no encontrada.")
+            return False
+        
+        if mapa is None:
+            print("Función no encontrada.")
+            return False
+        
+        print("\n-------------------------------------------------")
+        print("        Vas a realizar una reserva de boletas          ")
+        print("-------------------------------------------------\n")
+        
+        funcion = sala.get_programacion()[identificador_funcion - 1]
+        mapa = funcion.get_mapa_sala()
+        
+        for i in range(cant_boletas):
+            asiento_disponible = mapa[fila, columna_inicial + i] 
+            if asiento_disponible != 0:
+                print("Los asientos seleccionados no están libres, seleccione de nuevo.")
+                return False
+            
+        for i in range(cant_boletas):
+            mapa[fila, columna_inicial + i] = 1
+            
+        funcion.agregar_asientos_reservados(cant_boletas)
+        print("Su reserva ha sido guardada con éxito.")
+        return True
+    
+    def get_usuario_por_documento(self, documento):
+        for i in range(self.contador_clientes):
+            if self.usuarios[i] is not None:
+                if self.usuarios[i].get_usuario() == documento:
+                    return self.usuarios[i]
+        return None
 
 obj:SistemaCine
 

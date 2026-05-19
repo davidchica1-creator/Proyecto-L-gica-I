@@ -31,4 +31,9 @@ class Complejo:
         print("No se pueden agregar más salas al complejo. Capacidad máxima alcanzada.")
         return False
 
-
+    def get_sala(self, identificador_sala):
+        for i in range(len(self.__lista_salas)):
+             if self.__lista_salas[i] is not None:
+                if self.__lista_salas[i].get_identificador() == identificador_sala:
+                    return self.__lista_salas[i]
+        return None

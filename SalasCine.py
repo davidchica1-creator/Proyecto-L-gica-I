@@ -18,6 +18,8 @@ class SalaCine:
         self.__tamanio = self.__cant_filas * self.__sillas_por_fila
         self.__programacion = np.full((5), fill_value = None, dtype = object)
 
+    def get_programacion(self):
+        return self.__programacion
     
     def get_identificador(self):
         return self.__identificador_sala

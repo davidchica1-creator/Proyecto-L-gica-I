@@ -138,15 +138,23 @@ Retorna: None
                             mapa=Funcion(id_funcion,id_pelicula,fecha,hora_inicio,num_filas,num_columnas)
                             mapa.mostrar_mapa()
                         case 2:
-                            print("Aun no se ha implementado")
+                            documento = solicitar_dato("Ingrese su número de documento: ", "numero")
+                            usuario = sistema.get_usuario_por_documento(documento)
+                            identificador_sala = solicitar_dato("Ingrese el ID de la sala: ", "numero")
+                            sala = sistema.complejo.get_sala(identificador_sala)
+                            identificador_funcion = solicitar_dato("Ingrese el ID de la función: ", "numero")
+                            cant_boletas = solicitar_dato("Ingrese la cantidad de boletas: ", "numero")
+                            fila = solicitar_dato("Ingrese la fila deseada (letra): ", "texto").upper()
+                            columna_inicial = solicitar_dato("Ingrese la columna inicial (número): ", "numero")
+                            sistema.reservar_boleta(usuario, sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial)
                         
 
     '''
-    Autor: Juan David Ortiz Diaz  
-    Fecha: 04/05/2026  
-    Método menu_cliente: Muestra el menú del cliente y permite consultar programación, ver información de películas y gestionar reservas.  
-    Parámetros: Ninguno  
-    Retorna: None  
+    Autor: Salome Garcia    
+    Fecha: 04/05/2026
+    Método menu_cliente: Muestra el menú del cliente y permite consultar información, visualizar mapas de funciones y realizar reservas.
+    Parámetros: sistema (objeto sistemaCine)
+    Retorna: None
     '''
 
     def menu_cliente(self, sistema)->None:
@@ -182,6 +190,6 @@ Retorna: None
                             mapa=Funcion(id_funcion,id_pelicula,fecha,hora_inicio,num_filas,num_columnas)
                             mapa.mostrar_mapa()
                         case 2:
-                            print("Aun no se ha implementado")
+                           sistema.reservar_boleta()
                 case 4: 
                     break 

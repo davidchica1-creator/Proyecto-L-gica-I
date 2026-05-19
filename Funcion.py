@@ -16,7 +16,7 @@ class Funcion:
         self.__cant_filas = cant_filas
         self.__sillas_por_fila = sillas_por_fila
         self.__mapa_sala = np.zeros((self.__cant_filas,self.__sillas_por_fila), dtype=int)
-
+        self.__asientos_reservados = 0
     '''
     Métodos: mostrar_mapa, muestra el mapa de la sala indicando los asientos disponibles (con un punto) y los ocupados (con una X).
     '''
@@ -39,7 +39,15 @@ class Funcion:
                 else:
                     print("X", end=" ")
             print()
-
+    def get_identificador_funcion(self) -> int:
+        return self.__identificador_funcion
+        
+    def get_mapa_sala(self) -> np.ndarray:
+        return self.__mapa_sala
+    
     def verificar_disponibilidad(self, asiento_inicial, cant_boletas):
         pass
 
+    def agregar_asientos_reservados(self, cant_boletas) -> None:
+        self.__asientos_reservados += cant_boletas
+        

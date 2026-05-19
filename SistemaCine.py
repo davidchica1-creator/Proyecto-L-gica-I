@@ -4,7 +4,22 @@ from SalasCine import*
 from Pelicula import*
 from Complejo import Complejo  
 
+'''
+Autor: Juan David Ortiz Diaz  
+Fecha: 04/05/2026
+Clase SistemaCine: Representa un sistema de cine
+'''
+
 class SistemaCine:
+
+    '''
+    Autor: Juan David Ortiz Diaz  
+    Fecha: 04/05/2026  
+    Método constructor de la clase SistemaCine  
+    Parámetros: Ninguno  
+    Salidas: None  
+    '''
+
     def __init__(self):
         self.usuarios:np.ndarray = np.full((100), fill_value = None, dtype = object)
         self.contador_clientes:int =0
@@ -15,20 +30,21 @@ class SistemaCine:
         self.complejo:Complejo = Complejo()
         self.contador_salas:int = 0
 
-
-
-
     '''
-    Autor: Juan David Ortiz Diaz  f
+    Autor: Juan David Ortiz Diaz
     Fecha: 04/05/2026  
     Método crear_cliente: Permite registrar un nuevo cliente en el sistema validando que no exista previamente.  
     Parámetros: Ninguno  
-    Retorna: bool (True si se crea correctamente, False si falla)  
+    Salidas: bool (True si se crea correctamente, False si falla)  
     '''
+
     def crear_cliente(self) -> bool:
-        print("\n--------------------------------------------")
-        print("        Vas a crear un cliente nuevo          ")
-        print("--------------------------------------------\n")
+        encabezado = "|         Registro de nuevo cliente          |"
+        separador = "-" * len(encabezado)
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+
         self.__nombre = solicitar_dato("\nIngrese el nombre completo del cliente: ", "texto")
         self.__usuario = solicitar_dato("Ingrese el usuario (documento) del cliente: ", "numero")
         self.__contrasena = (f"{self.__usuario}{self.__nombre[0].lower()}*")
@@ -59,16 +75,18 @@ class SistemaCine:
     '''
     Autor: David Chica López  
     Fecha: 14/05/2026  
-    Metodo mostrar_lista_peliculas: Muestra una tabla ordenada con la informacion de las peliculas registradas en el sistema.  
-    Parámetros: Ninguno  
-    Retorna: None  
+    Metodo mostrar_lista_peliculas: Muestra una tabla ordenada con la informacion de las peliculas registradas en el sistema mostrando su informacion de ID, nombre en español
+    nombre original, año de estreno, duracion, genero, pais de origen, calificacion y estado.  
+    Entradas: Ninguno  
+    Salidas: None  
     '''
+
     def mostrar_lista_peliculas(self) -> None:
         if self.contador_peliculas == 0:
             print("No hay películas registradas en el sistema.")
             return
         
-        header = f"| {'#':<3} | {'Nombre en español':<20} | {'Nombre original':<20} | {'Año de estreno':<15} | {'Duración':<10} | {'Género':<12} | {'Pais de origen':<15} | {'Calificación':<12} | {'Estado':<10} |"
+        header = f"| {'#':<3} | {'ID Peli':<10} | {'Nombre en español':<25} | {'Nombre original':<20} | {'Año de estreno':<15} | {'Duración':<10} | {'Género':<12} | {'Pais de origen':<15} | {'Calificación':<12} | {'Estado':<10} |"
         separador = "-" * len(header)
         
         print(f"\n{separador}")
@@ -84,26 +102,63 @@ class SistemaCine:
 
         if entrada == "":
             pass
+    
+    '''
+    Autor: David Chica López  
+    Fecha: 14/05/2026  
+    Metodo mostrar_lista_peliculas_activas: Muestra una tabla ordenada con la información de unicamente las pleiculas activas en el sistema mostrando su informacion de ID,
+    nombre en español, año de estreno, duración( en minutos ), genero, pais de origen, calificacion y estado ( que unicamente sera activo ).  
+    Entradas: Ninguno  
+    Salidas: None  
+    '''
+
+    def mostrar_lista_peliculas_activas(self) -> None:
+        if self.contador_peliculas == 0:
+            print("No hay películas registradas en el sistema.")
+            return
+        
+        encabezado = f"| {'#':<3} | {'ID Peli':<10} | {'Nombre en español':<25} | {'Nombre original':<20} | {'Año de estreno':<15} | {'Duracion':<10} | {'Genero':<12} | {'Pais de origen':<15} | {'Calificacion':<12} | {'Estado':<10} |"
+        separador = "-" * len(encabezado)
+        
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+
+        numeral_visual = 1
+        for i in range(self.contador_peliculas):
+            if self.peliculas[i] is not None and self.peliculas[i].get_estado() is True:
+                print(f"| {numeral_visual:<3} | {self.peliculas[i].get_informacion()}")
+                print(separador)
+                numeral_visual += 1
+                
+        entradad = input("\nPresione enter para continuar...")
+
+        if entradad == "":
+            pass
+
 
 
     '''
     Autor: Juan David Ortiz Diaz  
     Fecha: 04/05/2026  
     Método login: Gestiona el inicio de sesión de usuarios (admin, vendedor o cliente) y redirige al menú correspondiente.  
-    Parámetros: Ninguno  
-    Retorna: None  
+    Entradas: Ninguno  
+    Salidas: None  
     '''
+
     def login(self)->None:
         opcion:int
         user:Usuario
         usuario_ingresado:str
         contrasena:str
         while True:
-            print("\n--------------------------------------------")
-            print("|     Bienvenido a ¿Qué hay para ver?     |")
-            print("--------------------------------------------\n")
+            encabezado = "|         Bienvenido a que hay para ver!          |"
+            separador = "-" * len(encabezado)
+            print(f"\n{separador}")
+            print(encabezado)
+            print(separador)
+            
             opcion = solicitar_dato("1. Ingresar\n2. Salir\n\nSeleccione una opción: ", "numero", 1, 2)
-
 
             if opcion == 2:
                 print("Hasta luego")
@@ -133,26 +188,39 @@ class SistemaCine:
     Autor: Juan David Ortiz Diaz  
     Fecha: 04/05/2026  
     Método menu_crear_sala: Permite registrar una nueva sala de cine solicitando los datos necesarios y validándolos.  
-    Parámetros: complejo (objeto que gestiona las salas de cine)  
-    Retorna: None  
+    Entradas: complejo (objeto que gestiona las salas de cine)  
+    Salidas: None  
     '''
 
 
     def menu_crear_sala(self)->str:
-        print("\n--------------------------------------------")
-        print("|         Registro de Nueva Sala             |") 
-        print("--------------------------------------------\n")
+
+        encabezado = "|         Registro de nueva sala          |"
+        separador = "-" * len(encabezado)
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
 
         if self.contador_salas == 12:
             return "Se ha alcanzado el máximo de salas permitidas por el sistema."
             
         else: 
 
-            identificador_sala = solicitar_dato("Ingrese el identificador de la sala (1-12): ", "numero", 1, 12)
+            while True:
+                identificador_sala = solicitar_dato("Ingrese el identificador de la sala (1-12): ", "numero", 1, 12)
+                existe = False
+                for sala in self.complejo.get_lista_salas():
+                    if sala is not None and sala.get_identificador() == identificador_sala:
+                        print(f"Error: Ya existe una sala con el identificador {identificador_sala}. Intente con otro.")
+                        existe = True
+                        break
+                
+                if not existe:
+                    break
 
             valor_boleta = solicitar_dato("Ingrese el valor de la boleta: ", "numero", 1)
 
-            cant_filas = solicitar_dato("Ingrese cantidad de filas: ", "numero", 1)
+            cant_filas = solicitar_dato("Ingrese cantidad de filas (máximo 26): ", "numero", 1, 26)
 
             sillas_por_fila = solicitar_dato("Ingrese sillas por fila: ", "numero", 1)
 
@@ -161,22 +229,29 @@ class SistemaCine:
             exito = self.complejo.agregar_sala(sala_nueva)
             
             if exito:
-                print("Proceso terminado con éxito.")
+                print("\nProceso terminado con éxito.")
             else:
                 print("No se pudo realizar el registro.")
     
     '''
     Autor: David Chica lopez
-    Fecha: 04/05/2026
-    Metodo: agregar_pelicula, recibe los datos de la película a través de entradas del administrador y los asigna a los atributos correspondientes.
+    Fecha: 10/05/2026
+    Metodo agregar_pelicula: Permite agregar una pelicula a la lista de peliculas
+    Entradas: None
+    Salidas: Cadena de texto que confirma que la pelicula fue creada con exito
     '''
-    def agregar_pelicula(self)-> bool:
-        print("----------------------------------------------------------------------------------------------")
-        print("| Hola Administrador, vas a agregar una pelicula, por favor ingrese todos los siguientes datos |")
-        print("----------------------------------------------------------------------------------------------\n")
+
+    def agregar_pelicula(self)-> str:
+
+        encabezado = "|         Registro de nueva pelicula          |"
+        separador = "-" * len(encabezado)
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+
         if self.contador_peliculas >= 50:
-            print("Error: Capacidad máxima de películas alcanzada.")
-            return False
+            
+            print("Error: Capacidad máxima de películas alcanzada")
 
         nombre_espanol = solicitar_dato("Ingrese el nombre en español de la pelicula: ", "texto")
         nombre_original = solicitar_dato("\nIngrese el nombre original de la pelicula: ", "texto")
@@ -234,8 +309,8 @@ class SistemaCine:
         self.peliculas[self.contador_peliculas] = nueva_pelicula
         self.contador_peliculas += 1
 
+        
         print(f"\nPelícula '{nombre_espanol}' agregada exitosamente.")
-        return True
 
 obj:SistemaCine
 

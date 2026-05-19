@@ -49,6 +49,17 @@ def solicitar_dato(mensaje, tipo_esperado, min_val=None, max_val=None):
             except ValueError:
                 print("Error: Debes ingresar un número entero válido.")
                 continue 
+        
+        elif tipo_esperado == 'si_no':
+            if entrada.isdigit():
+                print("Error: Debes ingresar 'si' o 'no'.")
+                continue
+            
+            if entrada.lower() == 'si' or entrada.lower() == 'no':
+                return entrada.lower()
+            else:
+                print("Error: Debes ingresar 'si' o 'no'.")
+                continue
 
         elif tipo_esperado == 'fecha':
             if validar_formato(entrada, "%d/%m/%Y"):
@@ -66,4 +77,29 @@ def solicitar_dato(mensaje, tipo_esperado, min_val=None, max_val=None):
             print(f"Error interno: El tipo esperado '{tipo_esperado}' no existe.")
             return None
 
+'''
+Autor: David Chica López
+Fecha: 04/05/2026
+Función: validar_formato
+'''
+
+def validar_formato(cadena, formato):
+    try:
+        datetime.strptime(cadena, formato)
+        return True
+    except ValueError:
+        return False
+
+
+'''
+Autor: David Chica López
+Fecha: 18/05/2026
+Función: horas_minutos
+Entradas: Cadena de texto con el formato HH:MM
+Salidas: Numero entero con la cantidad de minutos desde la medianoche
+'''
+
+def horas_minutos(time_str: str) -> int:
+    hours, minutes = map(int, time_str.split(':'))
+    return hours * 60 + minutes
     

@@ -46,13 +46,13 @@ class Pelicula:
     Salidas: None
     '''
 
-    def cambiar_estado(self, pelicula:int)-> None:
+    def cambiar_estado(self)-> None:
         if self.get_estado():
             self.__estado = False
-            print(f"La pelicula {pelicula} ha sido desactivada.")
+            print(f"La pelicula '{self.__nombre_espanol}' ha sido desactivada.")
         else:
             self.__estado = True
-            print(f"La pelicula {pelicula} ha sido activada.")
+            print(f"La pelicula '{self.__nombre_espanol}' ha sido activada.")
 
     '''
     Autor: David Chica López

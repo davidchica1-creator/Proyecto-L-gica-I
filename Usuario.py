@@ -1,8 +1,7 @@
 import numpy as np
-from funciones_utiles import solicitar_dato
+from funciones_utiles import solicitar_dato, limpiar_pantalla
 from Pelicula import*
 from Funcion import*
-from SistemaCine import*
 
 '''
 Autor: Juan David Ortiz Diaz  
@@ -58,7 +57,7 @@ class Usuario:
     Retorna: None  
     '''
 
-    def menu_admin(self, sistema:SistemaCine)->None:
+    def menu_admin(self, sistema) -> None:
 
         while True:
             encabezado = "|         Bienvenido al menú admin          |"
@@ -100,7 +99,7 @@ class Usuario:
                                 sistema.mostrar_lista_peliculas()
                                 numeral_pelicula = solicitar_dato("Ingrese el número de la película a modificar: ", "numero", 1, sistema.contador_peliculas)
                                 pelicula_seleccionada = sistema.peliculas[numeral_pelicula - 1]
-                                pelicula_seleccionada.cambiar_estado(pelicula_seleccionada.get_estado())
+                                pelicula_seleccionada.cambiar_estado()
                 case 8:
                     sistema.menu_crear_sala()
 
@@ -115,7 +114,7 @@ class Usuario:
     Salidas: None  
     '''
 
-    def menu_vendedor(self, sistema:SistemaCine)->None:
+    def menu_vendedor(self, sistema) -> None:
     
         while True:
             encabezado = "|         Bienvenido al menú vendedor          |"
@@ -124,7 +123,7 @@ class Usuario:
             print(encabezado)
             print(separador)
 
-            opcion = solicitar_dato("Ingresa una de la opciones:\n1) Crear clientes\n2) Consultar programacion\n3) Consultar info de la peliculas\n4) Reserva boletas\n5) Salir\n", "numero", 1, 5)
+            opcion = solicitar_dato("\nIngresa una de la opciones:\n\n1) Crear clientes\n2) Consultar programacion\n3) Consultar info de la peliculas\n4) Reserva boletas\n5) Salir\n", "numero", 1, 5)
             
             if opcion == 5:
                 break
@@ -161,7 +160,7 @@ class Usuario:
     Salidas: Ninguno    
     '''
 
-    def menu_cliente(self, sistema:SistemaCine) -> None:
+    def menu_cliente(self, sistema) -> None:
 
         while True:
             encabezado = f"|         Bienvenido al menú {self.__nombre}         |"
@@ -169,7 +168,7 @@ class Usuario:
             print(f"\n{separador}")
             print(encabezado)
             print(separador)
-            opcion = solicitar_dato("Ingresa una de la opciones:\n1.Consultar programacion\n2.Consultar info de la peliculas\n3.Reservar boletas\n4.Salir\n\n", "numero", 1, 4)
+            opcion = solicitar_dato("\nIngresa una de la opciones:\n\n1.Consultar programacion\n2.Consultar info de la peliculas\n3.Reservar boletas\n4.Salir\n\n", "numero", 1, 4)
             
                 
             match opcion:

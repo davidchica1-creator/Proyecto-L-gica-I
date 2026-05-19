@@ -7,9 +7,8 @@ Atributos: nombre, direccion, lista_salas, cantidad_salas
 
 import numpy as np
 from SalasCine import *
-from funciones_utiles import solicitar_dato, validar_formato, horas_minutos
+from funciones_utiles import solicitar_dato, validar_formato, horas_minutos, limpiar_pantalla
 from Funcion import *
-from SistemaCine import *
 
 
 
@@ -69,7 +68,7 @@ class Complejo:
     Salidas: None
     '''
     
-    def crear_funcion(self, sistema_cine:SistemaCine , sala_seleccionada: SalaCine) -> None:
+    def crear_funcion(self, sistema_cine, sala_seleccionada: SalaCine) -> None:
     
             '''
             En caso de querer modificar una funcion se verifica que la cantidad de funciones para esa sala no supere el limite de 5
@@ -82,7 +81,6 @@ class Complejo:
                 print("No hay películas registradas en el sistema.")
                 return
                 
-            
             encabezado = "|         Registro de nueva función          |"
             separador = "-" * len(encabezado)   
 
@@ -132,30 +130,31 @@ class Complejo:
                 else:
                     print(f"Error: El ID {id_buscado} no corresponde a ninguna película de la lista de disponibles.")
 
-            fecha = solicitar_dato("Ingrese la fecha de la función (DD/MM/AAAA): ", "fecha")
+            fecha = solicitar_dato("\nIngrese la fecha de la función (DD/MM/AAAA): ", "fecha")
 
-            hora_inicio = solicitar_dato("Ingrese la hora de inicio (HH:MM): ", "hora")
+            hora_inicio = solicitar_dato("\nIngrese la hora de inicio (HH:MM): ", "hora")
 
             '''
-            Se valida que la nueva funcion no se cruce con ninguna otra funcion que ya este en la sala en la misma fecha seleccionada
+            Se valida que la nueva funcion no se cruce con ninguna otra funcion. 
+            Se agregan 15 minutos de margen para limpieza de la sala.
             '''
             duracion_peli_nueva = peli_encontrada.get_duracion()
             minutos_inicio_peli_nueva = horas_minutos(hora_inicio)
-            minutos_fin_peli_nueva = minutos_inicio_peli_nueva + duracion_peli_nueva
+            minutos_fin_peli_nueva = minutos_inicio_peli_nueva + duracion_peli_nueva + 15
             
             cruce_de_horario = False
             for funcion_actual in sala_seleccionada.get_programacion():
                 if funcion_actual is not None and funcion_actual.get_fecha() == fecha:
                     
-                    pelicula_de_la_funcion = None
+                    peli_ya_programada = None
                     for peli in sistema_cine.peliculas:
                         if peli is not None and peli.get_id() == funcion_actual.get_identificador_pelicula():
-                            pelicula_de_la_funcion = peli
+                            peli_ya_programada = peli
                             break
                     
-                    if pelicula_de_la_funcion is not None:
+                    if peli_ya_programada is not None:
                         minutos_inicio_existente = horas_minutos(funcion_actual.get_hora_inicio())
-                        minutos_fin_existente = minutos_inicio_existente + pelicula_de_la_funcion.get_duracion()
+                        minutos_fin_existente = minutos_inicio_existente + peli_ya_programada.get_duracion() + 15
                         
                         if minutos_inicio_peli_nueva < minutos_fin_existente and minutos_inicio_existente < minutos_fin_peli_nueva:
                             cruce_de_horario = True
@@ -186,7 +185,7 @@ class Complejo:
 
     '''
 
-    def modificar_funcion(self, sistema_cine:SistemaCine, sala_seleccionada:SalaCine) -> None:
+    def modificar_funcion(self, sistema_cine, sala_seleccionada: SalaCine) -> None:
         if sala_seleccionada.get_cant_funciones() == 0:
             print("No hay funciones programadas en esta sala.")
             return
@@ -246,25 +245,23 @@ class Complejo:
         fecha = solicitar_dato("Ingrese la nueva fecha de la función (DD/MM/AAAA): ", "fecha")
         hora_inicio = solicitar_dato("Ingrese la nueva hora de inicio (HH:MM): ", "hora")
 
-        '''
-        Se valida que el nuevo horario de la funcion no se cruce con otras funciones de la misma sala y fecha
-        '''
+   
         duracion_peli_nueva = peli_encontrada.get_duracion()
         minutos_inicio_peli_nueva = horas_minutos(hora_inicio)
         minutos_fin_peli_nueva = minutos_inicio_peli_nueva + duracion_peli_nueva
+        minutos_fin_peli_nueva = minutos_inicio_peli_nueva + duracion_peli_nueva + 15
         
         cruce_de_horario = False
         for funcion_actual in sala_seleccionada.get_programacion():
             if funcion_actual is not None and funcion_actual.get_id_funcion() != funcion_seleccionada and funcion_actual.get_fecha() == fecha:
-                pelicula_de_la_funcion = None
+                peli_ya_programada = None
                 for peli in sistema_cine.peliculas:
                     if peli is not None and peli.get_id() == funcion_actual.get_identificador_pelicula():
-                        pelicula_de_la_funcion = peli
+                        peli_ya_programada = peli
                         break
                 
-                if pelicula_de_la_funcion is not None:
                     minutos_inicio_existente = horas_minutos(funcion_actual.get_hora_inicio())
-                    minutos_fin_existente = minutos_inicio_existente + pelicula_de_la_funcion.get_duracion()
+                    minutos_fin_existente = minutos_inicio_existente + peli_ya_programada.get_duracion() + 15
                     
                     if minutos_inicio_peli_nueva < minutos_fin_existente and minutos_inicio_existente < minutos_fin_peli_nueva:
                         cruce_de_horario = True
@@ -326,8 +323,18 @@ class Complejo:
     '''
     
     def renovar_programacion_de_sala(self, sala_seleccionada:SalaCine) -> None:
-        print("\n|         Renovar programación          |")
-        print(f"Usted va a renovar la programación de la sala con el ID {sala_seleccionada.get_identificador()}, esto eliminará las funciones ya existentes.\n")
+
+        if sala_seleccionada.get_cant_funciones() == 0:
+            print("No hay funciones programadas en esta sala.")
+            return
+
+        encabezado = "|         Renovar programación          |"
+        separador = "-" * len(encabezado)
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+        
+        print(f"\nUsted va a renovar la programación de la sala con el ID {sala_seleccionada.get_identificador()}, esto eliminará las funciones ya existentes.\n")
 
         renovar_programacion = solicitar_dato("¿Está seguro de querer renovar la programación? (si/no): ", "si_no")
         if renovar_programacion == "si":
@@ -343,7 +350,7 @@ class Complejo:
 
     '''
 
-    def gestionar_programacion(self, sistema_cine:SistemaCine) -> None:
+    def gestionar_programacion(self, sistema_cine) -> None:
 
         '''
         Primeramente verifica que hayan salas y peliculas para agendar funciones
@@ -353,6 +360,7 @@ class Complejo:
             print("No hay salas registradas para programar funciones o no hay películas registradas.")
             return
         
+        limpiar_pantalla()
         encabezado = "|         Registro de nueva funcion          |"
         separador = "-" * len(encabezado)
         print(f"\n{separador}")

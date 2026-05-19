@@ -1,5 +1,5 @@
 from Usuario import*
-from funciones_utiles import solicitar_dato
+from funciones_utiles import solicitar_dato, limpiar_pantalla
 from SalasCine import*
 from Pelicula import*
 from Complejo import Complejo  
@@ -152,6 +152,7 @@ class SistemaCine:
         usuario_ingresado:str
         contrasena:str
         while True:
+            limpiar_pantalla()
             encabezado = "|         Bienvenido a que hay para ver!          |"
             separador = "-" * len(encabezado)
             print(f"\n{separador}")
@@ -312,8 +313,7 @@ class SistemaCine:
         
         print(f"\nPelícula '{nombre_espanol}' agregada exitosamente.")
 
-obj:SistemaCine
-
-obj = SistemaCine()
-
-obj.login()
+if __name__ == "__main__":
+    obj:SistemaCine
+    obj = SistemaCine()
+    obj.login()

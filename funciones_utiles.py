@@ -9,8 +9,11 @@ valores mínimo y máximo en caso de se usen menus de opciones, para evitar repe
 '''
 
 from datetime import datetime
+import os
 
 def solicitar_dato(mensaje, tipo_esperado, min_val=None, max_val=None):
+
+
     while True:
         entrada = input(mensaje).strip()
         
@@ -102,4 +105,13 @@ Salidas: Numero entero con la cantidad de minutos desde la medianoche
 def horas_minutos(time_str: str) -> int:
     hours, minutes = map(int, time_str.split(':'))
     return hours * 60 + minutes
+
+'''
+Autor: David Chica López
+Fecha: 18/05/2026
+Función: limpiar_pantalla
+'''
+def limpiar_pantalla():
+    
+    os.system('cls' if os.name == 'nt' else 'clear')
     

@@ -121,5 +121,5 @@ class SalaCine:
             if self.__programacion[i] is not None:
                 id_funcion_eliminada = self.__programacion[i].get_id_funcion()
                 self.__programacion[i] = None
-                self.__contador_funciones -= 1
                 print(f"Función con el ID {id_funcion_eliminada} eliminada de la sala {self.__identificador_sala}")
+        self.__contador_funciones = 0

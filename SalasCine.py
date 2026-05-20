@@ -90,7 +90,7 @@ class SalaCine:
     Salidas: None
     '''
     
-    def mostrar_info(self) -> None:
+    def mostrar_info(self) -> str:
         return (f"{self.get_identificador():<15} | {self.__valor_boleta:<20} | {self.__cant_filas:<15} | {self.__sillas_por_fila:<15} |")
     
     '''

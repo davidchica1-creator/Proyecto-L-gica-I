@@ -98,10 +98,10 @@ class Funcion:
     Fecha: 17/05/2026
     Metodo mostar_info: Muestra la informacion de la funcion
     Entradas: Ninguna
-    Salidas: None
+    Salidas: str
     '''
 
-    def mostra_info(self) -> None:
+    def mostrar_info(self) -> str:
         return f"{self.__identificador_funcion} | {self.nombre_espanol} | {self.__fecha} | {self.__hora_inicio} |"
     
     '''
@@ -109,11 +109,11 @@ class Funcion:
     Fecha: 17/05/2026
     Metodo info_modificar_funcion: Muestra la informacion de la funcion para modificar
     Entradas: Ninguna
-    Salidas: None
+    Salidas: str
     '''
     
-    def info_modificar_funcion(self) -> None:
-        return f"| {self.identificador_sala:<10} | {self.__identificador_funcion:<10} | {self.__identificador_pelicula:<20} | {self.__fecha:<15} | {self.__hora_inicio:<15} |"
+    def info_modificar_funcion(self) -> str:
+        return f"{self.identificador_sala:<10} | {self.__identificador_funcion:<10} | {self.__identificador_pelicula:<20} | {self.__fecha:<15} | {self.__hora_inicio:<15} |"
 
     def verificar_disponibilidad(self, asiento_inicial, cant_boletas):
         

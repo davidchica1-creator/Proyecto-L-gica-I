@@ -30,6 +30,7 @@ class SistemaCine:
 
         self.complejo:Complejo = Complejo()
         self.contador_salas:int = 0
+        
 
     '''
     Autor: Juan David Ortiz Diaz
@@ -325,22 +326,36 @@ class SistemaCine:
             print("Sala no encontrada.")
             return False
         
-        if mapa is None:
+        funcion = None
+        for i in sala.get_programacion():
+            if i is not None:
+                print(f"ID funcion: {i.get_identificador_funcion()}")
+                if i.get_identificador_funcion() == identificador_funcion:
+                    funcion = i
+                    break
+               
+            
+            
+        
+        if funcion is None:
             print("Función no encontrada.")
             return False
+        mapa = funcion.get_mapa_sala()
         
         print("\n-------------------------------------------------")
         print("        Vas a realizar una reserva de boletas          ")
         print("-------------------------------------------------\n")
         
-        funcion = sala.get_programacion()[identificador_funcion - 1]
-        mapa = funcion.get_mapa_sala()
+        if columna_inicial + cant_boletas > mapa.shape[1]:
+            print("Las columnas seleccionadas se salen del rango de la sala.")
+            return False
         
         for i in range(cant_boletas):
             asiento_disponible = mapa[fila, columna_inicial + i] 
             if asiento_disponible != 0:
                 print("Los asientos seleccionados no están libres, seleccione de nuevo.")
                 return False
+
             
         for i in range(cant_boletas):
             mapa[fila, columna_inicial + i] = 1
@@ -356,12 +371,9 @@ class SistemaCine:
                     return self.usuarios[i]
         return None
 
-obj:SistemaCine
-
-obj = SistemaCine()
-
-obj.login()
-
+    def emitir_boleta(self, usuario, sala, identificador_funcion) -> None:
+        pass
+        
 if __name__ == "__main__":
     obj:SistemaCine
     obj = SistemaCine()

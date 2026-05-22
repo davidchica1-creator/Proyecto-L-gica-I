@@ -9,7 +9,7 @@ import numpy as np
 from SalasCine import *
 from funciones_utiles import solicitar_dato, validar_formato, horas_minutos, limpiar_pantalla
 from Funcion import *
-
+from Reserva import * 
 
 
 
@@ -29,7 +29,14 @@ class Complejo:
         self.__direccion:str = ""
         self.__lista_salas = np.full((12), fill_value = None, dtype = object)
         self.__cantidad_salas = 0
-
+        self.reservas = np.full((100), fill_value=None, dtype=object)
+        self.contador_reservas = 0
+        
+    '''
+    '''
+    def agregar_reserva(self, reserva: Reserva) -> None:
+        self.__reservas[self.__contador_reservas] = reserva
+        self.__contador_reservas += 1
 
     '''
     Autor: David Chica López

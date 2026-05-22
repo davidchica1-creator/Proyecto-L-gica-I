@@ -212,7 +212,7 @@ class Complejo:
         
         for i in range(len(sala_seleccionada.get_programacion())):
             if sala_seleccionada.get_programacion()[i] is not None:
-                print(f"| {i+1:<3} | {sala_seleccionada.get_programacion()[i].info_modificar_funcion()}")
+                print(f"| {i+1:<3} {sala_seleccionada.get_programacion()[i].info_modificar_funcion()}")
         print(sep_tabla)
 
         funcion_a_modificar = None

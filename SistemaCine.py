@@ -31,6 +31,7 @@ class SistemaCine:
 
         self.complejo:Complejo = Complejo()
         self.contador_salas:int = 0
+        
 
     '''
     Autor: Juan David Ortiz Diaz
@@ -655,10 +656,30 @@ class SistemaCine:
             print("Sala no encontrada.")
             return False
         
+<<<<<<< HEAD
+=======
+        funcion = None
+        for i in sala.get_programacion():
+            if i is not None:
+                print(f"ID funcion: {i.get_identificador_funcion()}")
+                if i.get_identificador_funcion() == identificador_funcion:
+                    funcion = i
+                    break
+               
+            
+            
+        
+        if funcion is None:
+            print("Función no encontrada.")
+            return False
+        mapa = funcion.get_mapa_sala()
+        
+>>>>>>> 09611155dfe6d0da1dd163da9b59c7a78e3782ab
         print("\n-------------------------------------------------")
         print("        Vas a realizar una reserva de boletas          ")
         print("-------------------------------------------------\n")
         
+<<<<<<< HEAD
         funcion = sala.get_programacion()[identificador_funcion - 1]
 
         if funcion is None:
@@ -666,12 +687,18 @@ class SistemaCine:
             return False
 
         mapa = funcion.get_mapa_sala()
+=======
+        if columna_inicial + cant_boletas > mapa.shape[1]:
+            print("Las columnas seleccionadas se salen del rango de la sala.")
+            return False
+>>>>>>> 09611155dfe6d0da1dd163da9b59c7a78e3782ab
         
         for i in range(cant_boletas):
             asiento_disponible = mapa[fila, columna_inicial + i] 
             if asiento_disponible != 0:
                 print("Los asientos seleccionados no están libres, seleccione de nuevo.")
                 return False
+
             
         for i in range(cant_boletas):
             mapa[fila, columna_inicial + i] = 1
@@ -687,11 +714,17 @@ class SistemaCine:
                     return self.usuarios[i]
         return None
 
+<<<<<<< HEAD
 
 obj:SistemaCine
 obj = SistemaCine()
 obj.login()
 
+=======
+    def emitir_boleta(self, usuario, sala, identificador_funcion) -> None:
+        pass
+        
+>>>>>>> 09611155dfe6d0da1dd163da9b59c7a78e3782ab
 if __name__ == "__main__":
     obj:SistemaCine
     obj = SistemaCine()

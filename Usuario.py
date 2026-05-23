@@ -151,14 +151,36 @@ class Usuario:
                         case 2:
                             documento = solicitar_dato("Ingrese su número de documento: ", "numero")
                             usuario = sistema.get_usuario_por_documento(documento)
-                            identificador_sala = solicitar_dato("Ingrese el ID de la sala: ", "numero")
+                            
+                            salas = sistema.complejo.get_lista_salas()
+                            encabezado = f"| {'#':<3} | {'Sala ID':<15} | {'Valor boleta':<20} | {'Filas':<15} | {'Sillas/Fila':<15} |"
+                            separador = "-" * len(encabezado)
+                            print(f"\n{separador}")
+                            print(encabezado)
+                            print(separador)
+                            for i in range(len(salas)):
+                                if salas[i] is not None:
+                                    print(f"| {i+1:<3} | {salas[i].mostrar_info()}")       
+                            print(separador)
+                            
+                            identificador_sala = solicitar_dato("Seleccione el ID de la sala: ", "numero")
                             sala = sistema.complejo.get_sala(identificador_sala)
+                            programacion = sala.get_programacion()
+                            encabezado = f"| {'#':<3} | {'ID función':<10} | {'Fecha':<15} | {'Hora inicio':<15} |"
+                            separador = "-" * len(encabezado)
+                            print(f"\n{separador}")
+                            print(encabezado)
+                            print(separador)
+                            for i in range(len(programacion)):
+                                if programacion[i] is not None:
+                                    print(f"| {i+1:<3} | {programacion[i].info_modificar_funcion()}")
+                            print(separador)
                             identificador_funcion = solicitar_dato("Ingrese el ID de la función: ", "numero")
                             cant_boletas = solicitar_dato("Ingrese la cantidad de boletas: ", "numero")
-                            fila = solicitar_dato("Ingrese la fila deseada (letra): ", "texto").upper()
-                            columna_inicial = solicitar_dato("Ingrese la columna inicial (número): ", "numero")
+                            fila = solicitar_dato("Ingrese la fila: ", "numero")
+                            columna_inicial = solicitar_dato("Ingrese la columna inicial: ", "numero")
                             sistema.reservar_boleta(usuario, sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial)
-                        
+                                                    
 
     '''
 <<<<<<< HEAD

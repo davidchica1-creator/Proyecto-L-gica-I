@@ -72,7 +72,7 @@ class Usuario:
                 case 1:
                     sistema.crear_cliente()
                 case 2:
-                    print("Consultar programacion (no implementado)")
+                    sistema.menu_programacion()
                 case 3:
                     sistema.mostrar_lista_peliculas()
                 case 4:

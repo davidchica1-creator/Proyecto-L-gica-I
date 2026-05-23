@@ -87,3 +87,15 @@ class Pelicula:
     def get_duracion(self) -> int:
         return self.__duracion
     
+
+    '''
+    Autor: Juan David Ortiz
+    Fecha: 19/05/2026
+    Metodo get_nombre_espanol: Retorna el nombre en español de la película.
+    Entradas: None
+    Salidas: str
+    '''
+
+    def get_nombre_espanol(self) -> str:
+        return self.__nombre_espanol
+    

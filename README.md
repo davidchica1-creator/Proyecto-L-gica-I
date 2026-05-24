@@ -1,3 +1,0 @@
-# davidchica
-
-Test

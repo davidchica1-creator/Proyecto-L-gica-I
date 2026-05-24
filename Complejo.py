@@ -10,6 +10,9 @@ from SalasCine import *
 from funciones_utiles import solicitar_dato, validar_formato, horas_minutos, limpiar_pantalla
 from Funcion import *
 from Reserva import * 
+import datetime
+from datetime import datetime, timedelta
+
 
 
 
@@ -51,7 +54,7 @@ class Complejo:
             if self.__lista_salas[i] is None:
                 self.__lista_salas[i] = sala
                 self.__cantidad_salas += 1
-                print(f"\nSala {sala.get_identificador()} agregada al complejo.")
+                print(f"\nSala S{sala.get_identificador()} agregada al complejo.")
                 return True
         print("No se pueden agregar más salas al complejo. Capacidad máxima alcanzada.")
         return False
@@ -66,7 +69,17 @@ class Complejo:
     
     def get_lista_salas(self):
         return self.__lista_salas
-    
+
+    '''
+    Autor: David Chica López
+    Fecha: 23/05/2026
+    Metodo get_cantidad_salas: Retorna la cantidad de salas registradas.
+    Entradas: None
+    Salidas: int
+    '''
+    def get_cantidad_salas(self) -> int:
+        return self.__cantidad_salas
+
     '''
     Autor: David Chica López
     Fecha: 17/05/2026
@@ -88,6 +101,17 @@ class Complejo:
                 print("No hay películas registradas en el sistema.")
                 return
                 
+            # Mostrar programación actual de la sala antes de empezar
+            funciones_existentes = []
+            for f in sala_seleccionada.get_programacion():
+                if f is not None:
+                    funciones_existentes.append((f, sala_seleccionada.get_identificador()))
+            
+            sistema_cine.construir_tabla_programacion(
+                funciones_existentes, 
+                f"PROGRAMACIÓN ACTUAL - SALA {sala_seleccionada.get_identificador()}"
+            )
+
             encabezado = "|         Registro de nueva función          |"
             separador = "-" * len(encabezado)   
 
@@ -95,18 +119,9 @@ class Complejo:
             print(encabezado)
             print(separador)
             
-            while True:
-                identificador_funcion = solicitar_dato("Ingrese el identificador de la función: ", "numero")
-                
-                existe = False
-                for funcion in sala_seleccionada.get_programacion():
-                    if funcion is not None and funcion.get_id_funcion() == identificador_funcion:
-                        print(f"Error: Ya existe una función con el ID {identificador_funcion} en esta sala.")
-                        existe = True
-                        break
-                
-                if not existe:
-                    break
+            # Generar ID automático: s{sala}-{conteo+1}
+            identificador_funcion = f"s{sala_seleccionada.get_identificador()}-{sala_seleccionada.get_cant_funciones() + 1}"
+            print(f"ID de función generado: {identificador_funcion}")
             
             '''
             Se muestran las peliculas disponibles para agendar funciones y se le pide el ID de la pelicula a agendar
@@ -137,7 +152,28 @@ class Complejo:
                 else:
                     print(f"Error: El ID {id_buscado} no corresponde a ninguna película de la lista de disponibles.")
 
-            fecha = solicitar_dato("\nIngrese la fecha de la función (DD/MM/AAAA): ", "fecha")
+            # Lógica de fecha: solo pedir el día de la semana actual
+            hoy = datetime.now()
+            lunes = hoy - timedelta(days=hoy.weekday())
+            lunes = lunes.replace(hour=0, minute=0, second=0, microsecond=0)
+            domingo = lunes + timedelta(days=6, hours=23, minutes=59)
+
+            print(f"\nSolo puede programar funciones para la semana actual.")
+            print(f"Rango válido: del {lunes.strftime('%d/%m/%Y')} al {domingo.strftime('%d/%m/%Y')}")
+            
+            while True:
+                dia_input = solicitar_dato(f"Ingrese el día del mes para la función: ", "numero")
+                try:
+                    # Intentamos crear la fecha con el mes/año actual
+                    fecha_dt = datetime(hoy.year, hoy.month, dia_input)
+                    if lunes <= fecha_dt <= domingo:
+                        fecha = fecha_dt.strftime("%d/%m/%Y")
+                        break
+                    else:
+                        print(f"Error: El día {dia_input} está fuera de la semana actual.")
+                except ValueError:
+                    print("Error: El día ingresado no es válido para el mes actual.")
+
 
             hora_inicio = solicitar_dato("\nIngrese la hora de inicio (HH:MM): ", "hora")
 
@@ -203,7 +239,7 @@ class Complejo:
         print(encabezado)
         print(separador)   
 
-        header_tabla = f"| {'#':<3} | {'ID sala':<10} | {'ID función':<10} | {'Nombre pelicula':<20} | {'Fecha':<15} | {'Hora inicio':<15} |"
+        header_tabla = f"| {'#':<3} | S{'ID sala':<10} | {'ID función':<10} | {'Nombre pelicula':<20} | {'Fecha':<15} | {'Hora inicio':<15} |"
         sep_tabla = "-" * len(header_tabla)
         
         print(f"\n{sep_tabla}")
@@ -297,7 +333,7 @@ class Complejo:
             return
 
         print("\n|         Eliminar función          |")
-        header = f"| {'#':<3} | {'ID sala':<10} | {'ID función':<10} | {'Nombre pelicula':<20} | {'Fecha':<15} | {'Hora inicio':<15} |"
+        header = f"| {'#':<3} | S{'ID sala':<10} | {'ID función':<10} | {'Nombre pelicula':<20} | {'Fecha':<15} | {'Hora inicio':<15} |"
         separador = "-" * len(header)
         print(f"{separador}\n{header}\n{separador}")
         
@@ -355,75 +391,4 @@ class Complejo:
                 if self.__lista_salas[i].get_identificador() == identificador_sala:
                     return self.__lista_salas[i]
         return None
-
-
-
-    '''
-    Autor: David Chica López
-    Fecha: 16/05/2026
-    Metodo gestionar_progrmacion: Recibe de parametro un objeto del SistemaCine, no retorna nada.
-
-    '''
-
-    def gestionar_programacion(self, sistema_cine) -> None:
-
-        '''
-        Primeramente verifica que hayan salas y peliculas para agendar funciones
-        '''
-        
-        if self.__cantidad_salas == 0 or sistema_cine.contador_peliculas == 0:
-            print("No hay salas registradas para programar funciones o no hay películas registradas.")
-            return
-        
-        limpiar_pantalla()
-        encabezado = "|         Registro de nueva funcion          |"
-        separador = "-" * len(encabezado)
-        print(f"\n{separador}")
-        print(encabezado)
-        print(separador)
-
-        '''
-        Muestra una lista de las salas disponibles para agendar funciones
-        '''
-
-        print("\nSalas disponibles")
-        encabezado = f"| {'#':<3} | {'Sala ID':<15} | {'Valor boleta':<20} | {'Filas':<15} | {'Sillas/Fila':<15} |"
-        separador = "-" * len(encabezado)
-        
-        print(f"\n{separador}")
-        print(encabezado)
-        print(separador)
-        
-        for i in range(len(self.__lista_salas)):
-            if self.__lista_salas[i] is not None:
-                print(f"| {i+1:<3} | {self.__lista_salas[i].mostrar_info()}")
-        print(separador)
-
-        '''
-        Se pide al administrador la sala que quiere gestionar sus funciones
-        '''
-
-        idx_sala = solicitar_dato("\nSeleccione una sala para gestionar su programación: ", "numero", 1, self.__cantidad_salas) - 1
-        sala_seleccionada = self.__lista_salas[idx_sala]
-
-        print(f"\nID de la sala seleccionada: {sala_seleccionada.get_identificador()}")
-
-        '''
-        Se muestran las distintas opciones para administrar las funciones de la sala seleccionada
-        '''
-              
-        print("\n\n\t1) Crear función\n\t2) Modificar función\n\t3) Eliminar función\n\t4) Renovar programación\n\t5) Salir\n")
-        opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 5)
-
-        match opcion:
-            case 1:
-                self.crear_funcion(sistema_cine, sala_seleccionada)
-            case 2:
-                self.modificar_funcion(sistema_cine, sala_seleccionada)
-            case 3:
-                self.eliminar_funcion_de_sala(sala_seleccionada)
-            case 4:
-                self.renovar_programacion_de_sala(sala_seleccionada)
-            case 5:
-                return
-
+    

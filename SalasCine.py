@@ -93,7 +93,7 @@ class SalaCine:
     '''
     
     def mostrar_info(self) -> str:
-        return (f"{self.get_identificador():<15} | {self.__valor_boleta:<20} | {self.__cant_filas:<15} | {self.__sillas_por_fila:<15} |")
+        return (f"S{self.get_identificador():<15} | {self.__valor_boleta:<20} | {self.__cant_filas:<15} | {self.__sillas_por_fila:<15} |")
     
     '''
     Autor: David Chica López
@@ -103,7 +103,7 @@ class SalaCine:
     Salidas: None
     '''
 
-    def eliminar_funcion(self, identificador_funcion:int) -> None:
+    def eliminar_funcion(self, identificador_funcion:str) -> None:
         for i in range(len(self.__programacion)):
             if self.__programacion[i] is not None and self.__programacion[i].get_id_funcion() == identificador_funcion:
                 self.__programacion[i] = None

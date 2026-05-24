@@ -76,7 +76,7 @@ class Usuario:
                 case 3:
                     sistema.mostrar_lista_peliculas()
                 case 4:
-                    sistema.complejo.gestionar_programacion(sistema)
+                    sistema.gestionar_programacion()
                 case 5:
                     encabezado = "|         Gestionar peliculas          |"
                     separador = "-" * len(encabezado)
@@ -131,23 +131,26 @@ class Usuario:
             match opcion:
                 case 1:
                     sistema.crear_cliente()
+                
+                case 2:
+                    sistema.menu_programacion()
 
                 case 3:
                     sistema.mostrar_lista_peliculas_activas()
 
                 case 4:
+
+                    encabezado = "|         Reserva de boletas          |"
+                    separador = "-" * len(encabezado)
+                    print(f"\n{separador}")
+                    print(encabezado)
+                    print(separador)
+
                     sub_opcion = solicitar_dato("\n1. Visualizar mapa\n2. Reservar boleta\nSeleccione: ", "numero", 1, 2)
                     match sub_opcion:
                         case 1:
-                            id_funcion = solicitar_dato("Ingresa el ID de la función: ", "numero")
-                            id_pelicula = solicitar_dato("Ingresa el ID de la película: ", "texto")
-                            fecha = input("Ingresa la fecha (DD/MM/AA): ")
-                            hora_inicio = input("Ingresa la hora (HH:MM): ")
-                            num_filas = solicitar_dato("Filas (máximo 26): ", "numero", 1, 26)
-                            num_columnas = solicitar_dato("Columnas: ", "numero")
-                            mapa:Funcion
-                            mapa=Funcion(id_funcion, id_pelicula, 0, fecha, hora_inicio, num_filas, num_columnas)
-                            mapa.mostrar_mapa()
+                            sistema.mostrar_mapa_funcion()
+
                         case 2:
                             documento = solicitar_dato("Ingrese su número de documento: ", "numero")
                             usuario = sistema.get_usuario_por_documento(documento)
@@ -183,7 +186,6 @@ class Usuario:
                                                     
 
     '''
-<<<<<<< HEAD
     Autor: Salome Garcia    
     Fecha: 04/05/2026
     Método menu_cliente: Muestra el menú del cliente y permite consultar información, visualizar mapas de funciones y realizar reservas.
@@ -211,7 +213,7 @@ class Usuario:
                 
             match opcion:
                 case 1:
-                    print("Consultar programacion (no implementado)")    
+                    sistema.menu_programacion()
                 case 2:
                     sistema.mostrar_lista_peliculas_activas()
  
@@ -219,16 +221,8 @@ class Usuario:
                     sub_opcion = solicitar_dato("Ingresa una de las opciones:\n1.Visualizar mapa\n2.Reservar boleta\n", "numero", 1, 2)
                     match sub_opcion:
                         case 1:
-                            id_funcion = solicitar_dato("Ingresa el identificador de la funcion: ", "numero")
-                            id_pelicula = solicitar_dato("Ingresa el identificador de la pelicula: ", "texto")
-                            fecha = solicitar_dato("Ingresa la fecha (DD/MM/AAAA): ", "fecha")
-                            hora_inicio = solicitar_dato("Ingresa la hora de inicio (HH:MM): ", "hora")
-                            num_filas = solicitar_dato("Ingresa el numero de filas (máximo 26): ", "numero", 1, 26)
-                            num_columnas = solicitar_dato("Ingresa el numero de columnas: ", "numero", 1)
-                            mapa:Funcion
-                            mapa=Funcion(id_funcion, id_pelicula, 0, fecha, hora_inicio, num_filas, num_columnas)
-                            mapa.mostrar_mapa()
+                            sistema.mostrar_mapa_funcion()
                         case 2:
-                           sistema.reservar_boleta()
-                case 4: 
-                    break 
+                            sistema.reservar_boleta(self, sistema.complejo, sistema.peliculas)
+                case 4:
+                    break

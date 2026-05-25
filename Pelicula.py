@@ -87,3 +87,5 @@ class Pelicula:
     def get_duracion(self) -> int:
         return self.__duracion
     
+    def get_calificacion(self):
+        return self.__calificacion

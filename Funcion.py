@@ -135,3 +135,5 @@ class Funcion:
 
             return False
 
+    def get_asientos_reservados(self) -> int:
+        return self.__asientos_reservados

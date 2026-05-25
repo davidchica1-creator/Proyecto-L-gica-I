@@ -100,6 +100,8 @@ class Usuario:
                                 numeral_pelicula = solicitar_dato("Ingrese el número de la película a modificar: ", "numero", 1, sistema.contador_peliculas)
                                 pelicula_seleccionada = sistema.peliculas[numeral_pelicula - 1]
                                 pelicula_seleccionada.cambiar_estado()
+                case 7: 
+                    sistema.complejo.consultar_recaudo()
                 case 8:
                     sistema.menu_crear_sala()
 
@@ -179,8 +181,8 @@ class Usuario:
                             cant_boletas = solicitar_dato("Ingrese la cantidad de boletas: ", "numero")
                             fila = solicitar_dato("Ingrese la fila: ", "numero")
                             columna_inicial = solicitar_dato("Ingrese la columna inicial: ", "numero")
-                            sistema.reservar_boleta(usuario, sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial)
-                                                    
+                            if sistema.reservar_boleta(usuario, sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial):
+                                sistema.emitir_boleta(usuario, sala, identificador_funcion)             
 
     '''
 <<<<<<< HEAD

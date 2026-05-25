@@ -25,12 +25,12 @@ class Complejo:
 
     def __init__ (self):
 
-        self.__nombre:str = ""
+        self.__nombre:str = "Complejo de Cine"
         self.__direccion:str = ""
         self.__lista_salas = np.full((12), fill_value = None, dtype = object)
         self.__cantidad_salas = 0
-        self.reservas = np.full((100), fill_value=None, dtype=object)
-        self.contador_reservas = 0
+        self.__reservas = np.full((100), fill_value=None, dtype=object)
+        self.__contador_reservas = 0
         
     '''
     '''
@@ -212,7 +212,7 @@ class Complejo:
         
         for i in range(len(sala_seleccionada.get_programacion())):
             if sala_seleccionada.get_programacion()[i] is not None:
-                print(f"| {i+1:<3} {sala_seleccionada.get_programacion()[i].info_modificar_funcion()}")
+                print(f"| {i+1:<3} | {sala_seleccionada.get_programacion()[i].info_modificar_funcion()}")
         print(sep_tabla)
 
         funcion_a_modificar = None
@@ -355,6 +355,12 @@ class Complejo:
                 if self.__lista_salas[i].get_identificador() == identificador_sala:
                     return self.__lista_salas[i]
         return None
+    
+    def get_nombre(self):
+        return self.__nombre
+    
+    def get_reservas(self):
+        return self.__reservas
 
 
 
@@ -427,3 +433,71 @@ class Complejo:
             case 5:
                 return
 
+    '''
+    Autor: Salome Garcia Velasquez
+    Fecha: 25/05/2026
+    Metodo consultar_recaudo: Permite al administrador consultar el recaudo total ya sea de una sala especifica o del complejo completo.
+    Entradas: None
+    Salidas: None
+    '''
+
+    def consultar_recaudo(self) -> None:
+
+        if self.__cantidad_salas == 0:
+            print("No hay salas registradas en el complejo.")
+            return
+
+        encabezado = "|         Consultar recaudo total          |"
+        separador = "-" * len(encabezado)
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+
+        print("\n\t1) Recaudo de una sala especifica\n\t2) Recaudo del complejo completo\n")
+        tipo_consulta = solicitar_dato("Seleccione una opcion: ", "numero", 1, 2)
+
+        if tipo_consulta == 1:
+
+            identificador_sala = solicitar_dato("Ingrese el identificador de la sala: ", "numero")
+            sala = self.get_sala(identificador_sala)
+
+            if sala is None:
+                print("La sala ingresada no existe.")
+                return
+
+            valor_boleta = sala.get_valor_boleta()
+            recaudo_total = 0
+
+            print(f"\n--- Recaudo sala {identificador_sala} ---")
+
+            for i in range(len(sala.get_programacion())):
+                funcion = sala.get_programacion()[i]
+                if funcion is not None:
+                    recaudo_funcion = funcion.get_asientos_reservados() * valor_boleta
+                    recaudo_total += recaudo_funcion
+                    print(f"  Funcion {funcion.get_id_funcion()} | Fecha: {funcion.get_fecha()} | Recaudo: ${recaudo_funcion:,.0f}")
+
+            print(f"\n  Recaudo total sala {identificador_sala}: ${recaudo_total:,.0f}")
+
+        elif tipo_consulta == 2:
+
+            recaudo_complejo = 0
+
+            print("\n--- Recaudo del complejo completo ---")
+
+            for i in range(len(self.__lista_salas)):
+                sala = self.__lista_salas[i]
+                if sala is not None:
+                    valor_boleta = sala.get_valor_boleta()
+                    recaudo_sala = 0
+
+                    for j in range(len(sala.get_programacion())):
+                        funcion = sala.get_programacion()[j]
+                        if funcion is not None:
+                            recaudo_funcion = funcion.get_asientos_reservados() * valor_boleta
+                            recaudo_sala += recaudo_funcion
+
+                    recaudo_complejo += recaudo_sala
+                    print(f"  Sala {sala.get_identificador()}: ${recaudo_sala:,.0f}")
+
+            print(f"\n  Recaudo total del complejo: ${recaudo_complejo:,.0f}")

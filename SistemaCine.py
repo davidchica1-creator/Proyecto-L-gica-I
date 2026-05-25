@@ -315,7 +315,14 @@ class SistemaCine:
         
         print(f"\nPelícula '{nombre_espanol}' agregada exitosamente.")
 
-
+    '''
+    Autor: Salomé García Velásquez
+    Fecha: 18/05/2026
+    Metodo reservar_boleta: Permite realizar la reserva de boletas para una funcion en una sala,
+    verificando que el usuario, la sala y la funcion existan, y que los asientos seleccionados esten disponibles.
+    Entradas: usuario, sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial, precio_total
+    Salidas: bool
+    '''
     def reservar_boleta(self, usuario,sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial, precio_total = 0) -> bool:
         
         if usuario is None:
@@ -329,12 +336,9 @@ class SistemaCine:
         funcion = None
         for i in sala.get_programacion():
             if i is not None:
-                print(f"ID funcion: {i.get_identificador_funcion()}")
                 if i.get_identificador_funcion() == identificador_funcion:
                     funcion = i
                     break
-               
-            
             
         
         if funcion is None:
@@ -345,6 +349,11 @@ class SistemaCine:
         print("\n-------------------------------------------------")
         print("        Vas a realizar una reserva de boletas          ")
         print("-------------------------------------------------\n")
+        
+        if fila >= mapa.shape[0]:
+            print("La fila seleccionada se sale del rango de la sala.")
+            return False       
+            
         
         if columna_inicial + cant_boletas > mapa.shape[1]:
             print("Las columnas seleccionadas se salen del rango de la sala.")
@@ -358,11 +367,21 @@ class SistemaCine:
 
             
         for i in range(cant_boletas):
-            mapa[fila, columna_inicial + i] = 1
+            mapa[fila, columna_inicial + i] = 1       
+            
             
         funcion.agregar_asientos_reservados(cant_boletas)
         print("Su reserva ha sido guardada con éxito.")
         return True
+    
+    '''
+    Autor: Salomé García Velásquez
+    Fecha: 18/05/2026
+    Metodo get_usuario_por_documento: Busca y retorna un usuario segun su numero de documento.
+    En caso de no encontrarlo retorna None.
+    Entradas: documento
+    Salidas: usuario
+    '''
     
     def get_usuario_por_documento(self, documento):
         for i in range(self.contador_clientes):
@@ -371,9 +390,60 @@ class SistemaCine:
                     return self.usuarios[i]
         return None
 
+    '''
+    Autor: Salomé Garcia Velasquez
+    Fecha: 21/05/2026
+    Metodo emitir_boleta: Permite emitir la boleta de una reserva realizada por un usuario,
+    mostrando en pantalla la informacion de la funcion, pelicula y el total a pagar.
+    Entradas: usuario, sala, identificador_funcion
+    Salidas: None
+    '''
+
     def emitir_boleta(self, usuario, sala, identificador_funcion) -> None:
-        pass
+        funcion = None
+        for i in sala.get_programacion():
+            if i is not None and i.get_id_funcion() == identificador_funcion:
+                funcion = i
+                break
+            
+        if funcion is None:
+                print("Función no encontrada.")
+                
+            
+        pelicula = None
+        for i in range(self.contador_peliculas):
+                if self.peliculas[i] is not None and self.peliculas[i].get_id() == funcion.get_identificador_pelicula():
+                    pelicula = self.peliculas[i]
+                    break
         
+        if pelicula is None:
+            print("Película no encontrada.")
+            return
+        cant_boletas = 0
+        for j in self.complejo.get_reservas():
+            if j is not None and j.get_identificador_funcion() == identificador_funcion:
+                cant_boletas = j.get_cant_boletas()
+                break
+        
+        valor_sala = sala.get_valor_boleta()
+        precio_total = cant_boletas * valor_sala
+
+        separador = "=" * 50
+        print(separador)
+        print("           🎬  BOLETA DE CINE  🎬")
+        print(separador)
+        print(f"  Cliente        : {usuario.get_nombre()}")
+        print(f"  Fecha de venta : {funcion.get_fecha()}")
+        print(f"  Complejo       : {self.complejo.get_nombre()}")
+        print(f"  Sala N°        : {sala.get_identificador()}")
+        print(f"  Película       : {pelicula.get_informacion()}")
+        print(f"  Hora de función: {funcion.get_hora_inicio()}")
+        print(f"  Calificación   : {pelicula.get_calificacion()}")
+        print(f"  N° de boletas  : {cant_boletas}")
+        print(f"  TOTAL A PAGAR  : ${precio_total:,.0f}")
+        print(separador)
+        print("¡Gracias por su compra! Disfrute la película.")    
+                
 if __name__ == "__main__":
     obj:SistemaCine
     obj = SistemaCine()

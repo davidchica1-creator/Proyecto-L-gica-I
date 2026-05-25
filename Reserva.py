@@ -30,6 +30,9 @@ class Reserva:
     def get_asientos(self) -> np.ndarray:
         return self.__asientos
     
+    def get_identificador_funcion(self):
+        return self.__identificador_funcion
+    
     
     def generar_boleta(self) -> None:
         print("Boleta de Reserva")

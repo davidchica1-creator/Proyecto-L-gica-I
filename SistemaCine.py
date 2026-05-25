@@ -1,4 +1,5 @@
 import Reserva
+from datetime import datetime, timedelta
 from Usuario import*
 from funciones_utiles import solicitar_dato, limpiar_pantalla
 from SalasCine import*
@@ -108,7 +109,7 @@ class SistemaCine:
     '''
     Autor: David Chica López  
     Fecha: 14/05/2026  
-    Metodo mostrar_lista_peliculas_activas: Muestra una tabla ordenada con la información de unicamente las pleiculas activas en el sistema mostrando su informacion de ID,
+    Metodo mostrar_lista_peliculas_activas: Muestra una tabla ordenada con la información de unicamente las peliculas activas en el sistema mostrando su informacion de ID,
     nombre en español, año de estreno, duración( en minutos ), genero, pais de origen, calificacion y estado ( que unicamente sera activo ).  
     Entradas: Ninguno  
     Salidas: None  
@@ -138,7 +139,341 @@ class SistemaCine:
         if entradad == "":
             pass
 
+    # ══════════════════════════════════════════════════════════════════
+    # HELPER ─ Construye y muestra la tabla de programación semanal
+    # Recibe una lista de tuplas (funcion, sala_id, etiqueta_extra)
+    # etiqueta_extra permite forzar texto adicional en la celda, 
+    # por ejemplo la sala cuando se filtra por película.
+    # ══════════════════════════════════════════════════════════════════
 
+    '''
+    Autor: Juan David Ortiz / David Chica López
+    Fecha: 23/05/2026
+    Metodo _construir_tabla_programacion: Helper interno que genera y
+    muestra la tabla semanal de franjas horarias dado un iterable de
+    funciones. Permite filtrar por sala o película reutilizando lógica.
+    Entradas: funciones_con_sala -> lista de tuplas (Funcion, sala_id)
+              titulo             -> encabezado que se imprime sobre la tabla
+    Salidas:  None
+    '''
+
+    def _construir_tabla_programacion(self, funciones_con_sala: list, titulo: str) -> None:
+
+        # 1. Recolectar fechas únicas de las funciones recibidas
+        fechas = np.array([], dtype=object)
+        for funcion, sala_id in funciones_con_sala:
+            fecha = funcion.get_fecha()
+            if fecha not in fechas:
+                fechas = np.append(fechas, fecha)
+
+        if len(fechas) == 0:
+            print("\nNo hay funciones programadas")
+            input("\nEnter para continuar...")
+            return
+
+        # 2. Fecha más cercana y construcción de la semana
+        fecha_menor = datetime.strptime(fechas[0], "%d/%m/%Y")
+        for f in fechas:
+            fecha_actual = datetime.strptime(f, "%d/%m/%Y")
+            if fecha_actual < fecha_menor:
+                fecha_menor = fecha_actual
+
+        inicio_semana = fecha_menor - timedelta(days=fecha_menor.weekday())
+        fechas_str = np.empty(7, dtype=object)
+        for i in range(7):
+            dia = inicio_semana + timedelta(days=i)
+            fechas_str[i] = dia.strftime("%d/%m/%Y")
+
+        dias_es = np.array(
+            ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
+            dtype=object
+        )
+
+        # 3. Crear franjas de 2 horas entre 08:00 y 00:00
+        franjas = np.empty((8, 3), dtype=object)
+        fila_idx = 0
+        for h in range(8, 24, 2):
+            franjas[fila_idx][0] = h * 60
+            franjas[fila_idx][1] = (h + 2) * 60
+            franjas[fila_idx][2] = f"{h:02d}:00-{(h+2)%24:02d}:00"
+            fila_idx += 1
+
+        # 4. Rellenar tabla: cada celda puede acumular varias funciones
+        tabla = np.full((8, 7), "", dtype=object)
+
+        for funcion, sala_id in funciones_con_sala:
+            fecha_func = funcion.get_fecha()
+            hora_func  = funcion.get_hora_inicio()
+
+            if fecha_func not in fechas_str:
+                continue
+
+            dia_idx = 0
+            for i in range(7):
+                if fechas_str[i] == fecha_func:
+                    dia_idx = i
+
+            partes = hora_func.split(":")
+            minutos_total = int(partes[0]) * 60 + int(partes[1])
+
+            nombre_peli = "SIN NOMBRE"
+            for p in self.peliculas:
+                if p is not None and p.get_id() == funcion.get_identificador_pelicula():
+                    nombre_peli = p.get_nombre_espanol()[:12]
+
+            texto_celda = "S" + str(sala_id) + " " + nombre_peli + " " + hora_func
+
+            for i in range(8):
+                if franjas[i][0] <= minutos_total < franjas[i][1]:
+                    if tabla[i][dia_idx] == "":
+                        tabla[i][dia_idx] = texto_celda
+                    else:
+                        tabla[i][dia_idx] += "\n" + texto_celda
+
+        # 5. Calcular ancho dinámico de columna según contenido acumulado
+        ancho_franja = 12
+        ancho_dia    = 23
+
+        for i in range(8):
+            for j in range(7):
+                if tabla[i][j]:
+                    # Cada sub-entrada separada por \n cuenta por separado
+                    for entrada in tabla[i][j].split("\n"):
+                        if len(entrada) + 2 > ancho_dia:
+                            ancho_dia = len(entrada) + 2
+
+        separador = "+" + "-" * ancho_franja
+        for _ in range(7):
+            separador += "+" + "-" * ancho_dia
+        separador += "+"
+
+        # 6. Imprimir tabla
+        print(f"\n{titulo}")
+        print(separador)
+
+        encabezado = "|" + "FRANJA".center(ancho_franja)
+        for i in range(7):
+            encabezado += "|" + dias_es[i].center(ancho_dia)
+        encabezado += "|"
+        print(encabezado)
+        print(separador)
+
+        for i in range(8):
+            # Dividir cada celda en sus sub-líneas para imprimirlas en filas separadas
+            sub_lineas = []
+            for j in range(7):
+                if tabla[i][j]:
+                    sub_lineas.append(tabla[i][j].split("\n"))
+                else:
+                    sub_lineas.append([""])
+
+            max_sub = 0
+
+            for s in sub_lineas:
+
+                longitud = len(s)
+
+            if longitud > max_sub:
+
+                max_sub = longitud
+
+            for k in range(max_sub):
+                if k == 0:
+                    fila_txt = "|" + franjas[i][2].center(ancho_franja)
+                else:
+                    fila_txt = "|" + "".center(ancho_franja)
+
+                for j in range(7):
+                    if k < len(sub_lineas[j]):
+                        celda = sub_lineas[j][k]
+                    else:
+                        celda = ""
+                    fila_txt += "|" + celda[:ancho_dia].ljust(ancho_dia)
+                fila_txt += "|"
+                print(fila_txt)
+
+            print(separador)
+
+        input("\nPresione Enter para continuar...")
+
+    # ══════════════════════════════════════════════════════════════════
+    # MENÚ DE PROGRAMACIÓN ─ Submenú con 3 opciones
+    # ══════════════════════════════════════════════════════════════════
+
+    '''
+    Autor: Juan David Ortiz / David Chica López
+    Fecha: 23/05/2026
+    Metodo menu_programacion: Muestra un submenú para consultar la
+    programación general, por sala o por película. Se llama desde los
+    menús de admin, vendedor y cliente.
+    Entradas: None
+    Salidas:  None
+    '''
+
+    def menu_programacion(self) -> None:
+        while True:
+            encabezado = "|         Consultar programación          |"
+            separador  = "-" * len(encabezado)
+            print(f"\n{separador}")
+            print(encabezado)
+            print(separador)
+            opcion = solicitar_dato(
+                "\n1) Programación general\n2) Programación por sala\n3) Programación por película\n4) Volver\n\nSeleccione: ",
+                "numero", 1, 4
+            )
+            if opcion == 4:
+                break
+            elif opcion == 1:
+                self.mostrar_programacion_general()
+            elif opcion == 2:
+                self.mostrar_programacion_por_sala()
+            elif opcion == 3:
+                self.mostrar_programacion_por_pelicula()
+
+    # ══════════════════════════════════════════════════════════════════
+    # OPCIÓN 1 ─ Programación general (todas las salas, todas las funciones)
+    # ══════════════════════════════════════════════════════════════════
+
+    '''
+    Autor: Juan David Ortiz
+    Fecha: 19/05/2026  (refactorizado 23/05/2026)
+    Metodo mostrar_programacion_general: Recopila todas las funciones de
+    todas las salas y delega en _construir_tabla_programacion.
+    Entradas: None
+    Salidas:  None
+    '''
+
+    def mostrar_programacion_general(self) -> None:
+        funciones_con_sala = []
+        for sala in self.complejo.get_lista_salas():
+            if sala is not None:
+                for funcion in sala.get_programacion():
+                    if funcion is not None:
+                        funciones_con_sala.append((funcion, sala.get_identificador()))
+
+        self._construir_tabla_programacion(funciones_con_sala, "PROGRAMACION SEMANAL - GENERAL")
+
+    # ══════════════════════════════════════════════════════════════════
+    # OPCIÓN 2 ─ Programación por sala
+    # ══════════════════════════════════════════════════════════════════
+
+    '''
+    Autor: Juan David Ortiz / David Chica López
+    Fecha: 23/05/2026
+    Metodo mostrar_programacion_por_sala: Lista las salas disponibles,
+    pide al usuario que elija una y muestra solo sus funciones en la
+    tabla semanal reutilizando _construir_tabla_programacion.
+    Entradas: None
+    Salidas:  None
+    '''
+
+    def mostrar_programacion_por_sala(self) -> None:
+        # Listar salas disponibles
+        salas_disponibles = []
+        for sala in self.complejo.get_lista_salas():
+            if sala is not None:
+                salas_disponibles.append(sala)
+
+        if len(salas_disponibles) == 0:
+            print("\nNo hay salas registradas en el sistema.")
+            input("\nEnter para continuar...")
+            return
+
+        encabezado = f"| {'#':<3} | {'Sala ID':<15} | {'Valor boleta':<20} | {'Filas':<15} | {'Sillas/Fila':<15} |"
+        sep        = "-" * len(encabezado)
+        print(f"\n{sep}\n{encabezado}\n{sep}")
+        for idx, sala in enumerate(salas_disponibles):
+            print(f"| {idx+1:<3} | {sala.mostrar_info()}")
+        print(sep)
+
+        num_sala = solicitar_dato("\nSeleccione el número de sala a consultar: ", "numero", 1, len(salas_disponibles))
+        sala_elegida = salas_disponibles[num_sala - 1]
+
+        funciones_con_sala = []
+        for funcion in sala_elegida.get_programacion():
+            if funcion is not None:
+                funciones_con_sala.append((funcion, sala_elegida.get_identificador()))
+
+        self._construir_tabla_programacion(
+            funciones_con_sala,
+            f"PROGRAMACION SEMANAL - SALA {sala_elegida.get_identificador()}"
+        )
+
+    # ══════════════════════════════════════════════════════════════════
+    # OPCIÓN 3 ─ Programación por película
+    # ══════════════════════════════════════════════════════════════════
+
+    '''
+    Autor: Juan David Ortiz / David Chica López
+    Fecha: 23/05/2026
+    Metodo mostrar_programacion_por_pelicula: Muestra la lista de
+    películas con funciones programadas, pide al usuario que elija una
+    y muestra el horario de esa película en todas las salas donde se
+    presenta, indicando la sala en cada celda.
+    Entradas: None
+    Salidas:  None
+    '''
+
+    def mostrar_programacion_por_pelicula(self) -> None:
+        # Recopilar películas que tienen al menos una función programada
+        ids_con_funcion = set()
+        funciones_totales = []  # lista de (funcion, sala_id)
+
+        for sala in self.complejo.get_lista_salas():
+            if sala is not None:
+                for funcion in sala.get_programacion():
+                    if funcion is not None:
+                        ids_con_funcion.add(funcion.get_identificador_pelicula())
+                        funciones_totales.append((funcion, sala.get_identificador()))
+
+        if len(ids_con_funcion) == 0:
+            print("\nNo hay funciones programadas en ninguna sala.")
+            input("\nEnter para continuar...")
+            return
+
+        # Mostrar lista de películas con funciones
+        peliculas_con_funcion = []
+        for i in range(self.contador_peliculas):
+            p = self.peliculas[i]
+            if p is not None and p.get_id() in ids_con_funcion:
+                peliculas_con_funcion.append(p)
+
+        encabezado = f"| {'#':<3} | {'ID':<8} | {'Nombre en español':<30} |"
+        sep        = "-" * len(encabezado)
+        print(f"\n{sep}\n{encabezado}\n{sep}")
+        for idx, p in enumerate(peliculas_con_funcion):
+            print(f"| {idx+1:<3} | {p.get_id():<8} | {p.get_nombre_espanol():<30} |")
+        print(sep)
+
+        num_peli   = solicitar_dato("\nSeleccione el número de película a consultar: ", "numero", 1, len(peliculas_con_funcion))
+        peli_elegida = peliculas_con_funcion[num_peli - 1]
+
+        # Filtrar solo las funciones de esa película
+        funciones_filtradas = [
+            (f, sid) for f, sid in funciones_totales
+            if f.get_identificador_pelicula() == peli_elegida.get_id()
+        ]
+
+        self._construir_tabla_programacion(
+            funciones_filtradas,
+            f"PROGRAMACION SEMANAL - {peli_elegida.get_nombre_espanol().upper()}"
+        )
+
+    # ══════════════════════════════════════════════════════════════════
+    # Mantener compatibilidad: mostrar_programacion_semanal redirige
+    # al nuevo menú (por si algún lugar del código aún la invoca)
+    # ══════════════════════════════════════════════════════════════════
+
+    def mostrar_programacion_semanal(self, var: int) -> None:
+        if var == 1:
+            self.mostrar_programacion_general()
+        elif var == 2:
+            self.mostrar_programacion_por_sala()
+        elif var == 3:
+            self.mostrar_programacion_por_pelicula()
+        else:
+            print("Opción incorrecta")
+            
 
     '''
     Autor: Juan David Ortiz Diaz  
@@ -194,7 +529,6 @@ class SistemaCine:
     Entradas: complejo (objeto que gestiona las salas de cine)  
     Salidas: None  
     '''
-
 
     def menu_crear_sala(self)->str:
 
@@ -253,12 +587,10 @@ class SistemaCine:
         print(separador)
 
         if self.contador_peliculas >= 50:
-            
             print("Error: Capacidad máxima de películas alcanzada")
 
         nombre_espanol = solicitar_dato("Ingrese el nombre en español de la pelicula: ", "texto")
         nombre_original = solicitar_dato("\nIngrese el nombre original de la pelicula: ", "texto")
-        
         
         while True:
             identificador_pelicula = solicitar_dato("\nIngrese el identificador de la pelicula: ", "numero")
@@ -306,14 +638,13 @@ class SistemaCine:
             case 5:
                 calificacion = "NC-17"
 
-
         nueva_pelicula = Pelicula(nombre_espanol, nombre_original, identificador_pelicula, anno_estreno, duracion, genero, pais_origen, calificacion)
         
         self.peliculas[self.contador_peliculas] = nueva_pelicula
         self.contador_peliculas += 1
 
-        
         print(f"\nPelícula '{nombre_espanol}' agregada exitosamente.")
+
 
     '''
     Autor: Salomé García Velásquez
@@ -323,7 +654,9 @@ class SistemaCine:
     Entradas: usuario, sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial, precio_total
     Salidas: bool
     '''
-    def reservar_boleta(self, usuario,sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial, precio_total = 0) -> bool:
+    
+    def reservar_boleta(self, usuario, sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial, precio_total = 0) -> bool:
+
         
         if usuario is None:
             print("Usuario no encontrado.")
@@ -333,6 +666,7 @@ class SistemaCine:
             print("Sala no encontrada.")
             return False
         
+
         funcion = None
         for i in sala.get_programacion():
             if i is not None:
@@ -350,14 +684,25 @@ class SistemaCine:
         print("        Vas a realizar una reserva de boletas          ")
         print("-------------------------------------------------\n")
         
+
         if fila >= mapa.shape[0]:
             print("La fila seleccionada se sale del rango de la sala.")
             return False       
             
         
+
+        funcion = sala.get_programacion()[identificador_funcion - 1]
+
+        if funcion is None:
+            print("Función no encontrada.")
+            return False
+
+        mapa = funcion.get_mapa_sala()
+
         if columna_inicial + cant_boletas > mapa.shape[1]:
             print("Las columnas seleccionadas se salen del rango de la sala.")
             return False
+
         
         for i in range(cant_boletas):
             asiento_disponible = mapa[fila, columna_inicial + i] 
@@ -390,6 +735,7 @@ class SistemaCine:
                     return self.usuarios[i]
         return None
 
+
     '''
     Autor: Salomé Garcia Velasquez
     Fecha: 21/05/2026
@@ -398,6 +744,7 @@ class SistemaCine:
     Entradas: usuario, sala, identificador_funcion
     Salidas: None
     '''
+
 
     def emitir_boleta(self, usuario, sala, identificador_funcion) -> None:
         funcion = None
@@ -416,6 +763,7 @@ class SistemaCine:
                     pelicula = self.peliculas[i]
                     break
         
+
         if pelicula is None:
             print("Película no encontrada.")
             return
@@ -444,8 +792,8 @@ class SistemaCine:
         print(separador)
         print("¡Gracias por su compra! Disfrute la película.")    
                 
+
 if __name__ == "__main__":
     obj:SistemaCine
     obj = SistemaCine()
     obj.login()
-

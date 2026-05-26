@@ -91,6 +91,12 @@ class Funcion:
                     print(".", end=" ")
                 else:
                     print("X", end=" ")
+
+            pantalla = "        PANTALLA        "
+            separador = " " * len(pantalla)
+            print(f"\n{separador}")
+            print(pantalla)
+            print(separador)
             print()
 
     def get_identificador_funcion(self) -> int:

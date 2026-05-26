@@ -15,7 +15,7 @@ class Reserva:
         self.__identificador_funcion = identificador_funcion
         self.__identificador_sala = identificador_sala
         self.__cant_boletas = cant_boletas
-        self.__asientos = np.full((cant_boletas,), fill_value=1, dtype=int)
+        self.__asientos = asientos if asientos is not None else np.full((cant_boletas,), fill_value=1, dtype=int)
         self.__precio_total = precio_total
 
     '''
@@ -30,11 +30,11 @@ class Reserva:
     def get_asientos(self) -> np.ndarray:
         return self.__asientos
     
+    def get_usuario(self) -> int:
+        return self.__usuario
     
-    def generar_boleta(self) -> None:
-        print("Boleta de Reserva")
-        print(f"Usuario: {self.__usuario}")
-        print(f"Identificador de Función: {self.__identificador_funcion}")
-        print(f"Cantidad de Boletas: {self.__cant_boletas}")
-        print(f"Asientos: {self.__asientos}")
-        print(f"Precio Total: {self.__precio_total}")
+    def get_id_funcion(self) -> int:
+        return self.__identificador_funcion
+
+    def get_precio_total(self) -> int:
+        return self.__precio_total

@@ -32,8 +32,8 @@ class Complejo:
         self.__direccion:str = ""
         self.__lista_salas = np.full((12), fill_value = None, dtype = object)
         self.__cantidad_salas = 0
-        self.reservas = np.full((100), fill_value=None, dtype=object)
-        self.contador_reservas = 0
+        self.__reservas = np.full((100), fill_value=None, dtype=object)
+        self.__contador_reservas = 0
         
     '''
     '''
@@ -101,7 +101,6 @@ class Complejo:
                 print("No hay películas registradas en el sistema.")
                 return
                 
-            # Mostrar programación actual de la sala antes de empezar
             funciones_existentes = []
             for f in sala_seleccionada.get_programacion():
                 if f is not None:
@@ -119,7 +118,6 @@ class Complejo:
             print(encabezado)
             print(separador)
             
-            # Generar ID automático: s{sala}-{conteo+1}
             identificador_funcion = f"s{sala_seleccionada.get_identificador()}-{sala_seleccionada.get_cant_funciones() + 1}"
             print(f"ID de función generado: {identificador_funcion}")
             
@@ -152,19 +150,18 @@ class Complejo:
                 else:
                     print(f"Error: El ID {id_buscado} no corresponde a ninguna película de la lista de disponibles.")
 
-            # Lógica de fecha: solo pedir el día de la semana actual
             hoy = datetime.now()
             lunes = hoy - timedelta(days=hoy.weekday())
             lunes = lunes.replace(hour=0, minute=0, second=0, microsecond=0)
             domingo = lunes + timedelta(days=6, hours=23, minutes=59)
 
             print(f"\nSolo puede programar funciones para la semana actual.")
-            print(f"Rango válido: del {lunes.strftime('%d/%m/%Y')} al {domingo.strftime('%d/%m/%Y')}")
+            print(f"Rango válido: del {lunes.strftime('%d/%m/%Y')} al {domingo.strftime('%d/%m/%Y')}\n")
             
             while True:
                 dia_input = solicitar_dato(f"Ingrese el día del mes para la función: ", "numero")
                 try:
-                    # Intentamos crear la fecha con el mes/año actual
+
                     fecha_dt = datetime(hoy.year, hoy.month, dia_input)
                     if lunes <= fecha_dt <= domingo:
                         fecha = fecha_dt.strftime("%d/%m/%Y")
@@ -215,7 +212,7 @@ class Complejo:
             nueva_funcion = Funcion(identificador_funcion, identificador_pelicula, sala_seleccionada.get_identificador(), fecha, hora_inicio, cant_filas, sillas_por_fila)
             
             if sala_seleccionada.agregar_funcion(nueva_funcion):
-                print(f"Función creada y agregada a la sala {sala_seleccionada.get_identificador()}")
+                print(f"\nFunción creada y agregada a la sala S{sala_seleccionada.get_identificador()}")
             else:
                 print("No se pudo crear la función.")
 

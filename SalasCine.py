@@ -50,6 +50,16 @@ class SalaCine:
     
     '''
     Autor: David Chica López
+    Fecha: 25/05/2026
+    Metodo get_valor_boleta: Retorna el valor de la boleta para la sala.
+    Entradas: None
+    Salidas: valor de la boleta para la sala
+    '''
+    def get_valor_boleta(self) -> int:
+        return self.__valor_boleta
+
+    '''
+    Autor: David Chica López
     Fecha: 17/05/2026
     Métodos setter de cant_funciones
     Entradas: cant_funciones

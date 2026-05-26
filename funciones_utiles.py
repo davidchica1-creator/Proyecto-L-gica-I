@@ -53,6 +53,12 @@ def solicitar_dato(mensaje, tipo_esperado, min_val=None, max_val=None):
                 print("Error: Debes ingresar un número entero válido.")
                 continue 
         
+        elif tipo_esperado == "letra":
+            if len(entrada) != 1 or not entrada.isalpha():
+                print("Error: Debes ingresar una sola letra.")
+                continue
+            return entrada.upper()
+
         elif tipo_esperado == 'si_no':
             if entrada.isdigit():
                 print("Error: Debes ingresar 'si' o 'no'.")

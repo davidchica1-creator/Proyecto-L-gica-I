@@ -1,4 +1,4 @@
-import Reserva
+from Reserva import *
 from datetime import datetime, timedelta
 from Usuario import*
 from funciones_utiles import solicitar_dato, limpiar_pantalla
@@ -74,13 +74,14 @@ class SistemaCine:
                 user = Usuario("Vendedor", 1234, 2)
                 user.menu_vendedor(self)
             else:
-                encontrado = False
-                for i in range(self.contador_clientes):
-                    user = self.usuarios[i]
-                    if str(user.get_usuario()) == usuario_ingresado and user.get_contrasena() == contrasena:
-                        user.menu_cliente(self)
-                        encontrado = True
-                        break
+                # Refactorización: Usamos el método de búsqueda existente
+                user = self.get_usuario_por_documento(usuario_ingresado)
+                if user and user.get_contrasena() == contrasena:
+                    user.menu_cliente(self)
+                    encontrado = True
+                else:
+                    encontrado = False
+                
                 if not encontrado:
                     print("\n ==Error: Usuario no encontrado o contraseña incorrecta==")
 
@@ -109,30 +110,28 @@ class SistemaCine:
         print(encabezado)
         print(separador)
 
-        self.__nombre = solicitar_dato("\nIngrese el nombre completo del cliente: ", "texto")
-        self.__usuario = solicitar_dato("Ingrese el usuario (documento) del cliente: ", "numero")
-        self.__contrasena = (f"{self.__usuario}{self.__nombre[0].lower()}*")
+        # Mejora: Usar variables locales en lugar de atributos de instancia (self.__) para evitar fugas de datos
+        nombre = solicitar_dato("\nIngrese el nombre completo del cliente: ", "texto")
+        documento = solicitar_dato("Ingrese el usuario (documento) del cliente: ", "numero")
+        contrasena_gen = (f"{documento}{nombre[0].lower()}*")
         
         if self.contador_clientes >= 100 :
             print ("Se ha alcanzado el máximo de usuarios permitidos por el sistema.")
             return False
         
-        for i in range(self.contador_clientes):
-            if self.usuarios[i] is not None:
-                if self.usuarios[i].get_usuario() == self.__usuario:
-                    print("El usuario ya existe")
-                    return False
+        if self.get_usuario_por_documento(documento):
+            print("El usuario ya existe")
+            return False
 
-        
-        nuevo = Usuario(self.__nombre,self.__usuario, 3)
+        nuevo = Usuario(nombre, documento, 3)
 
         self.usuarios[self.contador_clientes] = nuevo
         self.contador_clientes += 1
 
         print("\nCliente creado con éxito\n")
         print("Las credenciales del nuevo cliente son:\n")
-        print("Usuario:", self.__usuario)
-        print("Contraseña:", self.__contrasena)
+        print("Usuario:", documento)
+        print("Contraseña:", contrasena_gen)
 
         return True
     
@@ -574,10 +573,142 @@ class SistemaCine:
     ============================================================================================================================================================================
     '''
     
+    '''
+    ============================================================================================================================================================================
+    ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 6, R6. RESERVAR BOLESTAS PARA UNA PELICULA
+    '''
+
+    '''
+    Autor: salomé García Velásquez / David Chica López
+    Fecha: 20/05/2026
+    Metodo reservar_boleta: Gestiona el proceso completo de reserva de boletas.
+    Identifica si es vendedor o cliente, valida existencia del cliente,
+    permite seleccionar sala, función y asientos, y crea el objeto Reserva.
+    Entradas: usuario_sesion (el usuario que está realizando la operación)
+    Salidas: bool (True si se realizó con éxito, False en caso contrario)
+    '''
+
+    def reservar_boleta(self, usuario_sesion: Usuario) -> bool:
+        limpiar_pantalla()
+        encabezado = "|         Registro de nueva reserva          |"
+        separador = "-" * len(encabezado)
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+
+        # 1. Identificar el cliente para la reserva
+        cliente_final = None
+        if usuario_sesion.get_tipo_usuario() == 2: # Perfil Vendedor
+            documento = solicitar_dato("\nIngrese el número de documento del cliente: ", "numero")
+            cliente_final = self.get_usuario_por_documento(documento)
+            if cliente_final is None:
+                print(f"\nError: El cliente con documento {documento} no existe en el sistema.")
+                print("Debe registrarlo primero antes de realizar una reserva.")
+                input("\nPresione Enter para continuar...")
+                return False
+        else: # Perfil Cliente
+            cliente_final = usuario_sesion
+
+        # 2. Selección de Sala
+        if self.complejo.get_cantidad_salas() == 0:
+            print("\nNo hay salas registradas en el sistema.")
+            input("\nPresione Enter para continuar...")
+            return False
+            
+        print("\nSalas disponibles:")
+        salas = self.complejo.get_lista_salas()
+        enc_s = f"| {'#':<3} | {'Sala ID':<15} | {'Valor boleta':<20} |"
+        sep_s = "-" * len(enc_s)
+        print(f"{sep_s}\n{enc_s}\n{sep_s}")
+        for i in range(len(salas)):
+            if salas[i] is not None:
+                print(f"| {i+1:<3} | S{salas[i].get_identificador():<14} | {salas[i].get_valor_boleta():<20} |")
+        print(sep_s)
+
+        num_sala = solicitar_dato("\nSeleccione el número de la sala: ", "numero", 1, self.complejo.get_cantidad_salas())
+        sala_seleccionada = salas[num_sala - 1]
+
+        # 3. Selección de Función
+        if sala_seleccionada.get_cant_funciones() == 0:
+            print(f"\nLa sala {sala_seleccionada.get_identificador()} no tiene funciones programadas.")
+            input("\nPresione Enter para continuar...")
+            return False
+
+        print(f"\nFunciones disponibles en Sala {sala_seleccionada.get_identificador()}:")
+        programacion = sala_seleccionada.get_programacion()
+        funciones_validas = []
+        for f in programacion:
+            if f is not None:
+                funciones_validas.append(f)
+
+        enc_f = f"| {'#':<3} | {'ID Función':<12} | {'Fecha':<12} | {'Hora':<10} |"
+        sep_f = "-" * len(enc_f)
+        print(f"{sep_f}\n{enc_f}\n{sep_f}")
+        for i in range(len(funciones_validas)):
+            f = funciones_validas[i]
+            print(f"| {i+1:<3} | {f.get_id_funcion():<12} | {f.get_fecha():<12} | {f.get_hora_inicio():<10} |")
+        print(sep_f)
+
+        num_func = solicitar_dato("\nSeleccione el número de la función: ", "numero", 1, len(funciones_validas))
+        funcion_elegida = funciones_validas[num_func - 1]
+
+        # 4. Mostrar Mapa y pedir asientos
+        print("\nEstado actual de los asientos ( . = libre, X = ocupado ):")
+        funcion_elegida.mostrar_mapa()
+
+        cant_boletas = solicitar_dato("\nIngrese la cantidad de boletas a reservar: ", "numero", 1)
+        
+        while True:
+            fila_letra = solicitar_dato("Ingrese la letra de la fila (ej: A): ", "letra").upper()
+            letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            idx_fila = letras.find(fila_letra)
+            if idx_fila != -1 and idx_fila < sala_seleccionada.get_cant_filas():
+                break
+            print(f"Error: La fila '{fila_letra}' no existe en esta sala.")
+        
+        col_inicio = solicitar_dato(f"Ingrese el número de la silla inicial (1-{sala_seleccionada.get_sillas_por_fila()}): ", "numero", 1, sala_seleccionada.get_sillas_por_fila()) - 1
+
+        # 5. Validar disponibilidad
+        if col_inicio + cant_boletas > sala_seleccionada.get_sillas_por_fila():
+            print("\nError: No hay suficientes sillas consecutivas en esa fila.")
+            input("Presione Enter para volver...")
+            return False
+
+        mapa = funcion_elegida.get_mapa_sala()
+        for i in range(cant_boletas):
+            if mapa[idx_fila, col_inicio + i] != 0:
+                print("\nError: Uno o más asientos seleccionados ya están ocupados.")
+                input("Presione Enter para volver...")
+                return False
+
+        # 6. Realizar reserva y crear objeto
+        asientos_ids = []
+        for i in range(cant_boletas):
+            mapa[idx_fila, col_inicio + i] = 1
+            letra_fila = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[idx_fila]
+            asientos_ids.append(f"{letra_fila}{col_inicio + i + 1}")
+            
+        precio_total = cant_boletas * sala_seleccionada.get_valor_boleta()
+        
+        # CORRECCIÓN: Llamar al método sobre la instancia 'funcion_elegida', no sobre la clase 'Funcion'
+        funcion_elegida.agregar_asientos_reservados(cant_boletas)
+        
+        # Pasamos los nombres reales de los asientos (A1, A2...) en lugar de None
+        reserva_nueva = Reserva(cliente_final.get_usuario(), funcion_elegida.get_id_funcion(), sala_seleccionada.get_identificador(), cant_boletas, np.array(asientos_ids), precio_total)
+        self.complejo.agregar_reserva(reserva_nueva)
+
+        print("\nSu reserva ha sido guardada con éxito.")
+        self.emitir_boleta(reserva_nueva)
+        input("\nPresione Enter para continuar...")
+        return True
 
     '''
     ============================================================================================================================================================================
-    ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 7, R7. GESTIONAR PROGRAMCION
+    '''
+
+    '''
+    ============================================================================================================================================================================
+    ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 7, R7. GESTIONAR PROGRAMCION DE LAS PELICULAS
     '''
 
     '''
@@ -622,7 +753,6 @@ class SistemaCine:
         
         opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 5)
 
-        # Delegamos las acciones pesadas al objeto complejo pasándole 'self' como referencia al sistema
         match opcion:
             case 1:
                 self.complejo.crear_funcion(self, sala_seleccionada)
@@ -639,6 +769,31 @@ class SistemaCine:
     ============================================================================================================================================================================
     '''
     
+    '''
+    ============================================================================================================================================================================
+    ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 8, R8. EMITIR BOLETA
+    '''
+
+    def emitir_boleta(self, reserva: Reserva) -> None:
+        encabezado = "|         BOLETA DE RESERVA       |" 
+        separador = "-" * len(encabezado)  
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+
+        # Usamos los getters definidos en la clase Reserva
+        print(f"| -> Usuario: {reserva.get_usuario()}")
+        print(f"| -> Función ID: {reserva.get_id_funcion()}")
+        print(f"| -> Cantidad: {reserva.get_cant_boletas()}")
+        print(f"| -> Asientos: {reserva.get_asientos()}")
+        print(f"| -> Precio Total: ${reserva.get_precio_total()}")
+        print(separador)
+
+
+    '''
+    ============================================================================================================================================================================
+    '''
+
     '''
     ============================================================================================================================================================================
     ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 9, R9. CREAR O MODIFICAR PELICULAS
@@ -711,6 +866,24 @@ class SistemaCine:
     '''
     ============================================================================================================================================================================
     '''
+    
+    '''
+    ============================================================================================================================================================================
+    ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 10, R10.CONSULTAR PORCENTAJE DE OCUPACION
+    '''
+    
+    '''
+    ============================================================================================================================================================================
+    '''
+
+    '''
+    ============================================================================================================================================================================
+    ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 11, R11. CONSULTAR RECAUDO TOTAL
+    '''
+
+    '''
+    ============================================================================================================================================================================
+    '''
 
     '''
     ============================================================================================================================================================================
@@ -744,7 +917,7 @@ class SistemaCine:
 
             cant_filas = solicitar_dato("\nIngrese cantidad de filas ( minimo 10, máximo 26 ): ", "numero", 10, 26)
 
-            sillas_por_fila = solicitar_dato("\nIngrese sillas por fila: ( minimo 10, áximo 30 )", "numero", 10, 30)
+            sillas_por_fila = solicitar_dato("\nIngrese sillas por fila ( minimo 10, áximo 30 ): ", "numero", 10, 30)
 
             sala_nueva = SalaCine(identificador_sala, valor_boleta, cant_filas, sillas_por_fila)
             self.contador_salas += 1
@@ -758,51 +931,13 @@ class SistemaCine:
     ============================================================================================================================================================================
     '''
     
-    
-
-    def reservar_boleta(self, usuario, sala, identificador_funcion, identificador_sala, cant_boletas, fila, columna_inicial, precio_total = 0) -> bool:
-        
-        if usuario is None:
-            print("Usuario no encontrado.")
-            return False
-        
-        if sala is None:
-            print("Sala no encontrada.")
-            return False
-        
-        encabezado = "|         Registro de nueva reserva          |"
-        separador = "-" * len(encabezado)
-        print(f"\n{separador}")
-        print(encabezado)
-        print(separador)
-        
-        funcion = sala.get_programacion()[identificador_funcion - 1]
-
-        if funcion is None:
-            print("Función no encontrada.")
-            return False
-
-        mapa = funcion.get_mapa_sala()
-        
-        for i in range(cant_boletas):
-            asiento_disponible = mapa[fila, columna_inicial + i] 
-            if asiento_disponible != 0:
-                print("Los asientos seleccionados no están libres, seleccione de nuevo.")
-                return False
-
-            
-        for i in range(cant_boletas):
-            mapa[fila, columna_inicial + i] = 1
-            
-        funcion.agregar_asientos_reservados(cant_boletas)
-        print("Su reserva ha sido guardada con éxito.")
-        return True
-
 
     def get_usuario_por_documento(self, documento):
+        # Mejora: Convertir a str para asegurar la comparación independientemente del origen del dato
+        doc_buscado = str(documento)
         for i in range(self.contador_clientes):
             if self.usuarios[i] is not None:
-                if self.usuarios[i].get_usuario() == documento:
+                if str(self.usuarios[i].get_usuario()) == doc_buscado:
                     return self.usuarios[i]
         return None
 

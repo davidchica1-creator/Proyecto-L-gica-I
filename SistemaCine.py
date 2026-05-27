@@ -51,7 +51,6 @@ class SistemaCine:
         usuario_ingresado:str
         contrasena:str
         while True:
-            limpiar_pantalla()
             encabezado = "|         Bienvenido a que hay para ver!          |"
             separador = "-" * len(encabezado)
             print(f"\n{separador}")
@@ -74,7 +73,7 @@ class SistemaCine:
                 user = Usuario("Vendedor", 1234, 2)
                 user.menu_vendedor(self)
             else:
-                # Refactorización: Usamos el método de búsqueda existente
+
                 user = self.get_usuario_por_documento(usuario_ingresado)
                 if user and user.get_contrasena() == contrasena:
                     user.menu_cliente(self)
@@ -110,7 +109,6 @@ class SistemaCine:
         print(encabezado)
         print(separador)
 
-        # Mejora: Usar variables locales en lugar de atributos de instancia (self.__) para evitar fugas de datos
         nombre = solicitar_dato("\nIngrese el nombre completo del cliente: ", "texto")
         documento = solicitar_dato("Ingrese el usuario (documento) del cliente: ", "numero")
         contrasena_gen = (f"{documento}{nombre[0].lower()}*")
@@ -222,7 +220,6 @@ class SistemaCine:
             separador += "+" + "-" * ancho_dia
         separador += "+"
 
-        # 6. Imprimir tabla
         print(f"\n{titulo}")
         print(separador)
 
@@ -332,7 +329,7 @@ class SistemaCine:
     '''
 
     def mostrar_programacion_por_sala(self) -> None:
-        # Listar salas disponibles
+
         salas_disponibles = []
         for sala in self.complejo.get_lista_salas():
             if sala is not None:
@@ -607,6 +604,7 @@ class SistemaCine:
                 return False
         else:
             cliente_final = usuario_sesion
+            print(f"Usuario encontrado, nombre de usuario: {cliente_final.get_nombre}")
 
         if self.complejo.get_cantidad_salas() == 0:
             print("\nNo hay salas registradas en el sistema.")
@@ -649,7 +647,6 @@ class SistemaCine:
         num_func = solicitar_dato("\nSeleccione el número de la función: ", "numero", 1, len(funciones_validas))
         funcion_elegida = funciones_validas[num_func - 1]
 
-        # 4. Mostrar Mapa y pedir asientos
         print("\nEstado actual de los asientos ( . = libre, X = ocupado ):")
         funcion_elegida.mostrar_mapa()
 
@@ -712,7 +709,7 @@ class SistemaCine:
     Salidas: None
     '''
     def gestionar_programacion(self) -> None:
-        # Verificamos requisitos usando el nuevo getter de complejo
+
         if self.complejo.get_cantidad_salas() == 0 or self.contador_peliculas == 0:
             print("No hay salas registradas para programar funciones o no hay películas registradas.")
             return
@@ -736,7 +733,6 @@ class SistemaCine:
                 print(f"| {i+1:<3} | {lista_salas[i].mostrar_info()}")
         print(sep_salas)
 
-        # Selección de sala
         cant_salas = self.complejo.get_cantidad_salas()
         idx_sala = solicitar_dato("\nSeleccione una sala para gestionar: ", "numero", 1, cant_salas) - 1
         sala_seleccionada = lista_salas[idx_sala]
@@ -767,30 +763,74 @@ class SistemaCine:
     ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 8, R8. EMITIR BOLETA
     '''
 
+    '''
+    Autor: Salome García Velásquez / David Chica López
+    Fecha: 23/05/2026
+    Metodo emitir_boleta: Emite la boleta con los datos de la reserva. Fecha de venta(mismo dia de la funcion), hora, nombre del complejo, sala de funcion, 
+    nombre de la pelicula, calificacion de la pelicula, precio total, lista de sillas reservadas 
+    Entradas: Reserva
+    Salidas: None
+    '''
     def emitir_boleta(self, reserva: Reserva) -> None:
 
         print("\nGenerando boleta de reserva...")
-
         input("\nPresione Enter para ver la boleta...")
 
-        usuario_obj = self.get_usuario_por_documento(reserva.get_usuario())
+        id_del_usuario = reserva.get_usuario()
+        objeto_usuario_encontrado = self.get_usuario_por_documento(id_del_usuario)
+        
+        if objeto_usuario_encontrado != None:
+            nombre_del_cliente = objeto_usuario_encontrado.get_nombre()
+        else:
+            nombre_del_cliente = "Desconocido"
 
-        nombre_cliente = usuario_obj.get_nombre() if usuario_obj else "Desconocido"
+        nombre_de_la_pelicula = "No encontrada"
+        calificacion_de_la_pelicula = "N/A"
+        fecha_de_la_funcion = "N/A"
+        hora_de_la_funcion = "N/A"
+        
+        id_de_la_sala = reserva.get_sala()
+        sala_donde_se_proyecta = self.complejo.get_sala(id_de_la_sala)
+        
+        if sala_donde_se_proyecta != None:
 
-        # Convertimos la lista de asientos a una cadena separada por comas
+            id_de_la_funcion_reservada = reserva.get_id_funcion()
+            lista_de_funciones_en_sala = sala_donde_se_proyecta.get_programacion()
+            
+            for funcion_actual in lista_de_funciones_en_sala:
+                if funcion_actual != None:
+                    if funcion_actual.get_id_funcion() == id_de_la_funcion_reservada:
+
+                        fecha_de_la_funcion = funcion_actual.get_fecha()
+                        hora_de_la_funcion = funcion_actual.get_hora_inicio()
+                        
+
+                        id_pelicula_a_buscar = funcion_actual.get_identificador_pelicula()
+                        for pelicula_actual in self.peliculas:
+                            if pelicula_actual != None:
+                                if pelicula_actual.get_id() == id_pelicula_a_buscar:
+
+                                    nombre_de_la_pelicula = pelicula_actual.get_nombre_espanol()
+                                    calificacion_de_la_pelicula = pelicula_actual.get_calificacion()
+                                    break 
+                        break 
+
         asientos_str = ", ".join(map(str, reserva.get_asientos()))
 
-        # Preparamos las líneas de contenido para calcular el ancho máximo
         lineas = [
-            f"| -> Nombre: {nombre_cliente}",
-            f"| -> Función ID: {reserva.get_id_funcion()}",
-            f"| -> Cantidad: {reserva.get_cant_boletas()}",
-            f"| -> Asientos: {asientos_str}",
-            f"| -> Precio Total: ${reserva.get_precio_total()}"
+            f"-> Cliente: {nombre_del_cliente}",
+            f"-> Pelicula: {nombre_de_la_pelicula}",
+            f"-> Fecha de la Funcion: {fecha_de_la_funcion}",
+            f"-> Hora de la Funcion: {hora_de_la_funcion}",
+            f"-> Sala: {id_de_la_sala}",
+            f"-> Calificacion: {calificacion_de_la_pelicula}",
+            f"-> Precio Total: ${reserva.get_precio_total()}",
+            f"-> Fecha de Venta: {reserva.get_fecha_venta()}",
+            f"-> Asientos: {asientos_str}"
         ]
 
         titulo = "BOLETA DE RESERVA"
-        # El ancho total será el máximo entre el título y la línea más larga de datos + margen
+
         ancho_total = max(len(l) for l in lineas) + 2
         separador = "-" * ancho_total
 
@@ -798,7 +838,7 @@ class SistemaCine:
         print(f"|{titulo.center(ancho_total - 2)}|")
         print(separador)
         for linea in lineas:
-            print(f"{linea:<{ancho_total - 1}}|")
+            print(f"|{linea:<{ancho_total - 1}}|")
         print(separador)
 
 
@@ -896,11 +936,11 @@ class SistemaCine:
     '''
 
     def consultar_porcentaje_ocupacion(self) -> None:
-        
-        if self.complejo.get_cantidad_salas() == 0 or self.complejo.get_cantidad_funciones() == 0:
-            print("\nNo hay salas o funciones registradas en el sistema.")
+        if self.complejo.get_cantidad_salas() == 0:
+            print("\nNo hay salas registradas en el sistema.")
             input("\nPresione Enter para continuar...")
             return
+        
         
         encabezado = "|         Porcentaje de ocupación por sala          |"
         separador = "-" * len(encabezado)
@@ -908,42 +948,46 @@ class SistemaCine:
         print(encabezado)
         print(separador)
 
-        datos_ocupacion:np.ndarray = np.full((self.complejo.get_cantidad_salas(), self.complejo.get_cantidad_funciones()), fill_value = 0, dtype = float)
+        lista_de_resultados = []
 
-        for sala in range(self.complejo.get_cantidad_salas()):
-            sala_actual = self.complejo.get_lista_salas()[sala]
-            if sala_actual is not None:
-                print(f"\nSala {sala_actual.get_identificador()}:")
-                programacion = sala_actual.get_programacion()
-                for funcion in programacion:
-                    if funcion is not None:
-                        total_asientos = sala_actual.get_cant_filas() * sala_actual.get_sillas_por_fila()
-                        asientos_ocupados = funcion.get_asientos_reservados()
-                        if total_asientos > 0:
-                            porcentaje_ocupacion = (asientos_ocupados / total_asientos) * 100
+        salas_del_sistema = self.complejo.get_lista_salas()
+        for sala_actual in salas_del_sistema:
+            if sala_actual != None:
+                programacion_de_la_sala = sala_actual.get_programacion()
+                
+                for funcion_actual in programacion_de_la_sala:
+                    if funcion_actual != None:
+
+                        capacidad_total = sala_actual.get_cant_filas() * sala_actual.get_sillas_por_fila()
+                        sillas_vendidas = funcion_actual.get_asientos_reservados()
+                        
+                        if capacidad_total > 0:
+                            porcentaje_calculado = (sillas_vendidas / capacidad_total) * 100
                         else:
-                            porcentaje_ocupacion = 0
-                        datos_ocupacion[sala_actual][funcion] = porcentaje_ocupacion
+                            porcentaje_calculado = 0.0
+                            
+                        id_de_la_sala = sala_actual.get_identificador()
+                        id_de_la_funcion = funcion_actual.get_id_funcion()
+                        lista_de_resultados.append([porcentaje_calculado, id_de_la_sala, id_de_la_funcion])
 
-        ocupacion_ordenada = np.copy(datos_ocupacion)
-        for datos in range(len(datos_ocupacion)):
+        if len(lista_de_resultados) == 0:
+            print("No se encontraron funciones programadas en las salas.")
+        else:
 
-            ocupacion_ordenada[datos][:] = ordenar_por_burbuja(datos_ocupacion[datos][:])
-        
-        for sala in range(len(ocupacion_ordenada)):
-            sala_actual = self.complejo.get_lista_salas()[sala]
-            for j in range(len(ocupacion_ordenada[sala])):
-                if ocupacion_ordenada[sala][j] != 0:
-                    print(f"Sala {sala_actual.get_identificador():<{separador}}\n")
+            cantidad_items = len(lista_de_resultados)
+            for i in range(cantidad_items):
+                for j in range(0, cantidad_items - i - 1):
 
-                    print(f"Función {j+1}: {ocupacion_ordenada[sala][j]:<{separador}}% ocupada\n")
+                    if lista_de_resultados[j][0] < lista_de_resultados[j + 1][0]:
 
-                    input("Presione Enter para continuar...")
+                        auxiliar = lista_de_resultados[j]
+                        lista_de_resultados[j] = lista_de_resultados[j + 1]
+                        lista_de_resultados[j + 1] = auxiliar
 
-                print(separador)
-
+            for item in lista_de_resultados:
+                print(f"Sala: S{item[1]} | Función: {item[2]} | Ocupación: {item[0]:.2f}%")
+        print(separador)
         input("\nPresione Enter para volver al menú...")
-        return
 
 
 
@@ -1009,7 +1053,7 @@ class SistemaCine:
     
 
     def get_usuario_por_documento(self, documento):
-        # Mejora: Convertir a str para asegurar la comparación independientemente del origen del dato
+
         doc_buscado = str(documento)
         for i in range(self.contador_clientes):
             if self.usuarios[i] is not None:

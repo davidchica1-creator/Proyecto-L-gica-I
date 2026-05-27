@@ -76,9 +76,9 @@ class Funcion:
     def mostrar_mapa(self)->None:
         print(f"\nMapa de la Funcion")
 
-        numerales = " "
+        numerales = "    "
         for i in range(self.__sillas_por_fila):
-            numerales += f"{i + 1} "
+            numerales += f"{i + 1}   "
         print(numerales)
 
         for i in range(self.__cant_filas): 
@@ -89,18 +89,21 @@ class Funcion:
             for j in range(self.__sillas_por_fila):
                 
                 if self.__mapa_sala[i, j] == 0:
-                    print(".", end="  ")
+                    print("[ ]", end=" ")
                 else:
-                    print("X", end=" ")
+                    print("[x]", end=" ")
 
         
             print()
         pantalla = "Pantalla"
         separador = "-" * (self.__sillas_por_fila *2)
-        print(f"\n{separador}")
-        print(f"|{pantalla:^{self.__sillas_por_fila*2}}|")
-        print(separador)
+        print(f"\n   {separador}")
+        print(f"   |{pantalla:^{len(numerales) + 2}}|")
+        print(f"   {separador}")
         print()
+
+    def get_asientos_reservados(self) -> int:
+        return self.__asientos_reservados
 
     def get_identificador_funcion(self) -> int:
         return self.__identificador_funcion
@@ -143,4 +146,3 @@ class Funcion:
         if asiento_inicial < 0 or asiento_inicial >= self.__cant_filas * self.__sillas_por_fila:
 
             return False
-

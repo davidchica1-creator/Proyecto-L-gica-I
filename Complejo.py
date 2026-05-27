@@ -28,15 +28,17 @@ class Complejo:
 
     def __init__ (self):
 
-        self.__nombre:str = ""
+        self.__nombre:str = "Complejo Que hay para ver"
         self.__direccion:str = ""
         self.__lista_salas = np.full((12), fill_value = None, dtype = object)
         self.__cantidad_salas = 0
         self.__reservas = np.full((100), fill_value=None, dtype=object)
         self.__contador_reservas = 0
         
-    '''
-    '''
+    def get_nombre(self) -> str:
+        return self.__nombre
+    
+
     def agregar_reserva(self, reserva: Reserva) -> None:
         self.__reservas[self.__contador_reservas] = reserva
         self.__contador_reservas += 1

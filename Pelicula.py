@@ -98,4 +98,14 @@ class Pelicula:
 
     def get_nombre_espanol(self) -> str:
         return self.__nombre_espanol
+
+    '''
+    Autor: David Chica López
+    Fecha: 24/05/2026
+    Metodo get_calificacion: Retorna la calificación de la película.
+    Entradas: None
+    Salidas: str
+    '''
+    def get_calificacion(self) -> str:
+        return self.__calificacion
     

@@ -121,3 +121,22 @@ def limpiar_pantalla():
     
     os.system('cls' if os.name == 'nt' else 'clear')
     
+'''
+Autor: David Chica López
+Fecha: 24/05/2026
+Función: ordenar_por_burbuja
+Entradas: Arreglo
+Salidas: Arreglo ordenado
+'''
+
+def ordenar_por_burbuja(arreglo):
+    arreglo2 = arreglo.copy()
+    n = len(arreglo)
+
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arreglo2[j] > arreglo2[j+1]:
+                auxiliar = arreglo2[j]
+                arreglo2[j] = arreglo2[j+1]
+                arreglo2[j+1] = auxiliar
+    return arreglo2

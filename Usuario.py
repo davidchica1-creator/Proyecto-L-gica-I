@@ -100,6 +100,10 @@ class Usuario:
                                 numeral_pelicula = solicitar_dato("Ingrese el número de la película a modificar: ", "numero", 1, sistema.contador_peliculas)
                                 pelicula_seleccionada = sistema.peliculas[numeral_pelicula - 1]
                                 pelicula_seleccionada.cambiar_estado()
+
+                case 6:
+                    sistema.consultar_porcentaje_ocupacion()
+
                 case 8:
                     sistema.menu_crear_sala()
 
@@ -155,14 +159,8 @@ class Usuario:
                             sistema.reservar_boleta(self)
                                                     
 
-    '''
-    Autor: Salome Garcia    
-    Fecha: 04/05/2026
-    Método menu_cliente: Muestra el menú del cliente y permite consultar información, visualizar mapas de funciones y realizar reservas.
-    Parámetros: sistema (objeto sistemaCine)
-    Retorna: None
-=======
-    Autor: Juan David Ortiz Diaz  
+    '''    
+    Autor: Juan David Ortiz Diaz/Salome Garcia Velasquez  
     Fecha: 04/05/2026  
     Método menu_cliente: Muestra el menú del cliente y permite consultar programación, ver información de películas y gestionar reservas.  
     Entradas: sistema  
@@ -173,7 +171,7 @@ class Usuario:
     def menu_cliente(self, sistema) -> None:
 
         while True:
-            encabezado = f"|         Bienvenido al menú {self.__nombre}         |"
+            encabezado = f"|         Bienvenido al menú, {self.__nombre}         |"
             separador = "-" * len(encabezado)
             print(f"\n{separador}")
             print(encabezado)

@@ -172,7 +172,7 @@ class Complejo:
                     print("Error: El día ingresado no es válido para el mes actual.")
 
 
-            hora_inicio = solicitar_dato("\nIngrese la hora de inicio (HH:MM): ", "hora")
+            hora_inicio = solicitar_dato("\nIngrese la hora de inicio en formato de 24 horas (HH:MM): ", "hora")
 
             '''
             Se valida que la nueva funcion no se cruce con ninguna otra funcion. 

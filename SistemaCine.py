@@ -1,7 +1,7 @@
 from Reserva import *
 from datetime import datetime, timedelta
 from Usuario import*
-from funciones_utiles import solicitar_dato, limpiar_pantalla
+from funciones_utiles import solicitar_dato, limpiar_pantalla, ordenar_por_burbuja
 from SalasCine import*
 from Pelicula import*
 from Complejo import Complejo  
@@ -596,9 +596,8 @@ class SistemaCine:
         print(encabezado)
         print(separador)
 
-        # 1. Identificar el cliente para la reserva
         cliente_final = None
-        if usuario_sesion.get_tipo_usuario() == 2: # Perfil Vendedor
+        if usuario_sesion.get_tipo_usuario() == 2: 
             documento = solicitar_dato("\nIngrese el número de documento del cliente: ", "numero")
             cliente_final = self.get_usuario_por_documento(documento)
             if cliente_final is None:
@@ -606,10 +605,9 @@ class SistemaCine:
                 print("Debe registrarlo primero antes de realizar una reserva.")
                 input("\nPresione Enter para continuar...")
                 return False
-        else: # Perfil Cliente
+        else:
             cliente_final = usuario_sesion
 
-        # 2. Selección de Sala
         if self.complejo.get_cantidad_salas() == 0:
             print("\nNo hay salas registradas en el sistema.")
             input("\nPresione Enter para continuar...")
@@ -628,7 +626,6 @@ class SistemaCine:
         num_sala = solicitar_dato("\nSeleccione el número de la sala: ", "numero", 1, self.complejo.get_cantidad_salas())
         sala_seleccionada = salas[num_sala - 1]
 
-        # 3. Selección de Función
         if sala_seleccionada.get_cant_funciones() == 0:
             print(f"\nLa sala {sala_seleccionada.get_identificador()} no tiene funciones programadas.")
             input("\nPresione Enter para continuar...")
@@ -656,7 +653,7 @@ class SistemaCine:
         print("\nEstado actual de los asientos ( . = libre, X = ocupado ):")
         funcion_elegida.mostrar_mapa()
 
-        cant_boletas = solicitar_dato("\nIngrese la cantidad de boletas a reservar: ", "numero", 1)
+        cant_boletas = solicitar_dato("\nIngrese la cantidad de boletas a reservar: ", "numero", 1, sala_seleccionada.get_sillas_por_fila())
         
         while True:
             fila_letra = solicitar_dato("Ingrese la letra de la fila (ej: A): ", "letra").upper()
@@ -668,7 +665,6 @@ class SistemaCine:
         
         col_inicio = solicitar_dato(f"Ingrese el número de la silla inicial (1-{sala_seleccionada.get_sillas_por_fila()}): ", "numero", 1, sala_seleccionada.get_sillas_por_fila()) - 1
 
-        # 5. Validar disponibilidad
         if col_inicio + cant_boletas > sala_seleccionada.get_sillas_por_fila():
             print("\nError: No hay suficientes sillas consecutivas en esa fila.")
             input("Presione Enter para volver...")
@@ -681,7 +677,6 @@ class SistemaCine:
                 input("Presione Enter para volver...")
                 return False
 
-        # 6. Realizar reserva y crear objeto
         asientos_ids = []
         for i in range(cant_boletas):
             mapa[idx_fila, col_inicio + i] = 1
@@ -690,10 +685,8 @@ class SistemaCine:
             
         precio_total = cant_boletas * sala_seleccionada.get_valor_boleta()
         
-        # CORRECCIÓN: Llamar al método sobre la instancia 'funcion_elegida', no sobre la clase 'Funcion'
         funcion_elegida.agregar_asientos_reservados(cant_boletas)
         
-        # Pasamos los nombres reales de los asientos (A1, A2...) en lugar de None
         reserva_nueva = Reserva(cliente_final.get_usuario(), funcion_elegida.get_id_funcion(), sala_seleccionada.get_identificador(), cant_boletas, np.array(asientos_ids), precio_total)
         self.complejo.agregar_reserva(reserva_nueva)
 
@@ -775,18 +768,37 @@ class SistemaCine:
     '''
 
     def emitir_boleta(self, reserva: Reserva) -> None:
-        encabezado = "|         BOLETA DE RESERVA       |" 
-        separador = "-" * len(encabezado)  
-        print(f"\n{separador}")
-        print(encabezado)
-        print(separador)
 
-        # Usamos los getters definidos en la clase Reserva
-        print(f"| -> Usuario: {reserva.get_usuario()}")
-        print(f"| -> Función ID: {reserva.get_id_funcion()}")
-        print(f"| -> Cantidad: {reserva.get_cant_boletas()}")
-        print(f"| -> Asientos: {reserva.get_asientos()}")
-        print(f"| -> Precio Total: ${reserva.get_precio_total()}")
+        print("\nGenerando boleta de reserva...")
+
+        input("\nPresione Enter para ver la boleta...")
+
+        usuario_obj = self.get_usuario_por_documento(reserva.get_usuario())
+
+        nombre_cliente = usuario_obj.get_nombre() if usuario_obj else "Desconocido"
+
+        # Convertimos la lista de asientos a una cadena separada por comas
+        asientos_str = ", ".join(map(str, reserva.get_asientos()))
+
+        # Preparamos las líneas de contenido para calcular el ancho máximo
+        lineas = [
+            f"| -> Nombre: {nombre_cliente}",
+            f"| -> Función ID: {reserva.get_id_funcion()}",
+            f"| -> Cantidad: {reserva.get_cant_boletas()}",
+            f"| -> Asientos: {asientos_str}",
+            f"| -> Precio Total: ${reserva.get_precio_total()}"
+        ]
+
+        titulo = "BOLETA DE RESERVA"
+        # El ancho total será el máximo entre el título y la línea más larga de datos + margen
+        ancho_total = max(len(l) for l in lineas) + 2
+        separador = "-" * ancho_total
+
+        print(f"\n{separador}")
+        print(f"|{titulo.center(ancho_total - 2)}|")
+        print(separador)
+        for linea in lineas:
+            print(f"{linea:<{ancho_total - 1}}|")
         print(separador)
 
 
@@ -809,6 +821,9 @@ class SistemaCine:
 
     def agregar_pelicula(self)-> str:
 
+        anno_actual = datetime.now().year
+        limpiar_pantalla()
+
         encabezado = "|         Registro de nueva pelicula          |"
         separador = "-" * len(encabezado)
         print(f"\n{separador}")
@@ -823,7 +838,7 @@ class SistemaCine:
         
         identificador_pelicula = self.contador_peliculas + 1
 
-        anno_estreno = solicitar_dato("\nIngrese el año de estreno de la pelicula: ", "numero")
+        anno_estreno = solicitar_dato("\nIngrese el año de estreno de la pelicula: ", "numero", 1900, anno_actual)
         duracion = solicitar_dato("\nIngrese la duracion (en minutos) de la pelicula: ", "numero", 90, 180)
         
         gen_opc = solicitar_dato("\n---Generos de la pelicula---\n\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6) Infantil\n\nIngrese una opcion: ", "numero", 1, 6)
@@ -872,6 +887,67 @@ class SistemaCine:
     ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 10, R10.CONSULTAR PORCENTAJE DE OCUPACION
     '''
     
+    '''
+    Autor: David Chica López  
+    Fecha: 23/05/2026
+    Metodo consultar_porcentaje_ocupacion: Permite al administrador consultar el porcentaje de ocupación de cada funcion en cada sala, ordenado de mayor a menor.
+    Entradas: None
+    Salidas: None
+    '''
+
+    def consultar_porcentaje_ocupacion(self) -> None:
+        
+        if self.complejo.get_cantidad_salas() == 0 or self.complejo.get_cantidad_funciones() == 0:
+            print("\nNo hay salas o funciones registradas en el sistema.")
+            input("\nPresione Enter para continuar...")
+            return
+        
+        encabezado = "|         Porcentaje de ocupación por sala          |"
+        separador = "-" * len(encabezado)
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+
+        datos_ocupacion:np.ndarray = np.full((self.complejo.get_cantidad_salas(), self.complejo.get_cantidad_funciones()), fill_value = 0, dtype = float)
+
+        for sala in range(self.complejo.get_cantidad_salas()):
+            sala_actual = self.complejo.get_lista_salas()[sala]
+            if sala_actual is not None:
+                print(f"\nSala {sala_actual.get_identificador()}:")
+                programacion = sala_actual.get_programacion()
+                for funcion in programacion:
+                    if funcion is not None:
+                        total_asientos = sala_actual.get_cant_filas() * sala_actual.get_sillas_por_fila()
+                        asientos_ocupados = funcion.get_asientos_reservados()
+                        if total_asientos > 0:
+                            porcentaje_ocupacion = (asientos_ocupados / total_asientos) * 100
+                        else:
+                            porcentaje_ocupacion = 0
+                        datos_ocupacion[sala_actual][funcion] = porcentaje_ocupacion
+
+        ocupacion_ordenada = np.copy(datos_ocupacion)
+        for datos in range(len(datos_ocupacion)):
+
+            ocupacion_ordenada[datos][:] = ordenar_por_burbuja(datos_ocupacion[datos][:])
+        
+        for sala in range(len(ocupacion_ordenada)):
+            sala_actual = self.complejo.get_lista_salas()[sala]
+            for j in range(len(ocupacion_ordenada[sala])):
+                if ocupacion_ordenada[sala][j] != 0:
+                    print(f"Sala {sala_actual.get_identificador():<{separador}}\n")
+
+                    print(f"Función {j+1}: {ocupacion_ordenada[sala][j]:<{separador}}% ocupada\n")
+
+                    input("Presione Enter para continuar...")
+
+                print(separador)
+
+        input("\nPresione Enter para volver al menú...")
+        return
+
+
+
+
     '''
     ============================================================================================================================================================================
     '''

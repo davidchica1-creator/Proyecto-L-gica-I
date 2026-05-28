@@ -730,7 +730,7 @@ class SistemaCine:
         lista_salas = self.complejo.get_lista_salas()
         for i in range(len(lista_salas)):
             if lista_salas[i] is not None:
-                print(f"| {i+1:<3} | {lista_salas[i].mostrar_info()}")
+                print(f"| {i+1:<3} |{lista_salas[i].mostrar_info()}")
         print(sep_salas)
 
         cant_salas = self.complejo.get_cantidad_salas()
@@ -738,9 +738,9 @@ class SistemaCine:
         sala_seleccionada = lista_salas[idx_sala]
 
         print(f"\nTrabajando en Sala: {sala_seleccionada.get_identificador()}")
-        print("\n\t1) Crear función\n\t2) Modificar función\n\t3) Eliminar función\n\t4) Renovar programación\n\t5) Salir\n")
+        print("\n\t1) Crear función\n\t2) Modificar función\n\t5) Salir\n")
         
-        opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 5)
+        opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 3)
 
         match opcion:
             case 1:
@@ -748,10 +748,6 @@ class SistemaCine:
             case 2:
                 self.complejo.modificar_funcion(self, sala_seleccionada)
             case 3:
-                self.complejo.eliminar_funcion_de_sala(sala_seleccionada)
-            case 4:
-                self.complejo.renovar_programacion_de_sala(sala_seleccionada)
-            case 5:
                 return
 
     '''
@@ -838,6 +834,8 @@ class SistemaCine:
         print(f"|{titulo.center(ancho_total - 2)}|")
         print(separador)
         for linea in lineas:
+            if len(lineas[linea]) > ancho_total:
+                print()
             print(f"|{linea:<{ancho_total - 1}}|")
         print(separador)
 
@@ -985,7 +983,7 @@ class SistemaCine:
                         lista_de_resultados[j + 1] = auxiliar
 
             for item in lista_de_resultados:
-                print(f"Sala: S{item[1]} | Función: {item[2]} | Ocupación: {item[0]:.2f}%")
+                print(f"|Sala: S{item[1]} | Función: {item[2]} | Ocupación: {item[0]:.2f} %|")
         print(separador)
         input("\nPresione Enter para volver al menú...")
 
@@ -1000,6 +998,95 @@ class SistemaCine:
     ============================================================================================================================================================================
     ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 11, R11. CONSULTAR RECAUDO TOTAL
     '''
+
+    '''
+    Autor: Salome Garcia Velasquez
+    Fecha: 25/05/2026
+    Metodo consultar_recaudo: Permite al administrador consultar el recaudo total ya sea de una sala especifica o del complejo completo.
+    Entradas: None
+    Salidas: None
+    '''
+
+    def consultar_recaudo(self) -> None:
+
+        if self.complejo.get_cantidad_salas() == 0:
+            print("No hay salas registradas en el complejo.")
+            return
+
+        encabezado = "|         Consultar recaudo total          |"
+        separador = "-" * len(encabezado)
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+
+        print("\n\t1) Recaudo de una sala especifica\n\t2) Recaudo del complejo completo\n")
+        tipo_consulta = solicitar_dato("Seleccione una opcion: ", "numero", 1, 2)
+
+        lista_salas = self.complejo.get_lista_salas()
+
+        if tipo_consulta == 1:
+            
+            encabezado = "|     Listado de salas disponibles     |"
+            separador = "-" * len(encabezado)
+            print(f"\n{separador}")
+            print(encabezado)
+            print(separador)
+
+            informacion = "|  #  | Sala ID | Valor boleta |"
+            separador = "-" * len(informacion)
+            print(f"\n{separador}")
+            print(informacion)
+            print(separador)
+
+            for i in range(len(lista_salas)):
+                if lista_salas[i] is not None:
+                    print(f"| {i+1:<3} | {lista_salas[i].get_identificador():<10} | {lista_salas[i].get_valor_boleta():<15} |")
+            print(separador)
+
+            identificador_sala = solicitar_dato("Ingrese la sala que desea consultar el recaudo: ", "numero", 1, self.complejo.get_cantidad_salas())
+            sala = self.complejo.get_sala(identificador_sala)
+            
+            valor_boleta = sala.get_valor_boleta()
+            recaudo_total = 0
+
+            encabezado = f"|Recauso por funcion de sala {identificador_sala}|"
+            separador = "-" * len(encabezado)
+            print(f"\n{separador}")
+            print(encabezado)
+            print(separador)
+
+            for i in range(len(sala.get_programacion())):
+                funcion = sala.get_programacion()[i]
+                if funcion is not None:
+                    recaudo_funcion = funcion.get_asientos_reservados() * valor_boleta
+                    recaudo_total += recaudo_funcion
+                    print(f"| Funcion {funcion.get_id_funcion():<15} | Recaudo: ${recaudo_funcion:<20} |")
+
+            print(f"\n  Recaudo total sala {identificador_sala}: ${recaudo_total:,.0f}")
+
+            input("\nPresione Enter para continuar...")
+            return
+
+        elif tipo_consulta == 2:
+            recaudo_complejo = 0
+            print("\n--- Recaudo del complejo completo ---")
+            for i in range(len(lista_salas)):
+                sala = lista_salas[i]
+                if sala is not None:
+                    valor_boleta = sala.get_valor_boleta()
+                    recaudo_sala = 0
+                    for j in range(len(sala.get_programacion())):
+                        funcion = sala.get_programacion()[j]
+                        if funcion is not None:
+                            recaudo_funcion = funcion.get_asientos_reservados() * valor_boleta
+                            recaudo_sala += recaudo_funcion
+                    recaudo_complejo += recaudo_sala
+                    print(f"  Sala {sala.get_identificador()}: ${recaudo_sala:,.0f}")
+            print(f"\n  Recaudo total del complejo: ${recaudo_complejo:,.0f}")
+            
+            input("\nPresione Enter para continuar...")
+            return
+
 
     '''
     ============================================================================================================================================================================
@@ -1033,7 +1120,7 @@ class SistemaCine:
 
             identificador_sala = self.contador_salas + 1
 
-            valor_boleta = solicitar_dato("\nIngrese el valor de la boleta: ", "numero", 1)
+            valor_boleta = solicitar_dato("\nIngrese el valor de la boleta: ", "numero", 5000, 50000)
 
             cant_filas = solicitar_dato("\nIngrese cantidad de filas ( minimo 10, máximo 26 ): ", "numero", 10, 26)
 

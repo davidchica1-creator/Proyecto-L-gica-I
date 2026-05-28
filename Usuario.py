@@ -105,7 +105,7 @@ class Usuario:
                     sistema.consultar_porcentaje_ocupacion()
 
                 case 7: 
-                    sistema.complejo.consultar_recaudo()
+                    sistema.consultar_recaudo()
                 case 8:
                     sistema.menu_crear_sala()
 

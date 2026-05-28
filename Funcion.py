@@ -149,9 +149,6 @@ class Funcion:
         if asiento_inicial < 0 or asiento_inicial >= self.__cant_filas * self.__sillas_por_fila:
 
             return False
-<<<<<<< HEAD
-=======
 
     def get_asientos_reservados(self) -> int:
         return self.__asientos_reservados
->>>>>>> 5538daf184b20a6219b35f78ab2535803eadd2b6

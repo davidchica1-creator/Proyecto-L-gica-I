@@ -16,6 +16,7 @@ class SalaCine:
         self.__cant_filas = cant_filas
         self.__sillas_por_fila = sillas_por_fila
         self.__tamanio = self.__cant_filas * self.__sillas_por_fila
+        self.__contador_funciones = 0
         self.__programacion = np.full((5), fill_value = None, dtype = object)
 
     def get_programacion(self):
@@ -24,7 +25,6 @@ class SalaCine:
     def get_identificador(self):
         return self.__identificador_sala
     
-<<<<<<< HEAD
     '''
     Autor: David Chica López
     Fecha: 25/05/2026
@@ -35,6 +35,12 @@ class SalaCine:
     def get_valor_boleta(self) -> int:
         return self.__valor_boleta
 
+    def get_cant_filas(self) -> int:
+        return self.__cant_filas
+
+    def get_sillas_por_fila(self) -> int:
+        return self.__sillas_por_fila
+
     '''
     Autor: David Chica López
     Fecha: 17/05/2026
@@ -42,24 +48,18 @@ class SalaCine:
     Entradas: cant_funciones
     Salidas: None
     '''
-=======
-    def get_valor_boleta(self):
-        return self.__valor_boleta
->>>>>>> 5538daf184b20a6219b35f78ab2535803eadd2b6
-
-    def mostrar_info(self):
-        return (f"{self.__identificador_sala:<15} | {self.__valor_boleta:<20} | {self.__cant_filas:<15} | {self.__sillas_por_fila:<15} |")
-     
+    def get_cant_funciones(self) -> int:
+        return self.__contador_funciones
     
     def agregar_funcion(self, funcion:Funcion)-> bool:
     
         for i in range(len(self.__programacion)):
             if self.__programacion[i] is None:
                 self.__programacion[i] = funcion
+                self.__contador_funciones += 1
                 return True
         return False
 
-<<<<<<< HEAD
     '''
     Autor: David Chica López
     Fecha: 17/05/2026
@@ -101,10 +101,8 @@ class SalaCine:
                 self.__programacion[i] = None
                 print(f"Función con el ID {id_funcion_eliminada} eliminada de la sala {self.__identificador_sala}")
         self.__contador_funciones = 0
-=======
     def eliminar_funcion(self, identificador_funcion:int):
         pass
 
     def calcular_porcentaje_ocupacion(self):
         pass
->>>>>>> 5538daf184b20a6219b35f78ab2535803eadd2b6

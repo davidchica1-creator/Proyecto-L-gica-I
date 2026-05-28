@@ -120,7 +120,7 @@ class Complejo:
             print(encabezado)
             print(separador)
             
-            identificador_funcion = f"s{sala_seleccionada.get_identificador()}-{sala_seleccionada.get_cant_funciones() + 1}"
+            identificador_funcion = f"S{sala_seleccionada.get_identificador()}-{sala_seleccionada.get_cant_funciones() + 1}"
             print(f"ID de función generado: {identificador_funcion}")
             
             '''
@@ -173,15 +173,20 @@ class Complejo:
                 except ValueError:
                     print("Error: El día ingresado no es válido para el mes actual.")
 
-
-            hora_inicio = solicitar_dato("\nIngrese la hora de inicio en formato de 24 horas (HH:MM): ", "hora")
+            while True:
+                hora_inicio = solicitar_dato("\nIngrese la hora de inicio en formato de 24 horas (HH:MM): ", "hora")
+                minutos_inicio_peli_nueva = horas_minutos(hora_inicio)
+                
+                # Validar rango (8:00 AM = 480 min a 10:00 PM = 1320 min)
+                if 480 <= minutos_inicio_peli_nueva <= 1320:
+                    break
+                print("Error: La hora debe estar entre las 08:00 y las 22:00 para ser visible.")
 
             '''
             Se valida que la nueva funcion no se cruce con ninguna otra funcion. 
             Se agregan 15 minutos de margen para limpieza de la sala.
             '''
             duracion_peli_nueva = peli_encontrada.get_duracion()
-            minutos_inicio_peli_nueva = horas_minutos(hora_inicio)
             minutos_fin_peli_nueva = minutos_inicio_peli_nueva + duracion_peli_nueva + 15
             
             cruce_de_horario = False
@@ -285,11 +290,16 @@ class Complejo:
                 print("Error: El ID ingresado no es válido o no está en la lista de películas activas.")
 
         fecha = solicitar_dato("Ingrese la nueva fecha de la función (DD/MM/AAAA): ", "fecha")
-        hora_inicio = solicitar_dato("Ingrese la nueva hora de inicio (HH:MM): ", "hora")
 
-   
+        while True:
+            hora_inicio = solicitar_dato("Ingrese la nueva hora de inicio (HH:MM): ", "hora")
+            minutos_inicio_peli_nueva = horas_minutos(hora_inicio)
+
+            if 480 <= minutos_inicio_peli_nueva <= 1320:
+                break
+            print("Error: La hora debe estar entre las 08:00 y las 22:00 para ser visible.")
+
         duracion_peli_nueva = peli_encontrada.get_duracion()
-        minutos_inicio_peli_nueva = horas_minutos(hora_inicio)
         minutos_fin_peli_nueva = minutos_inicio_peli_nueva + duracion_peli_nueva
         minutos_fin_peli_nueva = minutos_inicio_peli_nueva + duracion_peli_nueva + 15
         

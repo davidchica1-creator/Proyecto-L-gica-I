@@ -78,7 +78,10 @@ class Funcion:
 
         numerales = "    "
         for i in range(self.__sillas_por_fila):
-            numerales += f"{i + 1}   "
+            if i < 10:
+                numerales += f"{i + 1}   "
+            else:
+                numerales += f"{i + 1}  "
         print(numerales)
 
         for i in range(self.__cant_filas): 
@@ -96,7 +99,7 @@ class Funcion:
         
             print()
         pantalla = "Pantalla"
-        separador = "-" * (self.__sillas_por_fila *2)
+        separador = "-" * (len(numerales) + 2)
         print(f"\n   {separador}")
         print(f"   |{pantalla:^{len(numerales) + 2}}|")
         print(f"   {separador}")

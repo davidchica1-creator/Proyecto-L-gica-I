@@ -247,7 +247,7 @@ class Complejo:
         
         for i in range(len(sala_seleccionada.get_programacion())):
             if sala_seleccionada.get_programacion()[i] is not None:
-                print(f"| {i+1:<3} {sala_seleccionada.get_programacion()[i].info_modificar_funcion()}")
+                print(f"| {i+1:<3} | {sala_seleccionada.get_programacion()[i].info_modificar_funcion()}")
         print(sep_tabla)
 
         funcion_a_modificar = None
@@ -391,3 +391,148 @@ class Complejo:
                     return self.__lista_salas[i]
         return None
     
+    def get_nombre(self):
+        return self.__nombre
+    
+    def get_reservas(self):
+        return self.__reservas
+
+
+
+    '''
+    Autor: David Chica López
+    Fecha: 16/05/2026
+    Metodo gestionar_progrmacion: Recibe de parametro un objeto del SistemaCine, no retorna nada.
+
+    '''
+
+    def gestionar_programacion(self, sistema_cine) -> None:
+
+        '''
+        Primeramente verifica que hayan salas y peliculas para agendar funciones
+        '''
+        
+        if self.__cantidad_salas == 0 or sistema_cine.contador_peliculas == 0:
+            print("No hay salas registradas para programar funciones o no hay películas registradas.")
+            return
+        
+        limpiar_pantalla()
+        encabezado = "|         Registro de nueva funcion          |"
+        separador = "-" * len(encabezado)
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+
+        '''
+        Muestra una lista de las salas disponibles para agendar funciones
+        '''
+
+        print("\nSalas disponibles")
+        encabezado = f"| {'#':<3} | {'Sala ID':<15} | {'Valor boleta':<20} | {'Filas':<15} | {'Sillas/Fila':<15} |"
+        separador = "-" * len(encabezado)
+        
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+        
+        for i in range(len(self.__lista_salas)):
+            if self.__lista_salas[i] is not None:
+                print(f"| {i+1:<3} | {self.__lista_salas[i].mostrar_info()}")
+        print(separador)
+
+        '''
+        Se pide al administrador la sala que quiere gestionar sus funciones
+        '''
+
+        idx_sala = solicitar_dato("\nSeleccione una sala para gestionar su programación: ", "numero", 1, self.__cantidad_salas) - 1
+        sala_seleccionada = self.__lista_salas[idx_sala]
+
+        print(f"\nID de la sala seleccionada: {sala_seleccionada.get_identificador()}")
+
+        '''
+        Se muestran las distintas opciones para administrar las funciones de la sala seleccionada
+        '''
+              
+        print("\n\n\t1) Crear función\n\t2) Modificar función\n\t3) Eliminar función\n\t4) Renovar programación\n\t5) Salir\n")
+        opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 5)
+
+        match opcion:
+            case 1:
+                self.crear_funcion(sistema_cine, sala_seleccionada)
+            case 2:
+                self.modificar_funcion(sistema_cine, sala_seleccionada)
+            case 3:
+                self.eliminar_funcion_de_sala(sala_seleccionada)
+            case 4:
+                self.renovar_programacion_de_sala(sala_seleccionada)
+            case 5:
+                return
+
+    '''
+    Autor: Salome Garcia Velasquez
+    Fecha: 25/05/2026
+    Metodo consultar_recaudo: Permite al administrador consultar el recaudo total ya sea de una sala especifica o del complejo completo.
+    Entradas: None
+    Salidas: None
+    '''
+
+    def consultar_recaudo(self) -> None:
+
+        if self.__cantidad_salas == 0:
+            print("No hay salas registradas en el complejo.")
+            return
+
+        encabezado = "|         Consultar recaudo total          |"
+        separador = "-" * len(encabezado)
+        print(f"\n{separador}")
+        print(encabezado)
+        print(separador)
+
+        print("\n\t1) Recaudo de una sala especifica\n\t2) Recaudo del complejo completo\n")
+        tipo_consulta = solicitar_dato("Seleccione una opcion: ", "numero", 1, 2)
+
+        if tipo_consulta == 1:
+
+            identificador_sala = solicitar_dato("Ingrese el identificador de la sala: ", "numero")
+            sala = self.get_sala(identificador_sala)
+
+            if sala is None:
+                print("La sala ingresada no existe.")
+                return
+
+            valor_boleta = sala.get_valor_boleta()
+            recaudo_total = 0
+
+            print(f"\n--- Recaudo sala {identificador_sala} ---")
+
+            for i in range(len(sala.get_programacion())):
+                funcion = sala.get_programacion()[i]
+                if funcion is not None:
+                    recaudo_funcion = funcion.get_asientos_reservados() * valor_boleta
+                    recaudo_total += recaudo_funcion
+                    print(f"  Funcion {funcion.get_id_funcion()} | Fecha: {funcion.get_fecha()} | Recaudo: ${recaudo_funcion:,.0f}")
+
+            print(f"\n  Recaudo total sala {identificador_sala}: ${recaudo_total:,.0f}")
+
+        elif tipo_consulta == 2:
+
+            recaudo_complejo = 0
+
+            print("\n--- Recaudo del complejo completo ---")
+
+            for i in range(len(self.__lista_salas)):
+                sala = self.__lista_salas[i]
+                if sala is not None:
+                    valor_boleta = sala.get_valor_boleta()
+                    recaudo_sala = 0
+
+                    for j in range(len(sala.get_programacion())):
+                        funcion = sala.get_programacion()[j]
+                        if funcion is not None:
+                            recaudo_funcion = funcion.get_asientos_reservados() * valor_boleta
+                            recaudo_sala += recaudo_funcion
+
+                    recaudo_complejo += recaudo_sala
+                    print(f"  Sala {sala.get_identificador()}: ${recaudo_sala:,.0f}")
+
+            print(f"\n  Recaudo total del complejo: ${recaudo_complejo:,.0f}")

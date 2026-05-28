@@ -766,8 +766,8 @@ class SistemaCine:
     '''
     Autor: Salome García Velásquez / David Chica López
     Fecha: 23/05/2026
-    Metodo emitir_boleta: Emite la boleta con los datos de la reserva. Fecha de venta(mismo dia de la funcion), hora, nombre del complejo, sala de funcion, 
-    nombre de la pelicula, calificacion de la pelicula, precio total, lista de sillas reservadas 
+    Metodo emitir_boleta: Muestra en pantalla la informacion de la boleta con los datos de la reserva. Fecha de venta(mismo dia de la funcion), hora, nombre del complejo, 
+    sala de funcion, nombre de la pelicula, calificacion de la pelicula, precio total, lista de sillas reservadas 
     Entradas: Reserva
     Salidas: None
     '''
@@ -1051,7 +1051,6 @@ class SistemaCine:
     ============================================================================================================================================================================
     '''
     
-
     def get_usuario_por_documento(self, documento):
 
         doc_buscado = str(documento)
@@ -1060,7 +1059,6 @@ class SistemaCine:
                 if str(self.usuarios[i].get_usuario()) == doc_buscado:
                     return self.usuarios[i]
         return None
-
 
 if __name__ == "__main__":
     obj:SistemaCine

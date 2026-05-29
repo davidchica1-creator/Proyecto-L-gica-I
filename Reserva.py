@@ -24,7 +24,13 @@ class Reserva:
         self.__fecha_venta = datetime.now().strftime("%d/%m/%Y")
         self.__hora_venta = datetime.now().strftime("%H:%M")
 
- 
+    '''
+    Autor: Salomé Garcia / David Chica López
+    Fecha: 20/05/2026
+    Getters de cant_boletas, asientos, usuario, identificador_funcion, precio_total, fecha_venta, hora_venta, sala
+    Entradas: None
+    Retorna: Cantidad de boletas, asientos reservados, usuario que hizo la reserva, identificador de la función, precio total de la reserva, fecha y hora de la venta, identificador de la sala
+    '''
     def get_cant_boletas(self) -> int:
         return self.__cant_boletas
     

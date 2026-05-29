@@ -34,7 +34,16 @@ class Complejo:
         self.__cantidad_salas = 0
         self.__reservas = np.full((100), fill_value=None, dtype=object)
         self.__contador_reservas = 0
-        
+     
+     
+    '''
+    Autor: Salomé Garcia
+    Fecha: 20/05/2026
+    Métodos: get_nombre, agregar_reserva
+    Getter: retorna el nombre del complejo
+    Agregar reserva: recibe un objeto Reserva y lo agrega a la lista de reservas del complejo, incrementando el contador de reservas.
+    Retorna None.
+    '''   
     def get_nombre(self) -> str:
         return self.__nombre
     

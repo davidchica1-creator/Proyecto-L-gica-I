@@ -1138,6 +1138,14 @@ class SistemaCine:
     ============================================================================================================================================================================
     '''
     
+    '''
+    Autor: Salome Garcia   
+    Fecha: 21/05/2026  
+    Getter de usuario por documento: Permite buscar un usuario en el sistema a partir de su número de documento.
+    Entradas: documento (número de documento del usuario a buscar)
+    Salidas: Usuario (usuario encontrado) o None (si no se encuentra el usuario)
+    '''
+    
     def get_usuario_por_documento(self, documento):
 
         doc_buscado = str(documento)

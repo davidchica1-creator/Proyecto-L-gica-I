@@ -24,12 +24,7 @@ class Reserva:
         self.__fecha_venta = datetime.now().strftime("%d/%m/%Y")
         self.__hora_venta = datetime.now().strftime("%H:%M")
 
-    '''
-    Metodo: generar_boleta, muestra la información de la reserva, incluyendo el usuario, el identificador de la función, 
-    la cantidad de boletas, los asientos reservados y el precio total.
-    Parámetros: No recibe parámetros.
-    Retorna: None
-    '''
+ 
     def get_cant_boletas(self) -> int:
         return self.__cant_boletas
     

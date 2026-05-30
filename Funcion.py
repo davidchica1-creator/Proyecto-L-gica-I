@@ -76,13 +76,10 @@ class Funcion:
     def mostrar_mapa(self)->None:
         print(f"\nMapa de la Funcion")
 
-        numerales = "    "
+        numerales_header = "   "
         for i in range(self.__sillas_por_fila):
-            if i < 10:
-                numerales += f"{i + 1}   "
-            else:
-                numerales += f"{i + 1}  "
-        print(numerales)
+            numerales_header += f"{i + 1:^4}" # Centrar el número en 4 caracteres
+        print(numerales_header)
 
         for i in range(self.__cant_filas): 
             
@@ -95,14 +92,20 @@ class Funcion:
                     print("[ ]", end=" ")
                 else:
                     print("[x]", end=" ")
-
-        
             print()
-        pantalla = "Pantalla"
-        separador = "-" * (len(numerales) + 2)
-        print(f"\n   {separador}")
-        print(f"   |{pantalla:^{len(numerales) + 2}}|")
-        print(f"   {separador}")
+        
+        map_display_width = 1 + 2 + (self.__sillas_por_fila * 4)
+        
+        pantalla_texto = "Pantalla"
+
+        if map_display_width < len(pantalla_texto) + 4: 
+            map_display_width = len(pantalla_texto) + 4
+
+        screen_box_separator = "-" * map_display_width
+        
+        print(f"\n{screen_box_separator}")
+        print(f"|{pantalla_texto.center(map_display_width - 2)}|") 
+        print(screen_box_separator)
         print()
 
     def get_asientos_reservados(self) -> int:

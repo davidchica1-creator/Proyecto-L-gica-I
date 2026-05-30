@@ -101,8 +101,3 @@ class SalaCine:
                 self.__programacion[i] = None
                 print(f"Función con el ID {id_funcion_eliminada} eliminada de la sala {self.__identificador_sala}")
         self.__contador_funciones = 0
-    def eliminar_funcion(self, identificador_funcion:int):
-        pass
-
-    def calcular_porcentaje_ocupacion(self):
-        pass

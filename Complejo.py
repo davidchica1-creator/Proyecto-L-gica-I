@@ -112,10 +112,11 @@ class Complejo:
                 print("No hay películas registradas en el sistema.")
                 return
                 
-            funciones_existentes = []
-            for f in sala_seleccionada.get_programacion():
-                if f is not None:
-                    funciones_existentes.append((f, sala_seleccionada.get_identificador()))
+            funciones_existentes = np.full((5,), fill_value=None, dtype=object)
+            prog_sala = sala_seleccionada.get_programacion()
+            for i in range(len(prog_sala)):
+                if prog_sala[i] is not None:
+                    funciones_existentes[i] = (prog_sala[i], sala_seleccionada.get_identificador())
             
             sistema_cine.construir_tabla_programacion(
                 funciones_existentes, 
@@ -186,7 +187,6 @@ class Complejo:
                 hora_inicio = solicitar_dato("\nIngrese la hora de inicio en formato de 24 horas (HH:MM): ", "hora")
                 minutos_inicio_peli_nueva = horas_minutos(hora_inicio)
                 
-                # Validar rango (8:00 AM = 480 min a 10:00 PM = 1320 min)
                 if 480 <= minutos_inicio_peli_nueva <= 1320:
                     break
                 print("Error: La hora debe estar entre las 08:00 y las 22:00 para ser visible.")
@@ -337,6 +337,47 @@ class Complejo:
         funcion_a_modificar.set_hora_inicio(hora_inicio)
         print(f"Función con ID {funcion_seleccionada} modificada exitosamente.")
 
+
+    def renovar_programacion_semanal(self) -> None:
+        """
+        Método que verifica si es lunes y si la programación actual está vacía 
+        para proceder a limpiar funciones y reservas de la semana anterior.
+        """
+        ahora = datetime.now()
+        
+        if ahora.weekday() == 0:
+            lunes_semana_nueva = ahora.replace(hour=0, minute=0, second=0, microsecond=0)
+            domingo_semana_nueva = lunes_semana_nueva + timedelta(days=6, hours=23, minutes=59)
+            
+            semana_actual_vacia = True
+            existen_datos_pasados = False
+            
+            for i in range(len(self.__lista_salas)):
+                sala_actual = self.__lista_salas[i]
+                if sala_actual is not None:
+                    arreglo_funciones = sala_actual.get_programacion()
+                    for j in range(len(arreglo_funciones)):
+                        funcion_evaluada = arreglo_funciones[j]
+                        if funcion_evaluada is not None:
+                            momento_funcion = datetime.strptime(funcion_evaluada.get_fecha(), "%d/%m/%Y")
+                            
+                            if lunes_semana_nueva <= momento_funcion <= domingo_semana_nueva:
+                                semana_actual_vacia = False
+                            
+                            if momento_funcion < lunes_semana_nueva:
+                                existen_datos_pasados = True
+            
+            if semana_actual_vacia and existen_datos_pasados:
+                for i in range(len(self.__lista_salas)):
+                    sala_para_limpiar = self.__lista_salas[i]
+                    if sala_para_limpiar is not None:
+                        sala_para_limpiar.renovar_programacion(sala_para_limpiar.get_identificador())
+                
+                for k in range(len(self.__reservas)):
+                    self.__reservas[k] = None
+                
+                self.__contador_reservas = 0
+                print("\n[Mantenimiento] Se ha detectado el inicio de semana. Programación y reservas reiniciadas.")
 
     def get_sala(self, identificador_sala):
         for i in range(len(self.__lista_salas)):

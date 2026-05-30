@@ -1,3 +1,4 @@
+import numpy as np
 from Reserva import *
 from datetime import datetime, timedelta
 from Usuario import*
@@ -23,15 +24,30 @@ class SistemaCine:
     '''
 
     def __init__(self):
-        self.usuarios:np.ndarray = np.full((100), fill_value = None, dtype = object)
-        self.contador_clientes:int =0
+        self.ARCHIVO_USUARIOS = "usuarios.npy"
+        self.ARCHIVO_PELICULAS = "peliculas.npy"
+        self.ARCHIVO_COMPLEJO = "complejo.npy"
+        self.MAX_USUARIOS = 100
+        self.MAX_PELICULAS = 50
 
-        self.peliculas:np.ndarray = np.full((50), fill_value = None, dtype = object)
-        self.contador_peliculas:int=0
+        self.usuarios, self.contador_clientes = self.cargar_datos(self.ARCHIVO_USUARIOS, self.MAX_USUARIOS)
 
-        self.complejo:Complejo = Complejo()
-        self.contador_salas:int = 0
-        
+        if self.contador_clientes == 0:
+            self.usuarios[0] = Usuario("Admin123", "123", 1)
+            self.usuarios[1] = Usuario("Vendedor123", "123", 2)
+            self.contador_clientes = 1
+
+        self.peliculas, self.contador_peliculas = self.cargar_datos(self.ARCHIVO_PELICULAS, self.MAX_PELICULAS)
+
+        try:
+            temp_complejo = np.load(self.ARCHIVO_COMPLEJO, allow_pickle=True)
+            self.complejo = temp_complejo[0]
+            self.contador_salas = self.complejo.get_cantidad_salas()
+        except:
+            self.complejo = Complejo()
+            self.contador_salas = 0
+
+        self.complejo.renovar_programacion_semanal()
 
     '''
     ============================================================================================================================================================================
@@ -60,6 +76,7 @@ class SistemaCine:
             opcion = solicitar_dato("1. Ingresar\n2. Salir\n\nSeleccione una opción: ", "numero", 1, 2)
 
             if opcion == 2:
+                self.guardar_todo()
                 print("Hasta luego")
                 break
 
@@ -70,7 +87,7 @@ class SistemaCine:
                 user = Usuario("Admin", 123, 1)
                 user.menu_admin(self)
             elif usuario_ingresado == "Vendedor123" and contrasena == "Vendedor123*":
-                user = Usuario("Vendedor", 1234, 2)
+                user = Usuario("Vendedor", 123, 2)
                 user.menu_vendedor(self)
             else:
 
@@ -176,7 +193,10 @@ class SistemaCine:
 
         tabla = np.full((8, 7), "", dtype=object)
 
-        for funcion, sala_id in funciones_con_sala:
+        for item in funciones_con_sala:
+            if item is None:
+                continue
+            funcion, sala_id = item
             fecha_func = funcion.get_fecha()
             hora_func  = funcion.get_hora_inicio()
 
@@ -308,12 +328,16 @@ class SistemaCine:
     '''
 
     def mostrar_programacion_general(self) -> None:
-        funciones_con_sala = []
-        for sala in self.complejo.get_lista_salas():
-            if sala is not None:
-                for funcion in sala.get_programacion():
-                    if funcion is not None:
-                        funciones_con_sala.append((funcion, sala.get_identificador()))
+        funciones_con_sala = np.full((60,), fill_value=None, dtype=object)
+        idx = 0
+        lista_salas = self.complejo.get_lista_salas()
+        for i in range(len(lista_salas)):
+            if lista_salas[i] is not None:
+                prog = lista_salas[i].get_programacion()
+                for j in range(len(prog)):
+                    if prog[j] is not None:
+                        funciones_con_sala[idx] = (prog[j], lista_salas[i].get_identificador())
+                        idx += 1
 
         self.construir_tabla_programacion(funciones_con_sala, "PROGRAMACION SEMANAL - GENERAL")
 
@@ -329,11 +353,13 @@ class SistemaCine:
     '''
 
     def mostrar_programacion_por_sala(self) -> None:
-
-        salas_disponibles = []
-        for sala in self.complejo.get_lista_salas():
-            if sala is not None:
-                salas_disponibles.append(sala)
+        salas_disponibles = np.full((12,), fill_value=None, dtype=object)
+        contador = 0
+        lista_salas = self.complejo.get_lista_salas()
+        for i in range(len(lista_salas)):
+            if lista_salas[i] is not None:
+                salas_disponibles[contador] = lista_salas[i]
+                contador += 1
 
         if len(salas_disponibles) == 0:
             print("\nNo hay salas registradas en el sistema.")
@@ -343,17 +369,20 @@ class SistemaCine:
         encabezado = f"| {'#':<3} | {'Sala ID':<15} | {'Valor boleta':<20} | {'Filas':<15} | {'Sillas/Fila':<15} |"
         sep        = "-" * len(encabezado)
         print(f"\n{sep}\n{encabezado}\n{sep}")
-        for idx, sala in enumerate(salas_disponibles):
-            print(f"| {idx+1:<3} | {sala.mostrar_info()}")
+        for i in range(contador):
+            print(f"| {i+1:<3} | {salas_disponibles[i].mostrar_info()}")
         print(sep)
 
-        num_sala = solicitar_dato("\nSeleccione el número de sala a consultar: ", "numero", 1, len(salas_disponibles))
+        num_sala = solicitar_dato("\nSeleccione el número de sala a consultar: ", "numero", 1, contador)
         sala_elegida = salas_disponibles[num_sala - 1]
 
-        funciones_con_sala = []
-        for funcion in sala_elegida.get_programacion():
-            if funcion is not None:
-                funciones_con_sala.append((funcion, sala_elegida.get_identificador()))
+        funciones_con_sala = np.full((5,), fill_value=None, dtype=object)
+        prog_sala = sala_elegida.get_programacion()
+        idx_f = 0
+        for i in range(len(prog_sala)):
+            if prog_sala[i] is not None:
+                funciones_con_sala[idx_f] = (prog_sala[i], sala_elegida.get_identificador())
+                idx_f += 1
 
         self.construir_tabla_programacion(
             funciones_con_sala,
@@ -373,16 +402,21 @@ class SistemaCine:
     '''
 
     def mostrar_programacion_por_pelicula(self) -> None:
-        
-        ids_con_funcion = set()
-        funciones_totales = []  
+        ids_con_funcion = np.full((50,), fill_value=-1, dtype=int)
+        funciones_totales = np.full((60,), fill_value=None, dtype=object)
+        idx_ids = 0
+        idx_func = 0
 
-        for sala in self.complejo.get_lista_salas():
-            if sala is not None:
-                for funcion in sala.get_programacion():
-                    if funcion is not None:
-                        ids_con_funcion.add(funcion.get_identificador_pelicula())
-                        funciones_totales.append((funcion, sala.get_identificador()))
+        lista_salas = self.complejo.get_lista_salas()
+        for i in range(len(lista_salas)):
+            if lista_salas[i] is not None:
+                prog = lista_salas[i].get_programacion()
+                for j in range(len(prog)):
+                    if prog[j] is not None:
+                        ids_con_funcion[idx_ids] = prog[j].get_identificador_pelicula()
+                        funciones_totales[idx_func] = (prog[j], lista_salas[i].get_identificador())
+                        idx_ids += 1
+                        idx_func += 1
 
         if len(ids_con_funcion) == 0:
             print("\nNo hay funciones programadas en ninguna sala.")
@@ -536,17 +570,19 @@ class SistemaCine:
 
         programacion_sala = sala_seleccionada.get_programacion()
         
-        funciones_validas = []
+        funciones_validas = np.full((5,), fill_value=None, dtype=object)
+        contador_f = 0
         for j in range(len(programacion_sala)):
             if programacion_sala[j] is not None:
-                funciones_validas.append(programacion_sala[j])
+                funciones_validas[contador_f] = programacion_sala[j]
+                contador_f += 1
 
-        if len(funciones_validas) == 0:
+        if contador_f == 0:
             print(f"\nLa sala {sala_seleccionada.get_identificador()} no tiene funciones programadas.")
             input("\nPresione Enter para continuar...")
         else:
             print(f"\n--- Funciones disponibles en Sala {sala_seleccionada.get_identificador()} ---")
-            for k in range(len(funciones_validas)):
+            for k in range(contador_f):
                 funcion_actual = funciones_validas[k]
                 
                 nombre_peli = "Desconocida"
@@ -557,7 +593,7 @@ class SistemaCine:
                 
                 print(f"{k+1}) {nombre_peli} - {funcion_actual.get_fecha()} a las {funcion_actual.get_hora_inicio()}")
 
-            indice_f = solicitar_dato("\nSeleccione el número de la función para ver el mapa: ", "numero", 1, len(funciones_validas))
+            indice_f = solicitar_dato("\nSeleccione el número de la función para ver el mapa: ", "numero", 1, contador_f)
             funcion_elegida = funciones_validas[indice_f - 1]
             
             limpiar_pantalla()
@@ -631,20 +667,22 @@ class SistemaCine:
 
         print(f"\nFunciones disponibles en Sala {sala_seleccionada.get_identificador()}:")
         programacion = sala_seleccionada.get_programacion()
-        funciones_validas = []
-        for f in programacion:
-            if f is not None:
-                funciones_validas.append(f)
+        funciones_validas = np.full((5,), fill_value=None, dtype=object)
+        contador_fv = 0
+        for i in range(len(programacion)):
+            if programacion[i] is not None:
+                funciones_validas[contador_fv] = programacion[i]
+                contador_fv += 1
 
         enc_f = f"| {'#':<3} | {'ID Función':<12} | {'Fecha':<12} | {'Hora':<10} |"
         sep_f = "-" * len(enc_f)
         print(f"{sep_f}\n{enc_f}\n{sep_f}")
-        for i in range(len(funciones_validas)):
+        for i in range(contador_fv):
             f = funciones_validas[i]
             print(f"| {i+1:<3} | {f.get_id_funcion():<12} | {f.get_fecha():<12} | {f.get_hora_inicio():<10} |")
         print(sep_f)
 
-        num_func = solicitar_dato("\nSeleccione el número de la función: ", "numero", 1, len(funciones_validas))
+        num_func = solicitar_dato("\nSeleccione el número de la función: ", "numero", 1, contador_fv)
         funcion_elegida = funciones_validas[num_func - 1]
 
         print("\nEstado actual de los asientos ( . = libre, X = ocupado ):")
@@ -772,73 +810,52 @@ class SistemaCine:
         print("\nGenerando boleta de reserva...")
         input("\nPresione Enter para ver la boleta...")
 
-        id_del_usuario = reserva.get_usuario()
-        objeto_usuario_encontrado = self.get_usuario_por_documento(id_del_usuario)
+        usuario = self.get_usuario_por_documento(reserva.get_usuario())
+        nombre_cliente = usuario.get_nombre() if usuario else "Desconocido"
+
+        nombre_peli, calif_peli = "No encontrada", "N/A"
+        fecha_func, hora_func = "N/A", "N/A"
         
-        if objeto_usuario_encontrado != None:
-            nombre_del_cliente = objeto_usuario_encontrado.get_nombre()
-        else:
-            nombre_del_cliente = "Desconocido"
-
-        nombre_de_la_pelicula = "No encontrada"
-        calificacion_de_la_pelicula = "N/A"
-        fecha_de_la_funcion = "N/A"
-        hora_de_la_funcion = "N/A"
+        id_sala = reserva.get_sala()
+        sala = self.complejo.get_sala(id_sala)
         
-        id_de_la_sala = reserva.get_sala()
-        sala_donde_se_proyecta = self.complejo.get_sala(id_de_la_sala)
-        
-        if sala_donde_se_proyecta != None:
-
-            id_de_la_funcion_reservada = reserva.get_id_funcion()
-            lista_de_funciones_en_sala = sala_donde_se_proyecta.get_programacion()
-            
-            for funcion_actual in lista_de_funciones_en_sala:
-                if funcion_actual != None:
-                    if funcion_actual.get_id_funcion() == id_de_la_funcion_reservada:
-
-                        fecha_de_la_funcion = funcion_actual.get_fecha()
-                        hora_de_la_funcion = funcion_actual.get_hora_inicio()
-                        
-
-                        id_pelicula_a_buscar = funcion_actual.get_identificador_pelicula()
-                        for pelicula_actual in self.peliculas:
-                            if pelicula_actual != None:
-                                if pelicula_actual.get_id() == id_pelicula_a_buscar:
-
-                                    nombre_de_la_pelicula = pelicula_actual.get_nombre_espanol()
-                                    calificacion_de_la_pelicula = pelicula_actual.get_calificacion()
-                                    break 
-                        break 
+        if sala is not None:
+            for funcion in sala.get_programacion():
+                if funcion is not None and funcion.get_id_funcion() == reserva.get_id_funcion():
+                    fecha_func = funcion.get_fecha()
+                    hora_func = funcion.get_hora_inicio()
+                    
+                    for peli in self.peliculas:
+                        if peli is not None and peli.get_id() == funcion.get_identificador_pelicula():
+                            nombre_peli = peli.get_nombre_espanol()
+                            calif_peli = peli.get_calificacion()
+                            break
+                    break
 
         asientos_str = ", ".join(map(str, reserva.get_asientos()))
 
         lineas = [
-            f"-> Cliente: {nombre_del_cliente}",
-            f"-> Pelicula: {nombre_de_la_pelicula}",
-            f"-> Fecha de la Funcion: {fecha_de_la_funcion}",
-            f"-> Hora de la Funcion: {hora_de_la_funcion}",
-            f"-> Sala: {id_de_la_sala}",
-            f"-> Calificacion: {calificacion_de_la_pelicula}",
-            f"-> Precio Total: ${reserva.get_precio_total()}",
-            f"-> Fecha de Venta: {reserva.get_fecha_venta()}",
-            f"-> Asientos: {asientos_str}"
+            f" Cliente: {nombre_cliente}",
+            f" Pelicula: {nombre_peli}",
+            f" Fecha Funcion: {fecha_func}",
+            f" Hora Funcion: {hora_func}",
+            f" Sala: {id_sala}",
+            f" Calificacion: {calif_peli}",
+            f" Precio Total: ${reserva.get_precio_total():,}",
+            f" Fecha Venta: {reserva.get_fecha_venta()}",
+            f" Asientos: {asientos_str}"
         ]
 
         titulo = "BOLETA DE RESERVA"
-
-        ancho_total = max(len(l) for l in lineas) + 2
+        ancho_total = max(max(len(l) for l in lineas), len(titulo)) + 4
         separador = "-" * ancho_total
 
         print(f"\n{separador}")
         print(f"|{titulo.center(ancho_total - 2)}|")
         print(separador)
         for linea in lineas:
-            if len(lineas[linea]) > ancho_total:
-                print()
-            print(f"|{linea:<{ancho_total - 1}}|")
+            print(f"| {linea.ljust(ancho_total - 3)}|")
         print(separador)
-
 
     '''
     ============================================================================================================================================================================
@@ -1154,6 +1171,36 @@ class SistemaCine:
                 if str(self.usuarios[i].get_usuario()) == doc_buscado:
                     return self.usuarios[i]
         return None
+
+    def cargar_datos(self, archivo: str, num_max_datos: int) -> tuple[np.ndarray, int]:
+        """ Este método carga los datos de un archivo en un arreglo específico """
+        try:
+            arreglo_de_datos = np.load(archivo, allow_pickle=True)
+            i = 0
+            while (i < len(arreglo_de_datos) and arreglo_de_datos[i] is not None):
+                i += 1
+            return arreglo_de_datos, i
+        except (FileNotFoundError, EOFError, OSError):
+            print(f"No se pudo cargar el archivo {archivo}. Se creó un arreglo de datos vacío!")
+            arreglo_de_datos = np.full((num_max_datos), fill_value=None, dtype=object)
+            return arreglo_de_datos, 0
+
+    def guardar_datos(self, arreglo_de_datos: np.ndarray, archivo: str) -> bool:
+        """ Este método almacena los datos de un arreglo en un archivo """
+        try:
+            np.save(archivo, arreglo_de_datos)
+            return True
+        except Exception as e:
+            print(f"Error: no se pudieron almacenar los datos en el archivo {archivo}. {e}")
+            return False
+
+    def guardar_todo(self) -> None:
+        """ Centraliza el guardado de todos los datos persistentes del sistema """
+        print("\nGuardando datos del sistema...")
+        self.guardar_datos(self.usuarios, self.ARCHIVO_USUARIOS)
+        self.guardar_datos(self.peliculas, self.ARCHIVO_PELICULAS)
+        self.guardar_datos(np.array([self.complejo], dtype=object), self.ARCHIVO_COMPLEJO)
+        print("Datos guardados correctamente.")
 
 if __name__ == "__main__":
     obj:SistemaCine

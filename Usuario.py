@@ -188,7 +188,7 @@ class Usuario:
                     sistema.mostrar_lista_peliculas_activas()
  
                 case 3:
-                    sub_opcion = solicitar_dato("\nIngresa una de las opciones:\n\t1.Visualizar mapa\n\t2.Reservar boleta\n", "numero", 1, 2)
+                    sub_opcion = solicitar_dato("\nIngresa una de las opciones:\n\n\t1.Visualizar mapa\n\t2.Reservar boleta\n", "numero", 1, 2)
                     match sub_opcion:
                         case 1:
                             sistema.mostrar_mapa_funcion()

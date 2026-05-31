@@ -33,8 +33,8 @@ class SistemaCine:
         self.usuarios, self.contador_clientes = self.cargar_datos(self.ARCHIVO_USUARIOS, self.MAX_USUARIOS)
 
         if self.contador_clientes == 0:
-            self.usuarios[0] = Usuario("Admin123", "123", 1)
-            self.usuarios[1] = Usuario("Vendedor123", "123", 2)
+            self.usuarios[0] = Usuario("Admin123", "Admin123*", 1)
+            self.usuarios[1] = Usuario("Vendedor123", "Vendedor123*", 2)
             self.contador_clientes = 1
 
         self.peliculas, self.contador_peliculas = self.cargar_datos(self.ARCHIVO_PELICULAS, self.MAX_PELICULAS)
@@ -170,7 +170,7 @@ class SistemaCine:
     Salidas:  None
     '''
 
-    def construir_tabla_programacion(self, funciones_con_sala: list, titulo: str) -> None:
+    def construir_tabla_programacion(self, funciones_con_sala: np.ndarray, titulo: str) -> None:
 
         hoy = datetime.now()
         inicio_semana = hoy - timedelta(days=hoy.weekday())
@@ -362,7 +362,7 @@ class SistemaCine:
                 salas_disponibles[contador] = lista_salas[i]
                 contador += 1
 
-        if len(salas_disponibles) == 0:
+        if contador == 0:
             print("\nNo hay salas registradas en el sistema.")
             input("\nEnter para continuar...")
             return
@@ -419,7 +419,7 @@ class SistemaCine:
                         idx_ids += 1
                         idx_func += 1
 
-        if len(ids_con_funcion) == 0:
+        if idx_ids == 0:
             print("\nNo hay funciones programadas en ninguna sala.")
             input("\nEnter para continuar...")
             return

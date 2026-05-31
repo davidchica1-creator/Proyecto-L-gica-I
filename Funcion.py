@@ -11,15 +11,20 @@ from Pelicula import *
 
 class Funcion:
 
-    '''
-    Autor: David Chica López
-    Fecha: 2/05/2026
-    Método constructor de la clase Funcion
-    Entradas: identificador_funcion, identificador_pelicula, fecha, hora_inicio, cant_filas, sillas_por_fila
-    Salidas: None
-    '''
-    
     def __init__(self, identificador_funcion:int, identificador_pelicula:int, identificador_sala:int, fecha:str, hora_inicio:str, cant_filas:int, sillas_por_fila:int):
+        '''
+        Autor: David Chica López
+        Fecha: 02/05/2026
+        Método constructor de la clase Funcion.
+        Entradas: identificador_funcion (int) - ID de la función,
+                  identificador_pelicula (int) - ID de la película asociada,
+                  identificador_sala (int) - ID de la sala donde se proyecta,
+                  fecha (str) - Fecha de la función (DD/MM/AAAA),
+                  hora_inicio (str) - Hora de inicio (HH:MM),
+                  cant_filas (int) - Filas de la sala,
+                  sillas_por_fila (int) - Sillas por cada fila.
+        Salidas: None.
+        '''
         self.__identificador_funcion = identificador_funcion
         self.__identificador_pelicula = identificador_pelicula
         self.identificador_sala = identificador_sala
@@ -108,17 +113,11 @@ class Funcion:
         print(screen_box_separator)
         print()
 
-    def get_asientos_reservados(self) -> int:
-        return self.__asientos_reservados
-
     def get_identificador_funcion(self) -> int:
         return self.__identificador_funcion
         
     def get_mapa_sala(self) -> np.ndarray:
         return self.__mapa_sala
-    
-    def verificar_disponibilidad(self, asiento_inicial, cant_boletas):
-        pass
 
     def agregar_asientos_reservados(self, cant_boletas) -> None:
         self.__asientos_reservados += cant_boletas
@@ -134,7 +133,7 @@ class Funcion:
     '''
 
     def mostrar_info(self) -> str:
-        return f"{self.__identificador_funcion} | {self.nombre_espanol} | {self.__fecha} | {self.__hora_inicio} |"
+        return f"{self.__identificador_funcion} | ID Peli: {self.__identificador_pelicula} | {self.__fecha} | {self.__hora_inicio} |"
     
     '''
     Autor: David Chica López

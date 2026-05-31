@@ -11,6 +11,14 @@ import numpy as np
 class SalaCine:
 
     def __init__(self, identificador_sala:int, valor_boleta:int, cant_filas:int, sillas_por_fila:int):
+        '''
+        Autor: David Chica López
+        Fecha: 03/06/2026
+        Método constructor de la clase SalaCine.
+        Entradas: identificador_sala (int) - ID único de la sala, valor_boleta (int) - precio de cada boleta, cant_filas (int) - número de filas de asientos, 
+        sillas_por_fila (int) - sillas por cada fila.
+        Salidas: None
+        '''
         self.__identificador_sala = identificador_sala
         self.__valor_boleta = valor_boleta
         self.__cant_filas = cant_filas

@@ -11,17 +11,17 @@ Clase Usuario
 
 class Usuario:
 
-    """
-    Autor: Salome Garcia Velasquez
-    Fecha: 04/05/2026  
-    Método constructor de la clase Usuario  
-    Entradas: nombre, usuario, tipo_usuario  
-    Salidas: None  
-    """ 
-
     def __init__(self,nombre:str, usuario:int, tipo_usuario:int ):
+        '''
+        Autor: Salome Garcia Velasquez
+        Fecha: 04/05/2026
+        Método constructor de la clase Usuario.
+        Entradas: nombre (str) - Nombre del usuario,
+                  usuario (int) - Documento de identidad / ID,
+                  tipo_usuario (int) - Perfil (1: Admin, 2: Vendedor, 3: Cliente).
+        Salidas: None.
+        '''
     
-   
         self.__nombre = nombre
         self.__usuario = usuario
         self.__contrasena = (f"{self.__usuario}{self.__nombre[0].lower()}*")

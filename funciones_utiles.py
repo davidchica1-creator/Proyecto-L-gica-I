@@ -9,6 +9,7 @@ valores mínimo y máximo en caso de se usen menus de opciones, para evitar repe
 '''
 
 from datetime import datetime
+import numpy as np
 import os
 
 def solicitar_dato(mensaje, tipo_esperado, min_val=None, max_val=None):

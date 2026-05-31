@@ -12,6 +12,18 @@ from datetime import datetime
 class Reserva:
     
     def __init__(self, usuario:int, identificador_funcion:int, identificador_sala:int, cant_boletas:int, asientos:np.ndarray, precio_total:int):
+        '''
+        Autor: David Chica López
+        Fecha: 04/05/2026
+        Método constructor de la clase Reserva.
+        Entradas: usuario (int) - ID del usuario que reserva,
+                  identificador_funcion (int) - ID de la función,
+                  identificador_sala (int) - ID de la sala,
+                  cant_boletas (int) - Número de boletas compradas,
+                  asientos (np.ndarray) - Arreglo con los códigos de asientos (ej. A1, A2),
+                  precio_total (int) - Costo total de la reserva.
+        Salidas: None.
+        '''
         self.__usuario = usuario
         self.__identificador_funcion = identificador_funcion
         self.__identificador_sala = identificador_sala

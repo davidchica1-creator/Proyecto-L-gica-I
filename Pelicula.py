@@ -9,15 +9,22 @@ from funciones_utiles import solicitar_dato
 
 class Pelicula:
 
-    '''
-    Autor: David Chica López
-    Fecha: 03/05/2026
-    Método constructor de la clase Pelicula
-    Entradas: nombre_espanol, nombre_original, identificador_pelicula, anno_estreno, duracion, genero, pais_origen, calificacion, estado
-    Salidas: None
-    '''
-
     def __init__(self,nombre_espanol:str, nombre_original:str, identificador_pelicula:int, anno_estreno:int, duracion:int, genero:str, pais_origen:str, calificacion:str, estado:bool = True):
+        '''
+        Autor: David Chica López
+        Fecha: 03/05/2026
+        Método constructor de la clase Pelicula.
+        Entradas: nombre_espanol (str) - Título en español,
+                  nombre_original (str) - Título original,
+                  identificador_pelicula (int) - ID único,
+                  anno_estreno (int) - Año de lanzamiento,
+                  duracion (int) - Duración en minutos,
+                  genero (str) - Género de la película,
+                  pais_origen (str) - País de producción,
+                  calificacion (str) - Clasificación de edad (G, PG, etc.),
+                  estado (bool) - Activa o Inactiva.
+        Salidas: None.
+        '''
         self.__nombre_espanol = nombre_espanol
         self.__nombre_original = nombre_original
         self.__identificador_pelicula = identificador_pelicula

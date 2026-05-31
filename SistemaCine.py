@@ -254,18 +254,19 @@ class SistemaCine:
 
         for i in range(8):
 
-            sub_lineas = []
+            sub_lineas = np.full((7,), fill_value=None, dtype=object)
             for j in range(7):
                 if tabla[i][j]:
-                    sub_lineas.append(tabla[i][j].split("\n"))
+                    sub_lineas[j] = tabla[i][j].split("\n")
                 else:
-                    sub_lineas.append([""])
+                    sub_lineas[j] = np.array([""], dtype=object)
 
             max_sub = 0
             for s in sub_lineas:
-                longitud = len(s)
-                if longitud > max_sub:
-                    max_sub = longitud
+                if s is not None:
+                    longitud = len(s)
+                    if longitud > max_sub:
+                        max_sub = longitud
 
             for k in range(max_sub):
                 if k == 0:
@@ -423,26 +424,32 @@ class SistemaCine:
             input("\nEnter para continuar...")
             return
 
-        peliculas_con_funcion = []
+        peliculas_con_funcion = np.full((self.MAX_PELICULAS), fill_value=None, dtype=object)
+        contador_peli_prog = 0
         for i in range(self.contador_peliculas):
             p = self.peliculas[i]
             if p is not None and p.get_id() in ids_con_funcion:
-                peliculas_con_funcion.append(p)
+                peliculas_con_funcion[contador_peli_prog] = p
+                contador_peli_prog += 1
 
         encabezado = f"| {'#':<3} | {'ID':<8} | {'Nombre en español':<30} |"
         sep        = "-" * len(encabezado)
         print(f"\n{sep}\n{encabezado}\n{sep}")
-        for idx, p in enumerate(peliculas_con_funcion):
-            print(f"| {idx+1:<3} | {p.get_id():<8} | {p.get_nombre_espanol():<30} |")
+        for i in range(contador_peli_prog):
+            p = peliculas_con_funcion[i]
+            print(f"| {i+1:<3} | {p.get_id():<8} | {p.get_nombre_espanol():<30} |")
         print(sep)
 
-        num_peli   = solicitar_dato("\nSeleccione el número de película a consultar: ", "numero", 1, len(peliculas_con_funcion))
+        num_peli   = solicitar_dato("\nSeleccione el número de película a consultar: ", "numero", 1, contador_peli_prog)
         peli_elegida = peliculas_con_funcion[num_peli - 1]
 
-        funciones_filtradas = [
-            (f, sid) for f, sid in funciones_totales
-            if f.get_identificador_pelicula() == peli_elegida.get_id()
-        ]
+        funciones_filtradas = np.full((60), fill_value=None, dtype=object)
+        contador_filtradas = 0
+        for i in range(len(funciones_totales)):
+            item = funciones_totales[i]
+            if item is not None and item[0].get_identificador_pelicula() == peli_elegida.get_id():
+                funciones_filtradas[contador_filtradas] = item
+                contador_filtradas += 1
 
         self.construir_tabla_programacion(
             funciones_filtradas,
@@ -640,7 +647,7 @@ class SistemaCine:
                 return False
         else:
             cliente_final = usuario_sesion
-            print(f"Usuario encontrado, nombre de usuario: {cliente_final.get_nombre}")
+            print(f"Usuario encontrado, nombre de usuario: {cliente_final.get_nombre()}")
 
         if self.complejo.get_cantidad_salas() == 0:
             print("\nNo hay salas registradas en el sistema.")
@@ -712,17 +719,16 @@ class SistemaCine:
                 input("Presione Enter para volver...")
                 return False
 
-        asientos_ids = []
+        asientos_ids = np.full((cant_boletas,), fill_value="", dtype=object)
         for i in range(cant_boletas):
             mapa[idx_fila, col_inicio + i] = 1
-            letra_fila = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[idx_fila]
-            asientos_ids.append(f"{letra_fila}{col_inicio + i + 1}")
+            asientos_ids[i] = f"{'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[idx_fila]}{col_inicio + i + 1}"
             
         precio_total = cant_boletas * sala_seleccionada.get_valor_boleta()
         
         funcion_elegida.agregar_asientos_reservados(cant_boletas)
         
-        reserva_nueva = Reserva(cliente_final.get_usuario(), funcion_elegida.get_id_funcion(), sala_seleccionada.get_identificador(), cant_boletas, np.array(asientos_ids), precio_total)
+        reserva_nueva = Reserva(cliente_final.get_usuario(), funcion_elegida.get_id_funcion(), sala_seleccionada.get_identificador(), cant_boletas, asientos_ids, precio_total)
         self.complejo.agregar_reserva(reserva_nueva)
 
         print("\nSu reserva ha sido guardada con éxito.")
@@ -887,6 +893,7 @@ class SistemaCine:
 
         if self.contador_peliculas >= 50:
             print("Error: Capacidad máxima de películas alcanzada")
+            return
 
         nombre_espanol = solicitar_dato("Ingrese el nombre en español de la pelicula: ", "texto")
         nombre_original = solicitar_dato("\nIngrese el nombre original de la pelicula: ", "texto")
@@ -963,7 +970,9 @@ class SistemaCine:
         print(encabezado)
         print(separador)
 
-        lista_de_resultados = []
+        MAX_RESULTADOS = 60
+        lista_de_resultados = np.full((MAX_RESULTADOS, 3), fill_value=None, dtype=object)
+        contador_resultados = 0
 
         salas_del_sistema = self.complejo.get_lista_salas()
         for sala_actual in salas_del_sistema:
@@ -983,13 +992,15 @@ class SistemaCine:
                             
                         id_de_la_sala = sala_actual.get_identificador()
                         id_de_la_funcion = funcion_actual.get_id_funcion()
-                        lista_de_resultados.append([porcentaje_calculado, id_de_la_sala, id_de_la_funcion])
+                        
+                        lista_de_resultados[contador_resultados] = np.array([porcentaje_calculado, id_de_la_sala, id_de_la_funcion], dtype=object)
+                        contador_resultados += 1
 
-        if len(lista_de_resultados) == 0:
+        if contador_resultados == 0:
             print("No se encontraron funciones programadas en las salas.")
         else:
 
-            cantidad_items = len(lista_de_resultados)
+            cantidad_items = contador_resultados
             for i in range(cantidad_items):
                 for j in range(0, cantidad_items - i - 1):
 
@@ -999,7 +1010,8 @@ class SistemaCine:
                         lista_de_resultados[j] = lista_de_resultados[j + 1]
                         lista_de_resultados[j + 1] = auxiliar
 
-            for item in lista_de_resultados:
+            for i in range(contador_resultados):
+                item = lista_de_resultados[i]
                 print(f"|Sala: S{item[1]} | Función: {item[2]} | Ocupación: {item[0]:.2f} %|")
         print(separador)
         input("\nPresione Enter para volver al menú...")
@@ -1043,21 +1055,18 @@ class SistemaCine:
 
         if tipo_consulta == 1:
             
-            encabezado = "|     Listado de salas disponibles     |"
-            separador = "-" * len(encabezado)
+            ancho_tabla = 38
+            separador = "-" * ancho_tabla
             print(f"\n{separador}")
-            print(encabezado)
+            print(f"|{'Listado de salas disponibles':^36}|")
             print(separador)
 
-            informacion = "|  #  | Sala ID | Valor boleta |"
-            separador = "-" * len(informacion)
-            print(f"\n{separador}")
-            print(informacion)
+            print(f"| {'#':^3} | {'Sala ID':^10} | {'Valor boleta':^15} |")
             print(separador)
 
             for i in range(len(lista_salas)):
                 if lista_salas[i] is not None:
-                    print(f"| {i+1:<3} | {lista_salas[i].get_identificador():<10} | {lista_salas[i].get_valor_boleta():<15} |")
+                    print(f"| {i+1:^3} | {lista_salas[i].get_identificador():^10} | {lista_salas[i].get_valor_boleta():^15} |")
             print(separador)
 
             identificador_sala = solicitar_dato("Ingrese la sala que desea consultar el recaudo: ", "numero", 1, self.complejo.get_cantidad_salas())

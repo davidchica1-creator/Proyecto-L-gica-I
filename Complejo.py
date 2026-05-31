@@ -18,15 +18,14 @@ from datetime import datetime, timedelta
 
 class Complejo:
 
-    '''
-    Autor: David Chica López
-    Fecha: 04/05/2026
-    Método constructor de la clase Complejo
-    Entradas: None
-    Salidas: None
-    '''
-
     def __init__ (self):
+        '''
+        Autor: David Chica López
+        Fecha: 04/05/2026
+        Método constructor de la clase Complejo.
+        Entradas: None.
+        Salidas: None.
+        '''
 
         self.__nombre:str = "Complejo Que hay para ver"
         self.__direccion:str = ""
@@ -320,10 +319,10 @@ class Complejo:
                     if peli is not None and peli.get_id() == funcion_actual.get_identificador_pelicula():
                         peli_ya_programada = peli
                         break
-                
+
+                if peli_ya_programada is not None:
                     minutos_inicio_existente = horas_minutos(funcion_actual.get_hora_inicio())
                     minutos_fin_existente = minutos_inicio_existente + peli_ya_programada.get_duracion() + 15
-                    
                     if minutos_inicio_peli_nueva < minutos_fin_existente and minutos_inicio_existente < minutos_fin_peli_nueva:
                         cruce_de_horario = True
                         break

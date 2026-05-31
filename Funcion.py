@@ -78,12 +78,12 @@ class Funcion:
     Entradas: None
     Salidas: None
     '''
-    def mostrar_mapa(self)->None:
-        print(f"\nMapa de la Funcion")
+    def mostrar_mapa(self) -> None:
+        print(f"\nMapa de la Función")
 
         numerales_header = "   "
         for i in range(self.__sillas_por_fila):
-            numerales_header += f"{i + 1:^4}" # Centrar el número en 4 caracteres
+            numerales_header += f"{i + 1:^4}"
         print(numerales_header)
 
         for i in range(self.__cant_filas): 
@@ -127,7 +127,7 @@ class Funcion:
     '''
     Autor: David Chica López
     Fecha: 17/05/2026
-    Metodo mostar_info: Muestra la informacion de la funcion
+    Método mostrar_info: Muestra la información de la función
     Entradas: Ninguna
     Salidas: str
     '''

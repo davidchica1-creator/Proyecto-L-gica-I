@@ -93,7 +93,7 @@ class Complejo:
     '''
     Autor: David Chica López
     Fecha: 17/05/2026
-    Método crear_funcion: Permite crear una funcion en una sala seleccionada. Verifica que existan salas y peliculas registradas.
+    Método crear_funcion: Permite crear una función en una sala seleccionada. Verifica que existan salas y películas registradas.
     Entradas: sistema_cine, sala_seleccionada
     Salidas: None
     '''
@@ -101,7 +101,7 @@ class Complejo:
     def crear_funcion(self, sistema_cine, sala_seleccionada: SalaCine) -> None:
     
             '''
-            En caso de querer modificar una funcion se verifica que la cantidad de funciones para esa sala no supere el limite de 5
+            En caso de querer modificar una función se verifica que la cantidad de funciones para esa sala no supere el límite de 5
             '''
 
             if sala_seleccionada.get_cant_funciones() >= 5:
@@ -234,7 +234,7 @@ class Complejo:
     '''
     Autor: David Chica López
     Fecha: 17/05/2026
-    Metodo modificar_funcion: Permite modificar una funcion en una sala seleccionada. Verifica primeramente que la sala tenga al menos una funcion.
+    Método modificar_funcion: Permite modificar una función en una sala seleccionada. Verifica primeramente que la sala tenga al menos una función.
     Entradas: sistema_cine, sala_seleccionada
     Salidas: None
 
@@ -251,7 +251,7 @@ class Complejo:
         print(encabezado)
         print(separador)   
 
-        header_tabla = f"| {'#':<3} | S{'ID sala':<10} | {'ID función':<10} | {'Nombre pelicula':<20} | {'Fecha':<15} | {'Hora inicio':<15} |"
+        header_tabla = f"| {'#':<3} | S{'ID sala':<10} | {'ID función':<10} | {'Nombre película':<20} | {'Fecha':<15} | {'Hora inicio':<15} |"
         sep_tabla = "-" * len(header_tabla)
         
         print(f"\n{sep_tabla}")
@@ -339,44 +339,19 @@ class Complejo:
 
     def renovar_programacion_semanal(self) -> None:
         """
-        Método que verifica si es lunes y si la programación actual está vacía 
-        para proceder a limpiar funciones y reservas de la semana anterior.
+        Autor:David Chica Lopez
+        Método renovar_programacion_semanal: Elimina todas las funciones de todas las salas y todas las reservas del complejo. Mantiene los arreglos con su tamaño 
+        fijo original estableciendo los elementos en None.
         """
-        ahora = datetime.now()
-        
-        if ahora.weekday() == 0:
-            lunes_semana_nueva = ahora.replace(hour=0, minute=0, second=0, microsecond=0)
-            domingo_semana_nueva = lunes_semana_nueva + timedelta(days=6, hours=23, minutes=59)
-            
-            semana_actual_vacia = True
-            existen_datos_pasados = False
-            
-            for i in range(len(self.__lista_salas)):
-                sala_actual = self.__lista_salas[i]
-                if sala_actual is not None:
-                    arreglo_funciones = sala_actual.get_programacion()
-                    for j in range(len(arreglo_funciones)):
-                        funcion_evaluada = arreglo_funciones[j]
-                        if funcion_evaluada is not None:
-                            momento_funcion = datetime.strptime(funcion_evaluada.get_fecha(), "%d/%m/%Y")
-                            
-                            if lunes_semana_nueva <= momento_funcion <= domingo_semana_nueva:
-                                semana_actual_vacia = False
-                            
-                            if momento_funcion < lunes_semana_nueva:
-                                existen_datos_pasados = True
-            
-            if semana_actual_vacia and existen_datos_pasados:
-                for i in range(len(self.__lista_salas)):
-                    sala_para_limpiar = self.__lista_salas[i]
-                    if sala_para_limpiar is not None:
-                        sala_para_limpiar.renovar_programacion(sala_para_limpiar.get_identificador())
-                
-                for k in range(len(self.__reservas)):
-                    self.__reservas[k] = None
-                
-                self.__contador_reservas = 0
-                print("\n[Mantenimiento] Se ha detectado el inicio de semana. Programación y reservas reiniciadas.")
+        for sala_actual in self.__lista_salas:
+            if sala_actual is not None:
+                sala_actual.renovar_programacion(sala_actual.get_identificador())
+
+        for indice_reserva in range(len(self.__reservas)):
+            self.__reservas[indice_reserva] = None
+
+        self.__contador_reservas = 0
+        print("\n La programación y las reservas han sido reiniciadas completamente.")
 
     def get_sala(self, identificador_sala):
         for i in range(len(self.__lista_salas)):

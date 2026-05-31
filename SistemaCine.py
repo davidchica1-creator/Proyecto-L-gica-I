@@ -47,8 +47,6 @@ class SistemaCine:
             self.complejo = Complejo()
             self.contador_salas = 0
 
-        self.complejo.renovar_programacion_semanal()
-
     '''
     ============================================================================================================================================================================
     ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 1, R1. INGRESAR USUARIO
@@ -76,12 +74,11 @@ class SistemaCine:
             opcion = solicitar_dato("1. Ingresar\n2. Salir\n\nSeleccione una opción: ", "numero", 1, 2)
 
             if opcion == 2:
-                self.guardar_todo()
                 print("Hasta luego")
                 break
 
             usuario_ingresado = input("Ingrese el usuario: ")
-            contrasena = input("Ingresa la contrasena: ")
+            contrasena = input("Ingrese la contraseña: ")
 
             if usuario_ingresado == "Admin123" and contrasena == "Admin123*":
                 user = Usuario("Admin", 123, 1)
@@ -147,6 +144,7 @@ class SistemaCine:
         print("Las credenciales del nuevo cliente son:\n")
         print("Usuario:", documento)
         print("Contraseña:", contrasena_gen)
+        self.guardar_todo()
 
         return True
     
@@ -615,7 +613,7 @@ class SistemaCine:
     
     '''
     ============================================================================================================================================================================
-    ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 6, R6. RESERVAR BOLESTAS PARA UNA PELICULA
+    ESTE BLOQUE DE CODIGO CUMPLE CON EL REQUERIMIENTO 6, R6. RESERVAR BOLETAS PARA UNA PELÍCULA
     '''
 
     '''
@@ -733,6 +731,7 @@ class SistemaCine:
 
         print("\nSu reserva ha sido guardada con éxito.")
         self.emitir_boleta(reserva_nueva)
+        self.guardar_todo()
         input("\nPresione Enter para continuar...")
         return True
 
@@ -782,16 +781,23 @@ class SistemaCine:
         sala_seleccionada = lista_salas[idx_sala]
 
         print(f"\nTrabajando en Sala: {sala_seleccionada.get_identificador()}")
-        print("\n\t1) Crear función\n\t2) Modificar función\n\t5) Salir\n")
+        print("\n\t1) Crear función\n\t2) Modificar función\n\t3) Renovar programación general\n\t4) Salir\n")
         
-        opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 3)
+        opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 4)
 
         match opcion:
             case 1:
                 self.complejo.crear_funcion(self, sala_seleccionada)
+                self.guardar_todo()
             case 2:
                 self.complejo.modificar_funcion(self, sala_seleccionada)
+                self.guardar_todo()
             case 3:
+                confirmacion_admin = solicitar_dato("¿Está seguro? Esto eliminará todas las funciones del sistema (si/no): ", "si_no")
+                if confirmacion_admin == "si":
+                    self.complejo.renovar_programacion_semanal()
+                    self.guardar_todo()
+            case 4:
                 return
 
     '''
@@ -842,11 +848,11 @@ class SistemaCine:
 
         lineas = [
             f" Cliente: {nombre_cliente}",
-            f" Pelicula: {nombre_peli}",
+            f" Película: {nombre_peli}",
             f" Fecha Funcion: {fecha_func}",
             f" Hora Funcion: {hora_func}",
             f" Sala: {id_sala}",
-            f" Calificacion: {calif_peli}",
+            f" Calificación: {calif_peli}",
             f" Precio Total: ${reserva.get_precio_total():,}",
             f" Fecha Venta: {reserva.get_fecha_venta()}",
             f" Asientos: {asientos_str}"
@@ -875,7 +881,7 @@ class SistemaCine:
     '''
     Autor: David Chica López  
     Fecha: 10/05/2026
-    Metodo agregar_pelicula: Permite agregar una pelicula a la lista de peliculas
+    Método agregar_pelicula: Permite agregar una película a la lista de películas.
     Entradas: None
     Salidas: Cadena de texto que confirma que la pelicula fue creada con exito
     '''
@@ -895,15 +901,15 @@ class SistemaCine:
             print("Error: Capacidad máxima de películas alcanzada")
             return
 
-        nombre_espanol = solicitar_dato("Ingrese el nombre en español de la pelicula: ", "texto")
-        nombre_original = solicitar_dato("\nIngrese el nombre original de la pelicula: ", "texto")
+        nombre_espanol = solicitar_dato("Ingrese el nombre en español de la película: ", "texto")
+        nombre_original = solicitar_dato("\nIngrese el nombre original de la película: ", "texto")
         
         identificador_pelicula = self.contador_peliculas + 1
 
-        anno_estreno = solicitar_dato("\nIngrese el año de estreno de la pelicula: ", "numero", 1900, anno_actual)
-        duracion = solicitar_dato("\nIngrese la duracion (en minutos) de la pelicula: ", "numero", 90, 180)
+        anno_estreno = solicitar_dato("\nIngrese el año de estreno de la película: ", "numero", 1900, anno_actual)
+        duracion = solicitar_dato("\nIngrese la duración (en minutos) de la película: ", "numero", 90, 180)
         
-        gen_opc = solicitar_dato("\n---Generos de la pelicula---\n\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6) Infantil\n\nIngrese una opcion: ", "numero", 1, 6)
+        gen_opc = solicitar_dato("\n---Géneros de la película---\n\n1) Drama \n2) Suspenso \n3) Terror \n4) Acción \n5) Comedia \n6) Infantil\n\nIngrese una opción: ", "numero", 1, 6)
         match gen_opc:
             case 1:
                 genero = "Drama"
@@ -918,9 +924,9 @@ class SistemaCine:
             case 6:
                 genero = "Infantil"
 
-        pais_origen = solicitar_dato("\nIngrese el pais de origen de la pelicula: ", "texto")
+        pais_origen = solicitar_dato("\nIngrese el país de origen de la película: ", "texto")
 
-        cal_opc = solicitar_dato("\n---Tipos de calificacion de la pelicula---\n\n1) G      (General) \n2) PG     (Se recomienda la compañía de un adulto) \n3) PG-13  (Se recomienda la compañía de un adulto para menores de 13 años) \n4) R      (Prohibida la entrada a menores de 17 años sin compañía de un adulto) \n5) NC-17  (Prohibida la entrada a menores de 18 años sin compañía de un adulto)\n\nIngrese una opcion: ", "numero", 1, 5)
+        cal_opc = solicitar_dato("\n---Tipos de clasificación de la película---\n\n1) G      (General) \n2) PG     (Se recomienda la compañía de un adulto) \n3) PG-13  (Se recomienda la compañía de un adulto para menores de 13 años) \n4) R      (Prohibida la entrada a menores de 17 años sin compañía de un adulto) \n5) NC-17  (Prohibida la entrada a menores de 18 años sin compañía de un adulto)\n\nIngrese una opción: ", "numero", 1, 5)
         match cal_opc:
             case 1:
                 calificacion = "G"
@@ -939,6 +945,7 @@ class SistemaCine:
         self.contador_peliculas += 1
 
         print(f"\nPelícula '{nombre_espanol}' agregada exitosamente.")
+        self.guardar_todo()
 
     '''
     ============================================================================================================================================================================
@@ -1075,7 +1082,7 @@ class SistemaCine:
             valor_boleta = sala.get_valor_boleta()
             recaudo_total = 0
 
-            encabezado = f"|Recauso por funcion de sala {identificador_sala}|"
+            encabezado = f"|Recaudo por función de sala {identificador_sala}|"
             separador = "-" * len(encabezado)
             print(f"\n{separador}")
             print(encabezado)
@@ -1086,7 +1093,7 @@ class SistemaCine:
                 if funcion is not None:
                     recaudo_funcion = funcion.get_asientos_reservados() * valor_boleta
                     recaudo_total += recaudo_funcion
-                    print(f"| Funcion {funcion.get_id_funcion():<15} | Recaudo: ${recaudo_funcion:<20} |")
+                    print(f"| Función {funcion.get_id_funcion():<15} | Recaudo: ${recaudo_funcion:<20} |")
 
             print(f"\n  Recaudo total sala {identificador_sala}: ${recaudo_total:,.0f}")
 
@@ -1150,7 +1157,7 @@ class SistemaCine:
 
             cant_filas = solicitar_dato("\nIngrese cantidad de filas ( minimo 10, máximo 26 ): ", "numero", 10, 26)
 
-            sillas_por_fila = solicitar_dato("\nIngrese sillas por fila ( minimo 10, áximo 30 ): ", "numero", 10, 30)
+            sillas_por_fila = solicitar_dato("\nIngrese sillas por fila ( mínimo 10, máximo 30 ): ", "numero", 10, 30)
 
             sala_nueva = SalaCine(identificador_sala, valor_boleta, cant_filas, sillas_por_fila)
             self.contador_salas += 1
@@ -1158,6 +1165,7 @@ class SistemaCine:
             
             if exito:
                 print("\nProceso terminado con éxito.")
+                self.guardar_todo()
             else:
                 print("No se pudo realizar el registro.")
     '''
@@ -1180,9 +1188,16 @@ class SistemaCine:
                 if str(self.usuarios[i].get_usuario()) == doc_buscado:
                     return self.usuarios[i]
         return None
+    
+    '''
+    Autor: David Chica López  
+    Fecha: 30/05/2026
+    Metodo cargar_datos: Carga los datos de un archivo en un arreglo específico
+    Entradas: archivo(el nombre del archivo), num_max_datos(que es la cantidad maxima de datos que puede tener ese archivo)
+    Salidas: Una tupla que contiene el arreglo y la cantidad de datos que carga
+    '''
 
     def cargar_datos(self, archivo: str, num_max_datos: int) -> tuple[np.ndarray, int]:
-        """ Este método carga los datos de un archivo en un arreglo específico """
         try:
             arreglo_de_datos = np.load(archivo, allow_pickle=True)
             i = 0
@@ -1193,15 +1208,30 @@ class SistemaCine:
             print(f"No se pudo cargar el archivo {archivo}. Se creó un arreglo de datos vacío!")
             arreglo_de_datos = np.full((num_max_datos), fill_value=None, dtype=object)
             return arreglo_de_datos, 0
+        
+    '''
+    Autor: David Chica López  
+    Fecha: 30/05/2026
+    Metodo guardar_datos: Guarda los datos de un arreglo en un archivo
+    Entradas: arreglo_de_datos(el arreglo a guardar), archivo(el nombre del archivo)
+    Salidas: booleano que indica si se pudo guardar los datos o no
+    '''
 
     def guardar_datos(self, arreglo_de_datos: np.ndarray, archivo: str) -> bool:
-        """ Este método almacena los datos de un arreglo en un archivo """
         try:
             np.save(archivo, arreglo_de_datos)
             return True
         except Exception as e:
             print(f"Error: no se pudieron almacenar los datos en el archivo {archivo}. {e}")
             return False
+
+    '''
+    Autor: David Chica López  
+    Fecha: 30/05/2026
+    Metodo guardar_todo: Guarda todos los datos del sistema en archivos correspondientes
+    Entradas: None
+    Salidas: None
+    '''
 
     def guardar_todo(self) -> None:
         """ Centraliza el guardado de todos los datos persistentes del sistema """

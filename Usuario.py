@@ -66,7 +66,7 @@ class Usuario:
             print(encabezado)
             print(separador)
 
-            opcion = solicitar_dato("Ingresa una de la opciones:\n\n1) Crear clientes\n2) Consultar programacion\n3) Consultar informacion de las peliculas\n4) Gestionar programacion\n5) Crear o modificar pelicula\n6) Consultar porcentaje de ocupacion\n7) Consultar recaudo\n8) Crear salas\n9) Salir\n\n", "numero", 1, 9)
+            opcion = solicitar_dato("Ingresa una de la opciones:\n\n1) Crear clientes\n2) Consultar programación\n3) Consultar información de las películas\n4) Gestionar programación\n5) Crear o modificar película\n6) Consultar porcentaje de ocupación\n7) Consultar recaudo\n8) Crear salas\n9) Salir\n\n", "numero", 1, 9)
                 
             match opcion:            
                 case 1:
@@ -84,7 +84,7 @@ class Usuario:
                     print(encabezado)
                     print(separador)
 
-                    print("\n\t1) Crear pelicula\n\t2) Modificar estado de pelicula\n\t3) Salir\n")
+                    print("\n\t1) Crear película\n\t2) Modificar estado de película\n\t3) Salir\n")
                     sub_opcion = solicitar_dato("Seleccione una opción: ", "numero", 1, 3)
                     match sub_opcion:
 
@@ -100,6 +100,7 @@ class Usuario:
                                 numeral_pelicula = solicitar_dato("Ingrese el número de la película a modificar: ", "numero", 1, sistema.contador_peliculas)
                                 pelicula_seleccionada = sistema.peliculas[numeral_pelicula - 1]
                                 pelicula_seleccionada.cambiar_estado()
+                                sistema.guardar_todo()
 
                 case 6:
                     sistema.consultar_porcentaje_ocupacion()
@@ -129,7 +130,7 @@ class Usuario:
             print(encabezado)
             print(separador)
 
-            opcion = solicitar_dato("\nIngresa una de la opciones:\n\n1) Crear clientes\n2) Consultar programacion\n3) Consultar info de la peliculas\n4) Reserva boletas\n5) Salir\n", "numero", 1, 5)
+            opcion = solicitar_dato("\nIngresa una de la opciones:\n\n1) Crear clientes\n2) Consultar programación\n3) Consultar info de las películas\n4) Reservar boletas\n5) Salir\n", "numero", 1, 5)
             
             if opcion == 5:
                 break
@@ -178,7 +179,7 @@ class Usuario:
             print(f"\n{separador}")
             print(encabezado)
             print(separador)
-            opcion = solicitar_dato("\nIngresa una de la opciones:\n\n1.Consultar programacion\n2.Consultar info de la peliculas\n3.Reservar boletas\n4.Salir\n\n", "numero", 1, 4)
+            opcion = solicitar_dato("\nIngresa una de la opciones:\n\n1. Consultar programación\n2. Consultar info de las películas\n3. Reservar boletas\n4. Salir\n\n", "numero", 1, 4)
             
                 
             match opcion:

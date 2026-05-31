@@ -48,7 +48,7 @@ class Pelicula:
     '''
     Autor: David Chica López
     Fecha: 04/05/2026
-    Metodo cambiar_estado: Permite cambiar el estado de una pelicula, si esta activa su estado cambia a desactivada y viseversa
+    Método cambiar_estado: Permite cambiar el estado de una película, si está activa su estado cambia a desactivada y viceversa.
     Entradas: Indice de la pelicula a modificar
     Salidas: None
     '''
@@ -56,10 +56,10 @@ class Pelicula:
     def cambiar_estado(self)-> None:
         if self.get_estado():
             self.__estado = False
-            print(f"La pelicula '{self.__nombre_espanol}' ha sido desactivada.")
+            print(f"La película '{self.__nombre_espanol}' ha sido desactivada.")
         else:
             self.__estado = True
-            print(f"La pelicula '{self.__nombre_espanol}' ha sido activada.")
+            print(f"La película '{self.__nombre_espanol}' ha sido activada.")
 
     '''
     Autor: David Chica López

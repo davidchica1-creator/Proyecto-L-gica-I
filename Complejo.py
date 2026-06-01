@@ -251,32 +251,43 @@ class Complejo:
         print(encabezado)
         print(separador)   
 
-        header_tabla = f"| {'#':<3} | S{'ID sala':<10} | {'ID función':<10} | {'Nombre película':<20} | {'Fecha':<15} | {'Hora inicio':<15} |"
+        header_tabla = f"| {'#':<3} | {'ID sala':<10} | {'ID función':<10} | {'Nombre película':<20} | {'Fecha':<15} | {'Hora inicio':<15} |"
         sep_tabla = "-" * len(header_tabla)
         
         print(f"\n{sep_tabla}")
         print(header_tabla)
         print(sep_tabla)
         
-        for i in range(len(sala_seleccionada.get_programacion())):
-            if sala_seleccionada.get_programacion()[i] is not None:
-                print(f"| {i+1:<3} | {sala_seleccionada.get_programacion()[i].info_modificar_funcion()}")
-        print(sep_tabla)
+        programacion = sala_seleccionada.get_programacion()
+        for i in range(len(programacion)):
+            funcion = programacion[i]
+            if funcion is not None:
+                nombre_peli = "Desconocida"
+                for peli in sistema_cine.peliculas:
+                    if peli is not None and peli.get_id() == funcion.get_identificador_pelicula():
+                        nombre_peli = peli.get_nombre_espanol()
+                        break
+                
+                print(f"| {i+1:<3} | S{sala_seleccionada.get_identificador():<9} | {funcion.get_id_funcion():<10} | {nombre_peli[:20]:<20} | {funcion.get_fecha():<15} | {funcion.get_hora_inicio():<15} |")
 
-        funcion_a_modificar = None
-        while True:
-            funcion_seleccionada = solicitar_dato("Ingrese el ID de la función que desea modificar: ", "numero")
-            for func in sala_seleccionada.get_programacion():
-                if func is not None and func.get_id_funcion() == funcion_seleccionada:
-                    funcion_a_modificar = func
-                    break
-            
-            if funcion_a_modificar:
-                print(f"Vas a modificar la función con el ID {funcion_seleccionada}")
-                break
-            else:
-                print(f"Error: No existe una función con el ID {funcion_seleccionada} en esta sala.")
-                return
+        print(sep_tabla)
+        funciones_validas_en_sala = [f for f in programacion if f is not None]
+        
+        if not funciones_validas_en_sala:
+            print("No hay funciones programadas en esta sala para modificar.")
+            return
+
+        num_funciones_disponibles = len(funciones_validas_en_sala)
+
+        num_seleccionado = solicitar_dato(
+            "Ingrese el número de la función que desea modificar: ",
+            "numero",
+            1,
+            num_funciones_disponibles
+        )
+        
+        funcion_a_modificar = funciones_validas_en_sala[num_seleccionado - 1]
+        print(f"Vas a modificar la función con el ID {funcion_a_modificar.get_id_funcion()}")
 
         print("\nPelículas disponibles:")
         sistema_cine.mostrar_lista_peliculas_activas()
@@ -284,7 +295,7 @@ class Complejo:
         identificador_pelicula = -1
         peli_encontrada = None
         while True:
-            id_buscado = solicitar_dato("\nIngrese el nuevo ID de la película: ", "numero")
+            id_buscado = solicitar_dato("\nIngrese el ID de la película: ", "numero")
             for i in range(sistema_cine.contador_peliculas):
                 p = sistema_cine.peliculas[i]
                 if p is not None and p.get_id() == id_buscado and p.get_estado():
@@ -297,23 +308,43 @@ class Complejo:
             else:
                 print("Error: El ID ingresado no es válido o no está en la lista de películas activas.")
 
-        fecha = solicitar_dato("Ingrese la nueva fecha de la función (DD/MM/AAAA): ", "fecha")
+        hoy = datetime.now()
+        lunes = hoy - timedelta(days=hoy.weekday())
+        lunes = lunes.replace(hour=0, minute=0, second=0, microsecond=0)
+        domingo = lunes + timedelta(days=6, hours=23, minutes=59)
+
+        print(f"\nSolo puede programar funciones para la semana actual.")
+        print(f"Rango válido: del {lunes.strftime('%d/%m/%Y')} al {domingo.strftime('%d/%m/%Y')}\n")
+    
+        while True:
+            dia_input = solicitar_dato(f"Ingrese el día del mes para la función: ", "numero")
+            try:
+
+                fecha_dt = datetime(hoy.year, hoy.month, dia_input)
+                if lunes <= fecha_dt <= domingo:
+                    fecha = fecha_dt.strftime("%d/%m/%Y")
+                    break
+                else:
+                    print(f"Error: El día {dia_input} está fuera de la semana actual.")
+            except ValueError:
+                print("Error: El día ingresado no es válido para el mes actual.")
 
         while True:
-            hora_inicio = solicitar_dato("Ingrese la nueva hora de inicio (HH:MM): ", "hora")
+            hora_inicio = solicitar_dato("\nIngrese la hora de inicio en formato de 24 horas (HH:MM): ", "hora")
             minutos_inicio_peli_nueva = horas_minutos(hora_inicio)
-
+            
             if 480 <= minutos_inicio_peli_nueva <= 1320:
                 break
             print("Error: La hora debe estar entre las 08:00 y las 22:00 para ser visible.")
+
 
         duracion_peli_nueva = peli_encontrada.get_duracion()
         minutos_fin_peli_nueva = minutos_inicio_peli_nueva + duracion_peli_nueva
         minutos_fin_peli_nueva = minutos_inicio_peli_nueva + duracion_peli_nueva + 15
         
         cruce_de_horario = False
-        for funcion_actual in sala_seleccionada.get_programacion():
-            if funcion_actual is not None and funcion_actual.get_id_funcion() != funcion_seleccionada and funcion_actual.get_fecha() == fecha:
+        for funcion_actual in funciones_validas_en_sala: 
+            if funcion_actual is not None and funcion_actual.get_id_funcion() != funcion_a_modificar.get_id_funcion() and funcion_actual.get_fecha() == fecha:
                 peli_ya_programada = None
                 for peli in sistema_cine.peliculas:
                     if peli is not None and peli.get_id() == funcion_actual.get_identificador_pelicula():
@@ -334,7 +365,7 @@ class Complejo:
         funcion_a_modificar.set_identificador_pelicula(identificador_pelicula)
         funcion_a_modificar.set_fecha(fecha)
         funcion_a_modificar.set_hora_inicio(hora_inicio)
-        print(f"Función con ID {funcion_seleccionada} modificada exitosamente.")
+        print(f"Función con ID {funcion_a_modificar.get_id_funcion()} modificada exitosamente.")
 
 
     def renovar_programacion_semanal(self) -> None:

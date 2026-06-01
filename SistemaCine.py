@@ -32,11 +32,6 @@ class SistemaCine:
 
         self.usuarios, self.contador_clientes = self.cargar_datos(self.ARCHIVO_USUARIOS, self.MAX_USUARIOS)
 
-        if self.contador_clientes == 0:
-            self.usuarios[0] = Usuario("Admin123", "Admin123*", 1)
-            self.usuarios[1] = Usuario("Vendedor123", "Vendedor123*", 2)
-            self.contador_clientes = 1
-
         self.peliculas, self.contador_peliculas = self.cargar_datos(self.ARCHIVO_PELICULAS, self.MAX_PELICULAS)
 
         try:
@@ -77,14 +72,23 @@ class SistemaCine:
                 print("Hasta luego")
                 break
 
-            usuario_ingresado = input("Ingrese el usuario: ")
-            contrasena = input("Ingrese la contraseña: ")
+            while True:
+                usuario_ingresado = input("\nIngrese el usuario: ").strip()
+                if usuario_ingresado:
+                    break
+                print("Error: El campo no puede estar vacío.")
+
+            while True:
+                contrasena = input("\nIngrese la contraseña: ").strip()
+                if contrasena:
+                    break
+                print("Error: El campo no puede estar vacío.")
 
             if usuario_ingresado == "Admin123" and contrasena == "Admin123*":
-                user = Usuario("Admin", 123, 1)
+                user = Usuario("Administrador", "Admin123", 1)
                 user.menu_admin(self)
             elif usuario_ingresado == "Vendedor123" and contrasena == "Vendedor123*":
-                user = Usuario("Vendedor", 123, 2)
+                user = Usuario("Vendedor", "Vendedor123", 2)
                 user.menu_vendedor(self)
             else:
 
@@ -627,6 +631,17 @@ class SistemaCine:
     '''
 
     def reservar_boleta(self, usuario_sesion: Usuario) -> bool:
+        hay_funciones_disponibles = False
+        for sala_evaluada in self.complejo.get_lista_salas():
+            if sala_evaluada is not None and sala_evaluada.get_cant_funciones() > 0:
+                hay_funciones_disponibles = True
+                break
+        
+        if not hay_funciones_disponibles:
+            print("\nNo hay funciones programadas por el momento, vuelva pronto.")
+            input("\nPresione Enter para continuar...")
+            return False
+
         limpiar_pantalla()
         encabezado = "|         Registro de nueva reserva          |"
         separador = "-" * len(encabezado)
@@ -643,6 +658,8 @@ class SistemaCine:
                 print("Debe registrarlo primero antes de realizar una reserva.")
                 input("\nPresione Enter para continuar...")
                 return False
+            else:
+                print(f"\nCliente encontrado: {cliente_final.get_nombre()}")
         else:
             cliente_final = usuario_sesion
             print(f"Usuario encontrado, nombre de usuario: {cliente_final.get_nombre()}")
@@ -679,12 +696,19 @@ class SistemaCine:
                 funciones_validas[contador_fv] = programacion[i]
                 contador_fv += 1
 
-        enc_f = f"| {'#':<3} | {'ID Función':<12} | {'Fecha':<12} | {'Hora':<10} |"
+        enc_f = f"| {'#':<3} | {'ID Función':<12} | {'Película':<25} | {'Fecha':<12} | {'Hora':<10} |"
         sep_f = "-" * len(enc_f)
         print(f"{sep_f}\n{enc_f}\n{sep_f}")
         for i in range(contador_fv):
             f = funciones_validas[i]
-            print(f"| {i+1:<3} | {f.get_id_funcion():<12} | {f.get_fecha():<12} | {f.get_hora_inicio():<10} |")
+            
+            nombre_peli = "Desconocida"
+            for peli in self.peliculas:
+                if peli is not None and peli.get_id() == f.get_identificador_pelicula():
+                    nombre_peli = peli.get_nombre_espanol()
+                    break
+            
+            print(f"| {i+1:<3} | {f.get_id_funcion():<12} | {nombre_peli[:25]:<25} | {f.get_fecha():<12} | {f.get_hora_inicio():<10} |")
         print(sep_f)
 
         num_func = solicitar_dato("\nSeleccione el número de la función: ", "numero", 1, contador_fv)

@@ -153,13 +153,17 @@ class Usuario:
                     print(encabezado)
                     print(separador)
 
-                    sub_opcion = solicitar_dato("\n1. Visualizar mapa\n2. Reservar boleta\nSeleccione: ", "numero", 1, 2)
+                    sub_opcion = solicitar_dato("\n\t1) Visualizar mapa\n\t2) Reservar boleta\n\t3) Volver\n\n\tSeleccione: ", "numero", 1, 3)
                     match sub_opcion:
                         case 1:
                             sistema.mostrar_mapa_funcion()
 
                         case 2:
                             sistema.reservar_boleta(self)
+
+                        case 3:
+                            continue
+
                                                     
 
     '''    

@@ -384,15 +384,15 @@ class Complejo:
         self.__contador_reservas = 0
         print("\n La programación y las reservas han sido reiniciadas completamente.")
 
-    def get_sala(self, identificador_sala):
+    def get_sala(self, identificador_sala) -> SalaCine:
         for i in range(len(self.__lista_salas)):
              if self.__lista_salas[i] is not None:
                 if self.__lista_salas[i].get_identificador() == identificador_sala:
                     return self.__lista_salas[i]
         return None
     
-    def get_nombre(self):
+    def get_nombre(self) -> str:
         return self.__nombre
     
-    def get_reservas(self):
+    def get_reservas(self) -> np.ndarray:
         return self.__reservas

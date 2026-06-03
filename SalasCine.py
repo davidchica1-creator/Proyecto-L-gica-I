@@ -27,10 +27,10 @@ class SalaCine:
         self.__contador_funciones = 0
         self.__programacion = np.full((5), fill_value = None, dtype = object)
 
-    def get_programacion(self):
+    def get_programacion(self) -> np.ndarray:
         return self.__programacion
     
-    def get_identificador(self):
+    def get_identificador(self) -> int:
         return self.__identificador_sala
     
     '''

@@ -112,14 +112,11 @@ class Funcion:
         print(f"|{pantalla_texto.center(map_display_width - 2)}|") 
         print(screen_box_separator)
         print()
-
-    def get_identificador_funcion(self) -> int:
-        return self.__identificador_funcion
         
     def get_mapa_sala(self) -> np.ndarray:
         return self.__mapa_sala
 
-    def agregar_asientos_reservados(self, cant_boletas) -> None:
+    def agregar_asientos_reservados(self, cant_boletas:int) -> None:
         self.__asientos_reservados += cant_boletas
         
 
@@ -146,7 +143,7 @@ class Funcion:
     def info_modificar_funcion(self) -> str:
         return f"{self.identificador_sala:<10} | {self.__identificador_funcion:<10} | {self.__identificador_pelicula:<20} | {self.__fecha:<15} | {self.__hora_inicio:<15} |"
 
-    def verificar_disponibilidad(self, asiento_inicial, cant_boletas):
+    def verificar_disponibilidad(self, asiento_inicial, cant_boletas) -> bool:
         
         if asiento_inicial < 0 or asiento_inicial >= self.__cant_filas * self.__sillas_por_fila:
 

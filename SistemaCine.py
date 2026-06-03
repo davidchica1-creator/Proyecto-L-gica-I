@@ -1204,7 +1204,7 @@ class SistemaCine:
     Salidas: Usuario (usuario encontrado) o None (si no se encuentra el usuario)
     '''
     
-    def get_usuario_por_documento(self, documento):
+    def get_usuario_por_documento(self, documento:int) -> Usuario:
 
         doc_buscado = str(documento)
         for i in range(self.contador_clientes):

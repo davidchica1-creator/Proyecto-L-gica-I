@@ -129,15 +129,13 @@ Función: ordenar_por_burbuja
 Entradas: Arreglo
 Salidas: Arreglo ordenado
 '''
-
 def ordenar_por_burbuja(arreglo):
-    arreglo2 = arreglo.copy()
-    n = len(arreglo)
-
-    for i in range(n):
-        for j in range(0, n-i-1):
-            if arreglo2[j] > arreglo2[j+1]:
-                auxiliar = arreglo2[j]
-                arreglo2[j] = arreglo2[j+1]
-                arreglo2[j+1] = auxiliar
-    return arreglo2
+    arreglo_resultado = arreglo.copy()
+    cantidad_elementos = len(arreglo_resultado)
+    for i in range(cantidad_elementos):
+        for j in range(0, cantidad_elementos - i - 1):
+            if arreglo_resultado[j] > arreglo_resultado[j + 1]:
+                dato_temporal = arreglo_resultado[j]
+                arreglo_resultado[j] = arreglo_resultado[j + 1]
+                arreglo_resultado[j + 1] = dato_temporal
+    return arreglo_resultado

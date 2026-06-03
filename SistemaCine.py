@@ -994,57 +994,58 @@ class SistemaCine:
             input("\nPresione Enter para continuar...")
             return
         
-        
-        encabezado = "|         Porcentaje de ocupación por sala          |"
-        separador = "-" * len(encabezado)
-        print(f"\n{separador}")
-        print(encabezado)
-        print(separador)
 
-        MAX_RESULTADOS = 60
-        lista_de_resultados = np.full((MAX_RESULTADOS, 3), fill_value=None, dtype=object)
-        contador_resultados = 0
+        titulo_seccion = "|         Porcentaje de ocupación por sala          |"
+        linea_separadora = "-" * len(titulo_seccion)
+        print(f"\n{linea_separadora}")
+        print(titulo_seccion)
+        print(linea_separadora)
 
-        salas_del_sistema = self.complejo.get_lista_salas()
-        for sala_actual in salas_del_sistema:
-            if sala_actual != None:
-                programacion_de_la_sala = sala_actual.get_programacion()
+        capacidad_maxima_resultados = 60
+        registros_porcentaje = np.full((capacidad_maxima_resultados), fill_value="", dtype=object)
+        total_registros_encontrados = 0
+
+        arreglo_salas = self.complejo.get_lista_salas()
+        for i in range(len(arreglo_salas)):
+            sala_actual = arreglo_salas[i]
+            if sala_actual is not None:
+                programacion_sala = sala_actual.get_programacion()
                 
-                for funcion_actual in programacion_de_la_sala:
-                    if funcion_actual != None:
+                for j in range(len(programacion_sala)):
+                    funcion_actual = programacion_sala[j]
+                    if funcion_actual is not None:
 
-                        capacidad_total = sala_actual.get_cant_filas() * sala_actual.get_sillas_por_fila()
-                        sillas_vendidas = funcion_actual.get_asientos_reservados()
+                        capacidad_maxima = sala_actual.get_cant_filas() * sala_actual.get_sillas_por_fila()
+                        asientos_vendidos = funcion_actual.get_asientos_reservados()
                         
-                        if capacidad_total > 0:
-                            porcentaje_calculado = (sillas_vendidas / capacidad_total) * 100
+                        if capacidad_maxima > 0:
+                            calculo_porcentaje = (asientos_vendidos / capacidad_maxima) * 100
                         else:
-                            porcentaje_calculado = 0.0
+                            calculo_porcentaje = 0.0
                             
-                        id_de_la_sala = sala_actual.get_identificador()
-                        id_de_la_funcion = funcion_actual.get_id_funcion()
+                        id_sala_actual = sala_actual.get_identificador()
+                        id_funcion_actual = funcion_actual.get_id_funcion()
                         
-                        lista_de_resultados[contador_resultados] = np.array([porcentaje_calculado, id_de_la_sala, id_de_la_funcion], dtype=object)
-                        contador_resultados += 1
+                        registros_porcentaje[total_registros_encontrados] = f"{calculo_porcentaje:010.4f}|{id_sala_actual}|{id_funcion_actual}"
+                        total_registros_encontrados += 1
 
-        if contador_resultados == 0:
+        if total_registros_encontrados == 0:
             print("No se encontraron funciones programadas en las salas.")
         else:
+            datos_a_ordenar = np.full((total_registros_encontrados), fill_value="", dtype=object)
+            for i in range(total_registros_encontrados):
+                datos_a_ordenar[i] = registros_porcentaje[i]
+            
+            lista_final_ordenada = ordenar_por_burbuja(datos_a_ordenar)
 
-            cantidad_items = contador_resultados
-            for i in range(cantidad_items):
-                for j in range(0, cantidad_items - i - 1):
-
-                    if lista_de_resultados[j][0] < lista_de_resultados[j + 1][0]:
-
-                        auxiliar = lista_de_resultados[j]
-                        lista_de_resultados[j] = lista_de_resultados[j + 1]
-                        lista_de_resultados[j + 1] = auxiliar
-
-            for i in range(contador_resultados):
-                item = lista_de_resultados[i]
-                print(f"|Sala: S{item[1]} | Función: {item[2]} | Ocupación: {item[0]:.2f} %|")
-        print(separador)
+            for i in range(total_registros_encontrados - 1, -1, -1):
+                partes_del_registro = lista_final_ordenada[i].split("|")
+                valor_porcentaje = float(partes_del_registro[0])
+                sala_id = partes_del_registro[1]
+                funcion_id = partes_del_registro[2]
+                print(f"|Sala: S{sala_id} | Función: {funcion_id} | Ocupación: {valor_porcentaje:.2f} %|")
+        
+        print(linea_separadora)
         input("\nPresione Enter para volver al menú...")
 
 
